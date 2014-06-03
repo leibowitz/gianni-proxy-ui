@@ -46,7 +46,7 @@ function createSocket()
             "<td>" + moment(msg['date']['$date']).tz("Europe/London").format('YYYY-MM-DD HH:mm:ss.SSS000Z') + "</td>" +
             "<td>" + msg['request']['method'] + "</td>" +
             "<td>" + msg['request']['host'] + "</td>" +
-            "</tr>").prependTo("table > tbody");
+            "</tr>").appendTo("table > tbody");
   };
   sock.onclose = function() {
       console.log('close');
