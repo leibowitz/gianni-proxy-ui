@@ -1,0 +1,75 @@
+<html>
+  <head>
+    <title>List</title>
+<script src="/static/sockjs-0.3.min.js"></script>
+<script src="/static/moment.min.js"></script>
+<script src="/static/moment-timezone.min.js"></script>
+<script src="/static/moment-timezone-data.js"></script>
+<script src="/static/jquery.min.js"></script>
+
+  </head>
+  <body>
+List
+<button id="onPlayPause">Stop</button>
+<table>
+{% for item in items %}
+  <tr>
+    <td>
+      <a href="/item/{{ item['_id'] }}">{{ item['_id'] }}</a>
+    </td>
+    <td>
+      {{ item['date'].astimezone(EST) }}
+    </td>
+    <td>
+      {{ item['request']['method'] }}
+    </td>
+    <td>
+      {{ item['request']['host'] }}
+    </td>
+  </tr>
+{% end %}
+</table>
+<script type="text/javascript">
+  var sock;
+function createSocket()
+{
+  sock = new SockJS('/echo');
+  sock.onopen = function() {
+      console.log('open');
+  };
+  sock.onmessage = function(e) {
+      var msg = JSON.parse(e.data);
+      //console.log(msg);
+      //console.log(JSON.stringify(msg, null, 4));
+      $("<tr>" +
+            "<td><a href='/item/" + msg['_id']['$oid'] + "'>" + msg['_id']['$oid'] + "</a></td>" +
+            "<td>" + moment(msg['date']['$date']).tz("Europe/London").format('YYYY-MM-DD HH:mm:ss.SSS000Z') + "</td>" +
+            "<td>" + msg['request']['method'] + "</td>" +
+            "<td>" + msg['request']['host'] + "</td>" +
+            "</tr>").prependTo("table > tbody");
+  };
+  sock.onclose = function() {
+      console.log('close');
+      sock = null;
+      $(this).text('Record');
+  };
+}
+createSocket();
+
+$('#onPlayPause').on('click', function(evt){
+  if (sock != null) {
+    if (sock.readyState < SockJS.CLOSING) {
+      sock.close();
+    }
+    sock = null;
+    $(this).text('Record');
+  } else {
+    createSocket();
+    $(this).text('Stop');
+  }
+});
+console.log(sock);
+//setTimeout(function(){sock.close();}, 2000);
+</script>
+</body>
+</html>

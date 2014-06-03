@@ -1,0 +1,44 @@
+{% from pygments import highlight %}
+{% from pygments.lexers import JsonLexer %}
+{% from pygments.formatters import HtmlFormatter %}
+
+One
+<div>
+{{ item['_id'] }}
+</div>
+<div>
+{{ item['request']['method'] }}
+{{ item['response']['status'] }}
+<a href="{{ item['request']['host'] }}">{{ item['request']['host'] }}</a>
+</div>
+<h2>Request</h2>
+<table>
+{% for key, value in requestheaders.iteritems() %}
+  <tr>
+    <td>
+  {{ key }}: {{ value }}
+    </td>
+  </tr>
+{% end %}
+</table>
+{% if requestbody %}
+<div>
+<pre lang="json">{{ requestbody }}</pre>
+</div>
+{% end %}
+<h2>Response</h2>
+<table>
+{% for key, value in responseheaders.iteritems() %}
+  <tr>
+    <td>
+  {{ key }}: {{ value }}
+    </td>
+  </tr>
+{% end %}
+</table>
+{% if responsebody %}
+<div>
+<pre lang="json">{{ responsebody }}</pre>
+</div>
+{% end %}
+
