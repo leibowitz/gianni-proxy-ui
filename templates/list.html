@@ -1,6 +1,6 @@
 <html>
   <head>
-    <title>List</title>
+    <title>Gianni's Proxy</title>
 <script src="/static/sockjs-0.3.min.js"></script>
 <script src="/static/moment.min.js"></script>
 <script src="/static/moment-timezone.min.js"></script>
@@ -21,10 +21,16 @@ List
       {{ item['date'].astimezone(EST) }}
     </td>
     <td>
+      {{ item['response']['status'] }}
+    </td>
+    <td>
       {{ item['request']['method'] }}
     </td>
     <td>
       {{ item['request']['host'] }}
+    </td>
+    <td>
+      {{ item['request']['path'] }}
     </td>
   </tr>
 {% end %}
@@ -44,8 +50,10 @@ function createSocket()
       $("<tr>" +
             "<td><a href='/item/" + msg['_id']['$oid'] + "'>" + msg['_id']['$oid'] + "</a></td>" +
             "<td>" + moment(msg['date']['$date']).tz("Europe/London").format('YYYY-MM-DD HH:mm:ss.SSS000Z') + "</td>" +
+            "<td>" + msg['response']['status'] + "</td>" +
             "<td>" + msg['request']['method'] + "</td>" +
             "<td>" + msg['request']['host'] + "</td>" +
+            "<td>" + msg['request']['path'] + "</td>" +
             "</tr>").appendTo("table > tbody");
   };
   sock.onclose = function() {
