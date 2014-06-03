@@ -1,6 +1,11 @@
 <html>
   <head>
     <title>Gianni's Proxy</title>
+<style type="text/css">
+  .hidden {
+    display: none;
+  }
+</style>
 <script src="/static/sockjs-0.3.min.js"></script>
 <script src="/static/moment.min.js"></script>
 <script src="/static/moment-timezone.min.js"></script>
@@ -10,7 +15,14 @@
   </head>
   <body>
 
+<div>
 <button id="onPlayPause">Stop</button>
+<button id="onClear">Clear</button>
+</div>
+
+<form id="filterForm">
+  <input type="text" id="filterText" />
+</form>
 <table>
 {% for item in items %}
   <tr>
@@ -43,7 +55,7 @@ function createSocket()
       var msg = JSON.parse(e.data);
       //console.log(msg);
       //console.log(JSON.stringify(msg, null, 4));
-      $("<tr>" +
+      var row = $("<tr>" +
             "<td>" + moment(msg['date']['$date']).tz("Europe/London").format('YYYY-MM-DD HH:mm:ss.SSS000ZZ') + "</td>" +
             "<td>" + msg['response']['status'] + "</td>" +
             "<td>" + msg['request']['method'] + "</td>" +
@@ -51,7 +63,13 @@ function createSocket()
             msg['request']['host'] + 
             msg['request']['path'] + 
             "</a></td>" +
-            "</tr>").appendTo("table > tbody");
+            "</tr>");
+      var text = $('#filterText').val().trim();
+      if (filterRow(row, text)) {
+        setHidden(row, true).appendTo("table > tbody");
+      } else {
+        row.appendTo("table > tbody");
+      }
   };
   sock.onclose = function() {
       console.log('close');
@@ -74,6 +92,36 @@ $('#onPlayPause').on('click', function(evt){
   }
 });
 console.log(sock);
+function setHidden(row, s)
+{
+    return s ? row.attr('class', 'hidden') : row.removeAttr('class');
+}
+function filterRow(row, text)
+{
+  if (row.children('td').text().indexOf(text) != -1) {
+    return false;
+  }
+  return true;
+}
+$('#filterText').on('keyup', function(evt){
+    var text = $('#filterText').val().trim();
+    if (text.length > 0) {
+      var row;
+      $('table > tbody > tr').each(function(){
+        row = $(this);
+        if (filterRow(row, text)) {
+          setHidden(row, true);
+        } else {
+          setHidden(row, false);
+        }
+      });
+    } else {
+      $('table > tbody > tr').removeAttr('class');
+    }
+});
+$('#onClear').on('click', function(evt){
+  $('table > tbody > tr').remove();
+});
 //setTimeout(function(){sock.close();}, 2000);
 </script>
 </body>
