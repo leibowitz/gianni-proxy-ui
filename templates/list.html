@@ -52,6 +52,7 @@ function createSocket()
       console.log('open');
   };
   sock.onmessage = function(e) {
+      var shouldScroll = window.innerHeight + $(window).scrollTop() == $(window).height();
       var msg = JSON.parse(e.data);
       //console.log(msg);
       //console.log(JSON.stringify(msg, null, 4));
@@ -69,6 +70,10 @@ function createSocket()
         setHidden(row, true).appendTo("table > tbody");
       } else {
         row.appendTo("table > tbody");
+
+        if (shouldScroll) {
+          $("html, body").animate({ scrollTop: $(document).height() });
+        }
       }
   };
   sock.onclose = function() {
