@@ -232,7 +232,7 @@ settings = dict(
     debug=True
 )               
 
-EchoRouter = SockJSRouter(EchoConnection, '/echo')
+EchoRouter = SockJSRouter(EchoConnection, '/listener')
 handlers.extend(EchoRouter.urls)
 
 BodyRouter = SockJSRouter(BodyConnection, '/body')
