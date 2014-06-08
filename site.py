@@ -9,12 +9,11 @@ from httpheader import parse_media_type
 import pytz
 import pymongo
 import gridfs
-from bson.objectid import ObjectId
 import os
 import time
 from sockjs.tornado import SockJSRouter, SockJSConnection
 from sockjs.tornado.periodic import Callback
-from bson import json_util
+from bson import json_util, objectid
 from pygments import highlight
 from pygments.lexers import JsonLexer, TextLexer, IniLexer, get_lexer_for_mimetype
 from pygments.formatters import HtmlFormatter
@@ -184,7 +183,15 @@ class ViewHandler(tornado.web.RequestHandler):
         collection = self.settings['db'].proxyservice['log_logentry']
         fs = motor.MotorGridFS(self.settings['db'].proxyservice)
 
-        entry = yield motor.Op(collection.find_one, {'_id': ObjectId(ident)})
+        try:
+            oid = objectid.ObjectId(ident)
+        except objectid.InvalidId as e:
+            print e
+            self.send_error(500)
+            return
+        #raise tornado.web.HTTPError(400)
+
+        entry = yield motor.Op(collection.find_one, {'_id': oid})
         requestheaders = nice_headers(entry['request']['headers'])
         responseheaders = nice_headers(entry['response']['headers'])
         requestbody = None
