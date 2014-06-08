@@ -11,7 +11,6 @@ import pymongo
 import gridfs
 from bson.objectid import ObjectId
 import os
-import tail
 import time
 from sockjs.tornado import SockJSRouter, SockJSConnection
 from sockjs.tornado.periodic import Callback
