@@ -192,6 +192,7 @@ class ViewHandler(tornado.web.RequestHandler):
         #raise tornado.web.HTTPError(400)
 
         entry = yield motor.Op(collection.find_one, {'_id': oid})
+        requestquery = nice_body(entry['request']['query'], 'application/x-www-form-urlencoded')
         requestheaders = nice_headers(entry['request']['headers'])
         responseheaders = nice_headers(entry['response']['headers'])
         requestbody = None
@@ -235,7 +236,8 @@ class ViewHandler(tornado.web.RequestHandler):
                 requestheaders=requestheaders, 
                 responseheaders=responseheaders,
                 requestbody=requestbody, 
-                responsebody=responsebody)
+                responsebody=responsebody,
+                requestquery=requestquery)
 
 class HostHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous

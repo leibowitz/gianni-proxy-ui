@@ -13,16 +13,17 @@
   </head>
   <body>
 
-One
+<a href="/">Back to list</a>
 <div>
 {{ item['_id'] }}
 </div>
+<h2>Request</h2>
 <div>
 {{ item['request']['method'] }}
 {{ item['response']['status'] }}
-<a href="{{ item['request']['host'] }}">{{ item['request']['host'] }}</a>
+<a href="/domain/{{ item['request']['host'] }}">{{ item['request']['host'] }}</a>{{ item['request']['path'] }}
+{{ requestquery }}
 </div>
-<h2>Request</h2>
 <table>
 {% for key, value in requestheaders.iteritems() %}
   <tr>
