@@ -1,3 +1,16 @@
+<html>
+  <head>
+    <title>Gianni's Proxy</title>
+<style type="text/css">
+  .hidden {
+    display: none;
+  }
+</style>
+<script src="/static/sockjs-0.3.min.js"></script>
+<script src="/static/jquery.min.js"></script>
+
+  </head>
+  <body>
 {% from pygments import highlight %}
 {% from pygments.lexers import JsonLexer %}
 {% from pygments.formatters import HtmlFormatter %}
@@ -21,9 +34,9 @@ One
   </tr>
 {% end %}
 </table>
-{% if requestbody %}
+{% if item['request']['body'] %}
 <div>
-<pre lang="json">{{ requestbody }}</pre>
+<pre lang="json">{{ item['request']['body'] }}</pre>
 </div>
 {% end %}
 <h2>Response</h2>
@@ -36,9 +49,31 @@ One
   </tr>
 {% end %}
 </table>
-{% if responsebody %}
+{% if item['response']['body'] %}
 <div>
-<pre lang="json">{{ responsebody }}</pre>
+<pre lang="json">{{ item['response']['body'] }}</pre>
 </div>
 {% end %}
-
+{% if 'content-type' in responseheaders and 'text' in responseheaders['content-type'] %}
+{% end %}
+<script type="text/javascript">
+var sock;
+function createSocket()
+{
+  sock = new SockJS('/body');
+  sock.onopen = function() {
+      console.log('open');
+      sock.send('{{ item['response']['fileid'] }}')
+  };
+  sock.onmessage = function(e) {
+    console.log(e.data);
+  };
+  sock.onclose = function() {
+      console.log('close');
+      sock = null;
+  };
+}
+createSocket();
+</script>
+</body>
+</html>
