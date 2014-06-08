@@ -211,8 +211,12 @@ class ViewHandler(tornado.web.RequestHandler):
                 except Exception as e:
                     print e
             else:
-                responsebody = open(filepath).read()
-                responsebody = nice_body(responsebody, responseheaders['Content-Type'])
+                ctype = 'application/json'
+                lines = open(filepath).readlines()
+                responsebody = '\n'.join(map(lambda line: nice_body(line, ctype), filter(None, map(lambda line: line.strip(), lines))))
+                #responsebody = open(filepath).read()
+                #ctype = responseheaders['Content-Type']
+                #responsebody = nice_body(responsebody, ctype)
 
 
         if 'fileid' in entry['request'] and self.is_text_content(requestheaders):
