@@ -68,7 +68,7 @@ class BodyConnection(SockJSConnection):
         
     def on_message(self, fileid):
         print "message [" + fileid + "]"
-        filepath = "/Users/giannimoschini/src/github.com/leibowitz/go-proxy-service/" + fileid
+        filepath = "/tmp/proxy-service/" + fileid
         if os.path.exists(filepath):
             self.tail_file(filepath)
         else:
@@ -187,7 +187,7 @@ class ViewHandler(tornado.web.RequestHandler):
         #print entry['response']
         if 'fileid' in entry['response'] and self.is_text_content(responseheaders):
             respfileid = entry['response']['fileid']
-            filepath = "/Users/giannimoschini/src/github.com/leibowitz/go-proxy-service/" + str(respfileid)
+            filepath = "/tmp/proxy-service/" + str(respfileid)
             if not os.path.exists(filepath):
                 try:
                     gridout = yield fs.get(respfileid)
