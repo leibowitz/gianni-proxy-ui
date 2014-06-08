@@ -71,8 +71,9 @@ function createSocket()
       t = JSON.stringify(JSON.parse(e.data), null, 4);
     } catch (e) {
     }*/
-    console.log(t);
+    //console.log(t);
     $('#response').append($('<div>' + t + '</div>'));
+    $("html, body").animate({ scrollTop: $(document).height() });
   };
   sock.onclose = function() {
       console.log('close');

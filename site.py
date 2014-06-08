@@ -18,6 +18,7 @@ from bson import json_util
 from pygments import highlight
 from pygments.lexers import JsonLexer, TextLexer, IniLexer, get_lexer_for_mimetype
 from pygments.formatters import HtmlFormatter
+import tempfile
 
 class MySocket(SockJSConnection):
     def __init__(self, session):
@@ -50,8 +51,8 @@ class EchoConnection(MySocket):
         self.tail()
         
     def on_message(self, msg):
-        
-        print "message ", msg
+        #print "message ", msg
+        pass
 
     def on_new_requests(self, result):
         if result:
@@ -64,20 +65,20 @@ class BodyConnection(SockJSConnection):
     position = 0
 
     def on_open(self, info):
-        print "open"
+        pass
         
     def on_message(self, fileid):
-        print "message [" + fileid + "]"
-        filepath = "/tmp/proxy-service/" + fileid
+        #print "message [" + fileid + "]"
+        filepath = os.path.join(tempfile.gettempdir(), "proxy-service", fileid)
         if os.path.exists(filepath):
             self.tail_file(filepath)
         else:
-            print "File does not exist"
+            #print "File does not exist"
             self.close()
         
     @gen.engine
     def tail_file(self, filepath):
-        print "opening file"
+        #print "opening file"
         #self.position = 0
         self._file = open(filepath)
         self.position = 0
@@ -96,7 +97,7 @@ class BodyConnection(SockJSConnection):
         #print "started"
 
     def check_data(self):
-        print "looking at data"
+        #print "looking at data"
         if not self._file.closed:
             self._file.seek(self.position)
             line = self._file.readline()
@@ -108,16 +109,21 @@ class BodyConnection(SockJSConnection):
         #self.position = self.filet.follow(blocking=False, position=self.position)
 
     def on_new_data(self, data):
-        print "data ", data
+        #print "data ", data
+        data = data.strip()
+
+        if len(data) == 0:
+            return
+
         try:
             data = nice_body(data, 'application/json')
+            self.send(data)
             #json.dumps(json.loads(data), indent=4)
         except Exception as e:
             print e
-        self.send(data)
 
     def on_close(self):
-        print "closing"
+        #print "closing"
         if self._file is not None and not self._file.closed:
             self._file.close()
         self.pcb.stop()
@@ -144,7 +150,7 @@ def nice_body(body, content):
 
     ctype, chars = parse_media_type(content, with_parameters=False)
     lex = get_lexer_for_mimetype('/'.join(filter(None, ctype)))
-    print lex
+    #print lex
     return highlight(body, lex, HtmlFormatter(cssclass='codehilite'))
     #if headers != None and 'Content-Type' in headers and headers['Content-Type'].split(';')[0] == 'application/json':
     #    return highlight(body, JsonLexer(), HtmlFormatter())
@@ -166,7 +172,7 @@ class MainHandler(tornado.web.RequestHandler):
 class ViewHandler(tornado.web.RequestHandler):
 
     def is_text_content(self, headers):
-        print headers
+        #print headers
         if 'Content-Type' not in headers:
             return False
         return 'text' in headers['Content-Type'] or 'json' in headers['Content-Type'] or 'application/x-www-form-urlencoded' in headers['Content-Type']
@@ -187,7 +193,8 @@ class ViewHandler(tornado.web.RequestHandler):
         #print entry['response']
         if 'fileid' in entry['response'] and self.is_text_content(responseheaders):
             respfileid = entry['response']['fileid']
-            filepath = "/tmp/proxy-service/" + str(respfileid)
+            filepath = os.path.join(tempfile.gettempdir(), "proxy-service", str(respfileid))
+            #print filepath
             if not os.path.exists(filepath):
                 try:
                     gridout = yield fs.get(respfileid)
@@ -196,6 +203,9 @@ class ViewHandler(tornado.web.RequestHandler):
                         responsebody = nice_body(responsebody, responseheaders['Content-Type'])
                 except Exception as e:
                     print e
+            else:
+                responsebody = open(filepath).read()
+                responsebody = nice_body(responsebody, responseheaders['Content-Type'])
 
 
         if 'fileid' in entry['request'] and self.is_text_content(requestheaders):
