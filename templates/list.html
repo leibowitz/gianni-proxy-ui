@@ -15,13 +15,15 @@
   </head>
   <body>
 
+    {% if host %}<a href="/">Back to Home</a>{% end %}
 <div>
 <button id="onPlayPause">Stop</button>
 <button id="onClear">Clear</button>
 </div>
 
 <form id="filterForm">
-  <input type="text" id="filterText" />
+  <input type="text" id="filterText" size="50" value="{% if host %}{{ host }}{% end %}" />
+  <button>Filter by host</button>
 </form>
 <table>
 {% for item in items %}
@@ -127,6 +129,13 @@ $('#filterText').on('keyup', function(evt){
 $('#onClear').on('click', function(evt){
   $('table > tbody > tr').remove();
 });
+$('#filterForm').on('submit', function(evt){
+    event.preventDefault();
+    var host = $('#filterText').val().trim();
+    if (host.length != 0) {
+      document.location.href='/domain/'+host;
+    }
+  });
 //setTimeout(function(){sock.close();}, 2000);
 </script>
 </body>

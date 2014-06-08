@@ -166,7 +166,7 @@ class MainHandler(tornado.web.RequestHandler):
         res = cursor.to_list(10)
         entries = yield res
         #cursor.count(callback=get_numbers)
-        self.render("list.html", items=reversed(entries), EST=EST)
+        self.render("list.html", items=reversed(entries), EST=EST, host=None)
 
 class ViewHandler(tornado.web.RequestHandler):
 
@@ -237,12 +237,24 @@ class ViewHandler(tornado.web.RequestHandler):
                 requestbody=requestbody, 
                 responsebody=responsebody)
 
+class HostHandler(tornado.web.RequestHandler):
+    @tornado.web.asynchronous
+    @gen.engine
+    def get(self, host):
+        collection = self.settings['db'].proxyservice['log_logentry']
+        cursor = collection.find({"request.host": host}).sort([("$natural", pymongo.DESCENDING)]).limit(10)#.sort([('date', pymongo.DESCENDING)]).limit(10)
+        res = cursor.to_list(10)
+        entries = yield res
+        #cursor.count(callback=get_numbers)
+        self.render("list.html", items=reversed(entries), EST=EST, host=host)
+
 db = motor.MotorClient('mongodb://localhost:17017', tz_aware=True)
 EST = pytz.timezone('Europe/London')
 
 handlers = [
     (r"/", MainHandler),
     (r"/item/(?P<ident>[^\/]+)", ViewHandler),
+    (r"/domain/(?P<host>[^\/]+)", HostHandler),
 ]
     
 settings = dict(
