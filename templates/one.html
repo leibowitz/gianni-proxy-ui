@@ -1,6 +1,7 @@
 <html>
   <head>
     <title>Gianni's Proxy</title>
+    <link href="/static/default.css" media="all" rel="stylesheet" type="text/css" />
 <style type="text/css">
   .hidden {
     display: none;
@@ -11,9 +12,6 @@
 
   </head>
   <body>
-{% from pygments import highlight %}
-{% from pygments.lexers import JsonLexer %}
-{% from pygments.formatters import HtmlFormatter %}
 
 One
 <div>
@@ -34,9 +32,9 @@ One
   </tr>
 {% end %}
 </table>
-{% if item['request']['body'] %}
+{% if requestbody %}
 <div>
-<pre lang="json">{{ item['request']['body'] }}</pre>
+<pre lang="json">{{ requestbody }}</pre>
 </div>
 {% end %}
 <h2>Response</h2>
@@ -49,13 +47,15 @@ One
   </tr>
 {% end %}
 </table>
-{% if item['response']['body'] %}
-<div>
-<pre lang="json">{{ item['response']['body'] }}</pre>
+<div id="response">
+{% if responsebody %}
+<!--<div>
+<pre lang="json"></pre>
+</div>-->
+{% autoescape None %}
+{{ responsebody }}
+{% end %}
 </div>
-{% end %}
-{% if 'content-type' in responseheaders and 'text' in responseheaders['content-type'] %}
-{% end %}
 <script type="text/javascript">
 var sock;
 function createSocket()
@@ -66,7 +66,13 @@ function createSocket()
       sock.send('{{ item['response']['fileid'] }}')
   };
   sock.onmessage = function(e) {
-    console.log(e.data);
+    var t = e.data;
+    /*try {
+      t = JSON.stringify(JSON.parse(e.data), null, 4);
+    } catch (e) {
+    }*/
+    console.log(t);
+    $('#response').append($('<div>' + t + '</div>'));
   };
   sock.onclose = function() {
       console.log('close');

@@ -4,40 +4,58 @@ from tornado import gen
 from datetime import datetime
 import motor
 import json
+import urlparse
+from httpheader import parse_media_type
 import pytz
 import pymongo
+import gridfs
 from bson.objectid import ObjectId
 import os
 import tail
 import time
-from watcher import LogWatcher
 from sockjs.tornado import SockJSRouter, SockJSConnection
 from sockjs.tornado.periodic import Callback
 from bson import json_util
+from pygments import highlight
+from pygments.lexers import JsonLexer, TextLexer, IniLexer, get_lexer_for_mimetype
+from pygments.formatters import HtmlFormatter
 
 class MySocket(SockJSConnection):
     def __init__(self, session):
-        self.db = motor.MotorClient('mongodb://localhost:17017').open_sync().proxyservice
+        self.client = motor.MotorClient('mongodb://localhost:17017')
+        self.db = self.client.proxyservice
         super(MySocket, self).__init__(session)
 
 
 class EchoConnection(MySocket):
 
-    def on_open(self, info):
+    @gen.coroutine
+    def tail(self):
         collection = self.db['log_logentry']
         dn = datetime.utcnow()
         query = {'date': {'$gte': dn} }
-        collection.find(query, tailable=True, await_data=True).tail(callback=self.on_new_requests)
+        #collection.find(query, tailable=True, await_data=True).tail(callback=self.on_new_requests)
+
+        cursor = collection.find(query, tailable=True, await_data=True)
+        while True:
+            if not cursor.alive:
+                now = datetime.datetime.utcnow()
+                # While collection is empty, tailable cursor dies immediately
+                yield gen.Task(loop.add_timeout, datetime.timedelta(seconds=1))
+                cursor = collection.find(query, tailable=True, await_data=True)
+
+            if (yield cursor.fetch_next):
+                self.on_new_requests(cursor.next_object())
+
+    def on_open(self, info):
+        self.tail()
         
     def on_message(self, msg):
         
         print "message ", msg
 
-    def on_new_requests(self, result, err):
-
-        if err:
-            raise tornado.web.HTTPError(500, err)
-        elif result:
+    def on_new_requests(self, result):
+        if result:
             msg = json.dumps(result, default=json_util.default)
 
             self.send(msg)
@@ -52,7 +70,11 @@ class BodyConnection(SockJSConnection):
     def on_message(self, fileid):
         print "message [" + fileid + "]"
         filepath = "/Users/giannimoschini/src/github.com/leibowitz/go-proxy-service/" + fileid
-        self.tail_file(filepath)
+        if os.path.exists(filepath):
+            self.tail_file(filepath)
+        else:
+            print "File does not exist"
+            self.close()
         
     @gen.engine
     def tail_file(self, filepath):
@@ -88,6 +110,11 @@ class BodyConnection(SockJSConnection):
 
     def on_new_data(self, data):
         print "data ", data
+        try:
+            data = nice_body(data, 'application/json')
+            #json.dumps(json.loads(data), indent=4)
+        except Exception as e:
+            print e
         self.send(data)
 
     def on_close(self):
@@ -108,42 +135,89 @@ def get_numbers(ret, error):
 def nice_headers(headers):
     return {k: v[0] for k, v in headers.iteritems() if len(v) != 0}
 
-def nice_body(body, headers):
-    if headers != None and 'Content-Type' in headers and headers['Content-Type'].split(';')[0] == 'application/json':
-        return json.dumps(json.loads(body), indent=4)
-    return body
+def nice_body(body, content):
+    if 'application/x-www-form-urlencoded' in content:
+        return highlight(body.replace("&", "\n"), IniLexer(), HtmlFormatter(cssclass='codehilite'))
+        #return json.dumps(dict(urlparse.parse_qsl(body)), indent=2)
+    if 'json' in content:
+        #return json.dumps(json.loads(body), indent=4)
+        return highlight(json.dumps(json.loads(body), indent=4), JsonLexer(), HtmlFormatter(cssclass='codehilite'))
+
+    ctype, chars = parse_media_type(content, with_parameters=False)
+    lex = get_lexer_for_mimetype('/'.join(filter(None, ctype)))
+    print lex
+    return highlight(body, lex, HtmlFormatter(cssclass='codehilite'))
+    #if headers != None and 'Content-Type' in headers and headers['Content-Type'].split(';')[0] == 'application/json':
+    #    return highlight(body, JsonLexer(), HtmlFormatter())
+    #    #return json.dumps(json.loads(body), indent=4)
+    #return body
 
 class MainHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     @gen.engine
     def get(self):
-        collection = self.settings['db']['log_logentry']
+        #collection = self.settings['db']['log_logentry'].open_sync()
+        collection = self.settings['db'].proxyservice['log_logentry']
         cursor = collection.find({}).sort([("$natural", pymongo.DESCENDING)]).limit(10)#.sort([('date', pymongo.DESCENDING)]).limit(10)
-        entries = yield motor.Op(cursor.to_list)
+        res = cursor.to_list(10)
+        entries = yield res
         #cursor.count(callback=get_numbers)
         self.render("list.html", items=reversed(entries), EST=EST)
 
 class ViewHandler(tornado.web.RequestHandler):
+
+    def is_text_content(self, headers):
+        print headers
+        if 'Content-Type' not in headers:
+            return False
+        return 'text' in headers['Content-Type'] or 'json' in headers['Content-Type'] or 'application/x-www-form-urlencoded' in headers['Content-Type']
+
+
     @tornado.web.asynchronous
     @gen.engine
     def get(self, ident):
-        collection = self.settings['db']['log_logentry']
+        collection = self.settings['db'].proxyservice['log_logentry']
+        fs = motor.MotorGridFS(self.settings['db'].proxyservice)
 
         entry = yield motor.Op(collection.find_one, {'_id': ObjectId(ident)})
         requestheaders = nice_headers(entry['request']['headers'])
         responseheaders = nice_headers(entry['response']['headers'])
-        print entry['request']
+        requestbody = None
+        responsebody = None
+        #print entry['request']
+        #print entry['response']
+        if 'fileid' in entry['response'] and self.is_text_content(responseheaders):
+            respfileid = entry['response']['fileid']
+            filepath = "/Users/giannimoschini/src/github.com/leibowitz/go-proxy-service/" + str(respfileid)
+            if not os.path.exists(filepath):
+                try:
+                    gridout = yield fs.get(respfileid)
+                    if gridout:
+                        responsebody = yield gridout.read()
+                        responsebody = nice_body(responsebody, responseheaders['Content-Type'])
+                except Exception as e:
+                    print e
 
+
+        if 'fileid' in entry['request'] and self.is_text_content(requestheaders):
+            reqfileid = entry['request']['fileid']
+            try:
+                gridout = yield fs.get(reqfileid)
+                if gridout:
+                    requestbody = yield gridout.read()
+                    requestbody = nice_body(requestbody, requestheaders['Content-Type'])
+            except Exception as e:
+                print e
         #requestbody = nice_body(entry['request']['body'], requestheaders)
         #responsebody = nice_body(entry['response']['body'], responseheaders)
 
         self.render("one.html", item=entry, 
                 requestheaders=requestheaders, 
-                responseheaders=responseheaders)
-                #requestbody=requestbody, 
-                #responsebody=responsebody)
+                responseheaders=responseheaders,
+                requestbody=requestbody, 
+                responsebody=responsebody)
 
-db = motor.MotorClient('mongodb://localhost:17017', tz_aware=True).open_sync().proxyservice
+db = motor.MotorClient('mongodb://localhost:17017', tz_aware=True)
 EST = pytz.timezone('Europe/London')
 
 handlers = [
