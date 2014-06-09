@@ -1,6 +1,17 @@
-{% from pygments import highlight %}
-{% from pygments.lexers import JsonLexer %}
-{% from pygments.formatters import HtmlFormatter %}
+<html>
+  <head>
+    <title>Gianni's Proxy</title>
+    <link href="/static/default.css" media="all" rel="stylesheet" type="text/css" />
+<style type="text/css">
+  .hidden {
+    display: none;
+  }
+</style>
+<script src="/static/sockjs-0.3.min.js"></script>
+<script src="/static/jquery.min.js"></script>
+
+  </head>
+  <body>
 
 One
 <div>
@@ -36,9 +47,40 @@ One
   </tr>
 {% end %}
 </table>
+<div id="response">
 {% if responsebody %}
-<div>
-<pre lang="json">{{ responsebody }}</pre>
-</div>
+<!--<div>
+<pre lang="json"></pre>
+</div>-->
+{% autoescape None %}
+{{ responsebody }}
 {% end %}
-
+</div>
+<script type="text/javascript">
+var sock;
+function createSocket()
+{
+  sock = new SockJS('/body');
+  sock.onopen = function() {
+      console.log('open');
+      sock.send('{{ item['response']['fileid'] }}')
+  };
+  sock.onmessage = function(e) {
+    var t = e.data;
+    /*try {
+      t = JSON.stringify(JSON.parse(e.data), null, 4);
+    } catch (e) {
+    }*/
+    //console.log(t);
+    $('#response').append($('<div>' + t + '</div>'));
+    $("html, body").animate({ scrollTop: $(document).height() });
+  };
+  sock.onclose = function() {
+      console.log('close');
+      sock = null;
+  };
+}
+createSocket();
+</script>
+</body>
+</html>

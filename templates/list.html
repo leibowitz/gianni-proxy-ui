@@ -47,7 +47,7 @@
   var sock;
 function createSocket()
 {
-  sock = new SockJS('/echo');
+  sock = new SockJS('/listener');
   sock.onopen = function() {
       console.log('open');
   };
