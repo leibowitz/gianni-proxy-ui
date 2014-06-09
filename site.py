@@ -141,10 +141,9 @@ def nice_headers(headers):
 
 def nice_body(body, content):
     if 'application/x-www-form-urlencoded' in content:
-        return highlight(body.replace("&", "\n"), IniLexer(), HtmlFormatter(cssclass='codehilite'))
-        #return json.dumps(dict(urlparse.parse_qsl(body)), indent=2)
+        params = "\n".join([k + "=" + v for k, v in dict(urlparse.parse_qsl(body)).iteritems()])
+        return highlight(params, IniLexer(), HtmlFormatter(cssclass='codehilite'))
     if 'json' in content:
-        #return json.dumps(json.loads(body), indent=4)
         return highlight(json.dumps(json.loads(body), indent=4), JsonLexer(), HtmlFormatter(cssclass='codehilite'))
 
     ctype, chars = parse_media_type(content, with_parameters=False)
