@@ -6,26 +6,46 @@
     display: none;
   }
 </style>
-<script src="/static/sockjs-0.3.min.js"></script>
-<script src="/static/moment.min.js"></script>
-<script src="/static/moment-timezone.min.js"></script>
-<script src="/static/moment-timezone-data.js"></script>
-<script src="/static/jquery.min.js"></script>
+<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
+<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/grids-responsive-min.css">
+<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css"
+<link rel="stylesheet" href="http://purecss.io/combo/1.15.3?/css/main-grid.css&/css/main.css&/css/grids.css&/css/rainbow/baby-blue.css">
 
   </head>
   <body>
 
-    {% if host %}<a href="/">Back to Home</a>{% end %}
+  <div class="layout">
+
+    {% if host %}<a class="pure-button" href="/">Back to Home</a>{% end %}
 <div>
-<button id="onPlayPause">Stop</button>
-<button id="onClear">Clear</button>
+<button class="pure-button" id="onPlayPause">Stop</button>
+<button class="pure-button" id="onClear">Clear</button>
 </div>
 
-<form id="filterForm">
+<form id="filterForm" class="pure-form">
   <input type="text" id="filterText" size="50" value="{% if host %}{{ host }}{% end %}" />
-  <button>Filter by host</button>
+  <button class="pure-button pure-button-primary">Filter by host</button>
 </form>
-<table>
+
+<div class="pure-g">
+<div class="pure-u">
+
+<table class="pure-table pure-table-horizontal pure-table-striped">
+  <thead>
+    <th>
+      Date
+    </th>
+    <th>
+      Status
+    </th>
+    <th>
+      Method
+    </th>
+    <th>
+      Url
+    </th>
+  </thead>
+  <tbody>
 {% for item in items %}
   <tr>
     <td>
@@ -44,7 +64,18 @@
     </td>
   </tr>
 {% end %}
+  </tbody>
 </table>
+
+</div>
+</div>
+</div>
+
+<script src="/static/sockjs-0.3.min.js"></script>
+<script src="/static/moment.min.js"></script>
+<script src="/static/moment-timezone.min.js"></script>
+<script src="/static/moment-timezone-data.js"></script>
+<script src="/static/jquery.min.js"></script>
 <script type="text/javascript">
   var sock;
 function createSocket()
