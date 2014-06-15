@@ -15,11 +15,12 @@
   <body>
 
   <div class="layout">
-    <a class="pure-button" href="/rules">Rules</a>
-    {% if host %}<a class="pure-button" href="/">Back to Home</a>{% end %}
+    {% if origin %}<a class="pure-button" href="/">Sessions List</a>{% end %}
+    {% if host %}<a class="pure-button" href="/origin/{{ origin }}">Remove Host Filter</a>{% end %}
+    <a class="pure-button" href="/rules?{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host %}&amp;host={{ host }}{% end %}">View Rules</a>
 <div>
-<button class="pure-button" id="onPlayPause">Stop</button>
-<button class="pure-button" id="onClear">Clear</button>
+<button class="pure-button" id="onPlayPause">Stop Recording</button>
+<button class="pure-button" id="onClear">Clear list</button>
 </div>
 
 <form id="filterForm" class="pure-form">
@@ -59,7 +60,7 @@
       {{ item['request']['method'] }}
     </td>
     <td>
-      <a href="/item/{{ item['_id'] }}?origin={{ origin }}{% if host is not None %}&host={{ host }}{% end %}">
+      <a href="/item/{{ item['_id'] }}?origin={{ url_escape(origin) }}{% if host is not None %}&host={{ host }}{% end %}">
       {{ item['request']['host'] }}{{ item['request']['path'] }}
       </a>
     </td>
@@ -129,7 +130,7 @@ $('#onPlayPause').on('click', function(evt){
     $(this).text('Start Recording');
   } else {
     createSocket(origin);
-    $(this).text('Stop');
+    $(this).text('Stop Recording');
   }
 });
 console.log(sock);

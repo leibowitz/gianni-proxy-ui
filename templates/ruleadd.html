@@ -19,10 +19,23 @@
 
     <div id="main">
 <div class="content">
+    <a class="pure-button" href="/rules?{% if item is not None %}&amp;item={{ item }}{% end %}{% if origin is not None %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}">Rules list</a>
+  {% if item is not None %}
+    <a class="pure-button" href="/item/{{ item }}?{% if origin is not None %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}">Back to Request</a>
+  {% end %}
   <h2 class="content-subhead">Add Rule</h2>
   <form class="pure-form pure-form-stacked" method="post">
+    {% if host is not None %}
+    <input type="hidden" name="host" value="{{ host }}" />
+    {% end %}
+    {% if origin is not None %}
+    <input type="hidden" name="origin" value="{{ origin }}" />
+    {% end %}
+    {% if item is not None %}
+    <input type="hidden" name="item" value="{{ item }}" />
+    {% end %}
     <label for="host">Host</label>
-    <input type="text" name="host" size="40" placeholder="google.com" />
+    <input type="text" name="rhost" size="40" placeholder="google.com" />
     <label for="path">Path</label>
     <input type="text" name="path" size="40" placeholder="/path/to" />
     <label for="query">Query</label>

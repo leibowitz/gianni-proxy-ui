@@ -5,6 +5,7 @@ from datetime import datetime
 import motor
 import json
 import urlparse
+import urllib
 from httpheader import parse_media_type
 import pytz
 import pymongo
@@ -282,10 +283,13 @@ class RulesHandler(tornado.web.RequestHandler):
         #collection = self.settings['db']['log_logentry'].open_sync()
         collection = self.settings['db'].proxyservice['log_rules']
         cursor = collection.find({})
-        res = cursor.to_list(10)
+        res = cursor.to_list(100)
         entries = yield res
         #cursor.count(callback=get_numbers)
-        self.render("rules.html", items=entries)
+        item = self.get_argument('item', None)
+        origin = self.get_argument('origin', None)
+        host = self.get_argument('host', None)
+        self.render("rules.html", items=entries, item=item, origin=origin, host=host)
 
 class RulesEditHandler(tornado.web.RequestHandler):
 
@@ -305,12 +309,20 @@ class RulesEditHandler(tornado.web.RequestHandler):
         collection = self.settings['db'].proxyservice['log_rules']
         entry = yield motor.Op(collection.find_one, {'_id': self.get_id(ident)})
 
-        self.render("ruleedit.html", item=entry, tryagain=False)
+        item = self.get_argument('item', None)
+        origin = self.get_argument('origin', None)
+        host = self.get_argument('host', None)
+
+        self.render("ruleedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=False)
     
     @tornado.web.asynchronous
     @gen.engine
     def post(self, ident):
-        host = self.clean(self.get_argument('host'), False)
+        item = self.get_argument('item', None)
+        origin = self.get_argument('origin', None)
+        host = self.get_argument('host', None)
+
+        rhost = self.clean(self.get_argument('rhost'), False)
         path = self.clean(self.get_argument('path'), False)
         query = self.clean(self.get_argument('query'), False)
         status = self.clean(self.get_argument('status'), False)
@@ -321,15 +333,16 @@ class RulesEditHandler(tornado.web.RequestHandler):
 
         collection = self.settings['db'].proxyservice['log_rules']
         entry = yield motor.Op(collection.find_one, {'_id': self.get_id(ident)})
-        if not host and not path and not query and not status:
-            self.render("ruleedit.html", item=entry, tryagain=True)
+        if not rhost and not path and not query and not status:
+
+            self.render("ruleedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=True)
             return
 
         collection = self.settings['db'].proxyservice['log_rules']
-        collection.update({'_id': ident}, {
+        collection.update({'_id': self.get_id(ident)}, {
             'active': True,
             'dynamic': dynamic,
-            'host': host,
+            'host': rhost,
             'path': path,
             'query': query,
             'method': method,
@@ -337,7 +350,14 @@ class RulesEditHandler(tornado.web.RequestHandler):
             'response': response
         })
 
-        self.redirect('/rules')
+        params = {}
+        if origin:
+            params['origin'] = origin
+        if host:
+            params['host'] = host
+        if item:
+            params['item'] = item
+        self.redirect('/rules?' + urllib.urlencode(params))
 
 
     def clean(self, arg, default=None):
@@ -349,7 +369,10 @@ class RulesAddHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     @gen.engine
     def get(self):
-        self.render("ruleadd.html", tryagain=False)
+        item = self.get_argument('item', None)
+        origin = self.get_argument('origin', None)
+        host = self.get_argument('host', None)
+        self.render("ruleadd.html", tryagain=False, item=item, origin=origin, host=host)
 
     def clean(self, arg, default=None):
         arg = arg.strip()
@@ -360,7 +383,11 @@ class RulesAddHandler(tornado.web.RequestHandler):
         return arg
     
     def post(self):
-        host = self.clean(self.get_argument('host'), False)
+        item = self.get_argument('item', None)
+        origin = self.get_argument('origin', None)
+        host = self.get_argument('host', None)
+
+        rhost = self.clean(self.get_argument('rhost'), False)
         path = self.clean(self.get_argument('path'), False)
         query = self.clean(self.get_argument('query'), False)
         status = self.clean(self.get_argument('status'), False)
@@ -369,15 +396,15 @@ class RulesAddHandler(tornado.web.RequestHandler):
 
         dynamic = True if response is False else False
 
-        if not host and not path and not query and not status:
+        if not rhost and not path and not query and not status:
             response = False
-            #return self.render("ruleadd.html", tryagain=True)
+            self.render("ruleadd.html", tryagain=True, item=item, origin=origin, host=host)
 
         collection = self.settings['db'].proxyservice['log_rules']
         collection.insert({
             'active': True,
             'dynamic': dynamic,
-            'host': host,
+            'host': rhost,
             'path': path,
             'query': query,
             'method': method,
@@ -385,7 +412,14 @@ class RulesAddHandler(tornado.web.RequestHandler):
             'response': response
         })
 
-        self.redirect('/rules')
+        params = {}
+        if origin:
+            params['origin'] = origin
+        if host:
+            params['host'] = host
+        if item:
+            params['item'] = item
+        self.redirect('/rules?' + urllib.urlencode(params))
 
 db = motor.MotorClient('mongodb://localhost:17017', tz_aware=True)
 EST = pytz.timezone('Europe/London')

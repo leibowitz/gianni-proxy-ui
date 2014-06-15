@@ -19,21 +19,34 @@
 
     <div id="main">
 <div class="content">
+    <a class="pure-button" href="/rules?{% if item is not None %}&amp;item={{ item }}{% end %}{% if origin is not None %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}">Rules list</a>
+  {% if item is not None %}
+    <a class="pure-button" href="/item/{{ item }}?{% if origin is not None %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}">Back to Request</a>
+  {% end %}
   <h2 class="content-subhead">Edit Rule</h2>
   <form class="pure-form pure-form-stacked" method="post">
-    <input type="hidden" name="id" value="{{ item['_id'] }}" />
+    {% if host is not None %}
+    <input type="hidden" name="host" value="{{ host }}" />
+    {% end %}
+    {% if origin is not None %}
+    <input type="hidden" name="origin" value="{{ origin }}" />
+    {% end %}
+    {% if item is not None %}
+    <input type="hidden" name="item" value="{{ item }}" />
+    {% end %}
+    <input type="hidden" name="id" value="{{ entry['_id'] }}" />
     <label for="host">Host</label>
-    <input type="text" name="host" size="40" placeholder="google.com" value="{% if item['host'] != False %}{{ item['host'] }}{% end %}" />
+    <input type="text" name="rhost" size="40" placeholder="google.com" value="{% if entry['host'] != False %}{{ entry['host'] }}{% end %}" />
     <label for="path">Path</label>
-    <input type="text" name="path" size="40" placeholder="/path/to" value="{% if item['path'] != False %}{{ item['path'] }}{% end %}" />
+    <input type="text" name="path" size="40" placeholder="/path/to" value="{% if entry['path'] != False %}{{ entry['path'] }}{% end %}" />
     <label for="query">Query</label>
-    <input type="text" name="query" size="40" placeholder="query=1" value="{% if item['query'] != False %}{{ item['query'] }}{% end %}" />
+    <input type="text" name="query" size="40" placeholder="query=1" value="{% if entry['query'] != False %}{{ entry['query'] }}{% end %}" />
     <label for="method">Method</label>
-    <input type="text" name="method" size="10" placeholder="GET" value="{% if item['method'] != False %}{{ item['method'] }}{% end %}" />
+    <input type="text" name="method" size="10" placeholder="GET" value="{% if entry['method'] != False %}{{ entry['method'] }}{% end %}" />
     <label for="status">Status</label>
-    <input type="text" name="status" size="10" placeholder="200" value="{% if item['status'] != False %}{{ item['status'] }}{% end %}" />
+    <input type="text" name="status" size="10" placeholder="200" value="{% if entry['status'] != False %}{{ entry['status'] }}{% end %}" />
     <label for="response">Response Id</label>
-    <input type="text" name="response" size="40" placeholder="5395c5a55b8e31ad95d4ed43" value="{% if item['response'] != False %}{{ item['response'] }}{% end %}" />
+    <input type="text" name="response" size="40" placeholder="5395c5a55b8e31ad95d4ed43" value="{% if entry['response'] != False %}{{ entry['response'] }}{% end %}" />
     <button type="submit" class="pure-button pure-button-primary">Update</button>
   </form>
   {% if tryagain %}
