@@ -10,7 +10,9 @@ $(function () {
             width: textarea.width(),
             height: textarea.height(),
             'class': textarea.attr('class')
-        }).insertBefore(textarea);
+        })
+
+        editDiv.insertBefore(textarea);
 
         textarea.css('visibility', 'hidden').css('width', '0').css('height', '0');
 
@@ -27,8 +29,6 @@ $(function () {
                 } catch (e) {
                     console.log('unable to parse json content');
                 }
-            } else {
-                //editor.getSession().setValue(js_beautify(textarea.val()));
             }
         }
 
@@ -38,11 +38,8 @@ $(function () {
         textarea.closest('form').submit(function () {
             textarea.val(editor.getSession().getValue());
         })
-        var ed = $(editor.container);
-        $(window).on('resize', function(evt){
-            ed.width($(window).width()-50);
-            //editor.resize();
-        });
 
+        editDiv.resizable();
+        
     });
 });
