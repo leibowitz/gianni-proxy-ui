@@ -358,13 +358,15 @@ class RulesEditHandler(tornado.web.RequestHandler):
             'query': query,
             'method': method,
             'status': status,
+            'origin': origin,
             'response': response
         })
 
         params = {}
         if origin:
             params['origin'] = origin
-        if host:
+        # this is required otherwise we will filter out this rule after the redirect
+        if host and host == rhost:
             params['host'] = host
         if item:
             params['item'] = item
@@ -420,13 +422,15 @@ class RulesAddHandler(tornado.web.RequestHandler):
             'query': query,
             'method': method,
             'status': status,
+            'origin': origin,
             'response': response
         })
 
         params = {}
         if origin:
             params['origin'] = origin
-        if host:
+        # this is required otherwise we will filter out this rule after the redirect
+        if host and host == rhost:
             params['host'] = host
         if item:
             params['item'] = item
