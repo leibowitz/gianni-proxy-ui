@@ -161,6 +161,14 @@ def nice_body(body, content):
 class MainHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     @gen.engine
+    def get(self):
+        collection = self.settings['db'].proxyservice['log_logentry']
+        entries = yield collection.distinct("request.origin")
+        self.render("index.html", items=entries)
+
+class OriginHandler(tornado.web.RequestHandler):
+    @tornado.web.asynchronous
+    @gen.engine
     def get(self, origin):
         #collection = self.settings['db']['log_logentry'].open_sync()
         collection = self.settings['db'].proxyservice['log_logentry']
@@ -182,6 +190,8 @@ class ViewHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     @gen.engine
     def get(self, ident):
+        origin = self.get_argument('origin', None)
+        host = self.get_argument('host', None)
         collection = self.settings['db'].proxyservice['log_logentry']
         fs = motor.MotorGridFS(self.settings['db'].proxyservice)
 
@@ -239,7 +249,9 @@ class ViewHandler(tornado.web.RequestHandler):
                 responseheaders=responseheaders,
                 requestbody=requestbody, 
                 responsebody=responsebody,
-                requestquery=requestquery)
+                requestquery=requestquery, 
+                origin=origin,
+                host=host)
 
 class HostHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
@@ -267,7 +279,8 @@ db = motor.MotorClient('mongodb://localhost:17017', tz_aware=True)
 EST = pytz.timezone('Europe/London')
 
 handlers = [
-    (r"/origin/(?P<origin>[^\/]+)", MainHandler),
+    (r"/", MainHandler),
+    (r"/origin/(?P<origin>[^\/]+)", OriginHandler),
     (r"/origin/(?P<origin>[^\/]+)/host/(?P<host>[^\/]+)", OriginHostHandler),
     (r"/item/(?P<ident>[^\/]+)", ViewHandler),
     (r"/domain/(?P<host>[^\/]+)", HostHandler),

@@ -21,14 +21,14 @@
 
 <div class="pure-menu pure-menu-open pure-menu-horizontal">
     <ul>
-        <li><a href="/">&lt; Back to list</a></li>
+        <li><a href="{% if host is not None %}/origin/{{ origin }}/host/{{ host }}{% else %}/origin/{{ origin }}{% end %}">&lt; Back to list</a></li>
         <!--<li class="pure-menu-selected"><a href="/item/{{ item['_id'] }}">{{ item['_id'] }}</a></li>-->
     </ul>
 </div>
 <h2 class="content-subhead">Request</h2>
 {{ item['request']['method'] }}
 {{ item['response']['status'] }}
-<a href="/domain/{{ item['request']['host'] }}">{{ item['request']['host'] }}</a>{{ item['request']['path'] }}
+<a href="/origin/{{ origin }}/host/{{ item['request']['host'] }}">{{ item['request']['host'] }}</a>{{ item['request']['path'] }}
 
 {{ requestquery }}
 
