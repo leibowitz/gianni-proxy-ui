@@ -3,6 +3,7 @@ import tornado.web
 from tornado import gen
 from datetime import datetime
 import motor
+import mimes
 import json
 import urlparse
 import urllib
@@ -30,6 +31,22 @@ def get_gridfs_content(fs, ident):
     except Exception as e:
         print e
     raise gen.Return(data)
+
+def get_content_type(rawheaders):
+    return nice_headers(rawheaders)['Content-Type']
+
+# http://www.iana.org/assignments/media-types/media-types.xhtml
+# http://en.wikipedia.org/wiki/Internet_media_type#Type_text
+def get_format(content):
+    mtype = mimes.MIMEType.from_string(content)
+    if mtype.format:
+        return mtype.format
+    elif mtype.type == u"text":
+        return mtype.subtype
+    elif mtype.type == "application" and mtype.subtype in ["json", "xml"]:
+        return mtype.subtype
+
+    return None
 
 class MySocket(SockJSConnection):
     def __init__(self, session):
@@ -340,12 +357,13 @@ class RulesEditHandler(tornado.web.RequestHandler):
         #raise tornado.web.HTTPError(400)
         collection = self.settings['db'].proxyservice['log_rules']
         entry = yield motor.Op(collection.find_one, {'_id': self.get_id(ident)})
+        fmt = get_format(get_content_type(entry['response']['headers'])) if entry else None
 
         item = self.get_argument('item', None)
         origin = self.get_argument('origin', None)
         host = self.get_argument('host', None)
 
-        self.render("ruleedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=False, body=None)
+        self.render("ruleedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=False, body=None, fmt=fmt)
     
     @tornado.web.asynchronous
     @gen.engine
@@ -366,9 +384,11 @@ class RulesEditHandler(tornado.web.RequestHandler):
 
         collection = self.settings['db'].proxyservice['log_rules']
         entry = yield motor.Op(collection.find_one, {'_id': self.get_id(ident)})
+        fmt = get_format(get_content_type(entry['response']['headers'])) if entry else None
+
         if not rhost and not path and not query and not status:
 
-            self.render("ruleedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=True, body=body)
+            self.render("ruleedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=True, body=body, fmt=fmt)
             return
 
         collection = self.settings['db'].proxyservice['log_rules']
@@ -409,15 +429,19 @@ class RulesAddHandler(tornado.web.RequestHandler):
         origin = self.get_argument('origin', None)
         host = self.get_argument('host', None)
         body = None
+        fmt = None
         if item:
             collection = self.settings['db'].proxyservice['log_logentry']
             entry = yield motor.Op(collection.find_one, {'_id': self.get_id(item)})
             if entry:
                 fs = motor.MotorGridFS(self.settings['db'].proxyservice)
                 body = yield get_gridfs_content(fs, entry['response']['fileid'])
+                
+                fmt = get_format(get_content_type(entry['response']['headers'])) if entry else None
+
         else:
             entry = None
-        self.render("ruleadd.html", tryagain=False, item=item, origin=origin, host=host, entry=entry, body=body)
+        self.render("ruleadd.html", tryagain=False, item=item, origin=origin, host=host, entry=entry, body=body, fmt=fmt)
     
     def get_id(self, ident):
         try:
@@ -442,6 +466,7 @@ class RulesAddHandler(tornado.web.RequestHandler):
         item = self.get_argument('item', None)
         origin = self.get_argument('origin', None)
         host = self.get_argument('host', None)
+        fmt = self.get_argument('format', None)
 
         rhost = self.clean(self.get_argument('rhost'), False)
         path = self.clean(self.get_argument('path'), False)
@@ -455,7 +480,8 @@ class RulesAddHandler(tornado.web.RequestHandler):
 
         if not rhost and not path and not query and not status:
             response = False
-            self.render("ruleadd.html", tryagain=True, item=item, origin=origin, host=host, entry=None, body=body)
+            self.render("ruleadd.html", tryagain=True, item=item, origin=origin, host=host, entry=None, body=body, fmt=fmt)
+            return
 
         collection = self.settings['db'].proxyservice['log_rules']
         collection.insert({
