@@ -280,15 +280,26 @@ class RulesHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     @gen.engine
     def get(self):
-        #collection = self.settings['db']['log_logentry'].open_sync()
-        collection = self.settings['db'].proxyservice['log_rules']
-        cursor = collection.find({})
-        res = cursor.to_list(100)
-        entries = yield res
-        #cursor.count(callback=get_numbers)
         item = self.get_argument('item', None)
         origin = self.get_argument('origin', None)
         host = self.get_argument('host', None)
+        
+        query = {}
+
+        if origin:
+            query['origin'] = {'$in': [origin, None]}
+        if host:
+            query['host'] = {'$in': [host, None]}
+        # merge all conditions with an and
+        if len(query) > 1:
+            query = {'$and': map(lambda x: {x[0]: x[1]}, query.iteritems())}
+
+        #collection = self.settings['db']['log_logentry'].open_sync()
+        collection = self.settings['db'].proxyservice['log_rules']
+        cursor = collection.find(query)
+        res = cursor.to_list(100)
+        entries = yield res
+        #cursor.count(callback=get_numbers)
         self.render("rules.html", items=entries, item=item, origin=origin, host=host)
 
 class RulesEditHandler(tornado.web.RequestHandler):
