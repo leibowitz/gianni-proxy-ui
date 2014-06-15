@@ -357,7 +357,8 @@ class RulesEditHandler(tornado.web.RequestHandler):
         #raise tornado.web.HTTPError(400)
         collection = self.settings['db'].proxyservice['log_rules']
         entry = yield motor.Op(collection.find_one, {'_id': self.get_id(ident)})
-        fmt = get_format(get_content_type(entry['response']['headers'])) if entry else None
+        #fmt = get_format(get_content_type(entry['response']['headers'])) if entry else None
+        fmt=None
 
         item = self.get_argument('item', None)
         origin = self.get_argument('origin', None)
@@ -384,7 +385,8 @@ class RulesEditHandler(tornado.web.RequestHandler):
 
         collection = self.settings['db'].proxyservice['log_rules']
         entry = yield motor.Op(collection.find_one, {'_id': self.get_id(ident)})
-        fmt = get_format(get_content_type(entry['response']['headers'])) if entry else None
+        #fmt = get_format(get_content_type(entry['response']['headers'])) if entry else None
+        fmt = None
 
         if not rhost and not path and not query and not status:
 
