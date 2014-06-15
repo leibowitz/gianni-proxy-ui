@@ -35,7 +35,7 @@
     <input type="hidden" name="item" value="{{ item }}" />
     {% end %}
     <label for="host">Host</label>
-    <input type="text" name="rhost" size="40" {% if host %}value="{{ host }}"{% end %} placeholder="google.com" />
+    <input type="text" name="rhost" size="40" {% if host %}value="{{ host }}"{% elif entry %}value="{{ entry['request']['host'] }}"{% end %} placeholder="google.com" />
     <label for="path">Path</label>
     <input type="text" name="path" size="40" placeholder="/path/to" {% if entry %}value="{{ entry['request']['path'] }}"{% end %} />
     <label for="query">Query</label>
