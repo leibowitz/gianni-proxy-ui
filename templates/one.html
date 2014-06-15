@@ -21,7 +21,7 @@
 
 <div class="pure-menu pure-menu-open pure-menu-horizontal">
     <ul>
-        <li><a href="{% if host is not None %}/origin/{{ origin }}/host/{{ host }}{% else %}/origin/{{ origin }}{% end %}">&lt; Back to list</a></li>
+        <li><a href="{% if host is not None %}/origin/{{ origin }}/host/{{ host }}{% else %}{% if origin %}/origin/{{ origin }}{% else %}/{% end %}{% end %}">&lt; Back to list</a></li>
         <!--<li class="pure-menu-selected"><a href="/item/{{ item['_id'] }}">{{ item['_id'] }}</a></li>-->
     </ul>
     <a href="/rules/add?item={{ item['_id'] }}{% if origin is not None %}&origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&host={{ host }}{% end %}">Add Rule</a>

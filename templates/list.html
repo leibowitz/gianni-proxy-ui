@@ -78,9 +78,11 @@
 <script src="/static/moment-timezone.min.js"></script>
 <script src="/static/moment-timezone-data.js"></script>
 <script src="/static/jquery.min.js"></script>
+<script src="/static/purl.js"></script>
 <script type="text/javascript">
 var origin = $('#origin').val().trim();
-  var sock;
+var host = purl().param('host');
+var sock;
 function createSocket(origin)
 {
   sock = new SockJS('/listener');
@@ -97,7 +99,7 @@ function createSocket(origin)
             "<td>" + moment(msg['date']['$date']).tz("Europe/London").format('YYYY-MM-DD HH:mm:ss.SSS000ZZ') + "</td>" +
             "<td>" + msg['response']['status'] + "</td>" +
             "<td>" + msg['request']['method'] + "</td>" +
-            "<td><a href='/item/" + msg['_id']['$oid'] + "'>" + 
+            "<td><a href='/item/" + msg['_id']['$oid'] + "?" + (origin.length != 0 ? "origin="+ encodeURIComponent(origin) : "")+(host != undefined ? "&amp;host="+host : "")+"'>" + 
             msg['request']['host'] + 
             msg['request']['path'] + 
             "</a></td>" +
@@ -166,9 +168,9 @@ $('#onClear').on('click', function(evt){
 });
 $('#filterForm').on('submit', function(evt){
     event.preventDefault();
-    var host = $('#filterText').val().trim();
-    if (host.length != 0) {
-      document.location.href='/origin/'+origin+'/host/'+host;
+    var shost = $('#filterText').val().trim();
+    if (shost.length != 0) {
+      document.location.href='/origin/'+origin+'/host/'+shost;
     }
   });
 //setTimeout(function(){sock.close();}, 2000);
