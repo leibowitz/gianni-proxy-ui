@@ -275,6 +275,118 @@ class OriginHostHandler(tornado.web.RequestHandler):
         #cursor.count(callback=get_numbers)
         self.render("list.html", items=reversed(entries), EST=EST, host=host, origin=origin)
 
+class RulesHandler(tornado.web.RequestHandler):
+    @tornado.web.asynchronous
+    @gen.engine
+    def get(self):
+        #collection = self.settings['db']['log_logentry'].open_sync()
+        collection = self.settings['db'].proxyservice['log_rules']
+        cursor = collection.find({})
+        res = cursor.to_list(10)
+        entries = yield res
+        #cursor.count(callback=get_numbers)
+        self.render("rules.html", items=entries)
+
+class RulesEditHandler(tornado.web.RequestHandler):
+
+    def get_id(self, ident):
+        try:
+            oid = objectid.ObjectId(ident)
+        except objectid.InvalidId as e:
+            print e
+            self.send_error(500)
+            return None
+        return oid
+
+    @tornado.web.asynchronous
+    @gen.engine
+    def get(self, ident):
+        #raise tornado.web.HTTPError(400)
+        collection = self.settings['db'].proxyservice['log_rules']
+        entry = yield motor.Op(collection.find_one, {'_id': self.get_id(ident)})
+
+        self.render("ruleedit.html", item=entry, tryagain=False)
+    
+    @tornado.web.asynchronous
+    @gen.engine
+    def post(self, ident):
+        host = self.clean(self.get_argument('host'), False)
+        path = self.clean(self.get_argument('path'), False)
+        query = self.clean(self.get_argument('query'), False)
+        status = self.clean(self.get_argument('status'), False)
+        method = self.clean(self.get_argument('method'), False)
+        response = self.clean(self.get_argument('response'), False)
+
+        dynamic = True if response is False else False
+
+        collection = self.settings['db'].proxyservice['log_rules']
+        entry = yield motor.Op(collection.find_one, {'_id': self.get_id(ident)})
+        if not host and not path and not query and not status:
+            self.render("ruleedit.html", item=entry, tryagain=True)
+            return
+
+        collection = self.settings['db'].proxyservice['log_rules']
+        collection.update({'_id': ident}, {
+            'active': True,
+            'dynamic': dynamic,
+            'host': host,
+            'path': path,
+            'query': query,
+            'method': method,
+            'status': status,
+            'response': response
+        })
+
+        self.redirect('/rules')
+
+
+    def clean(self, arg, default=None):
+        if arg.strip() == '':
+            return default
+        return arg
+
+class RulesAddHandler(tornado.web.RequestHandler):
+    @tornado.web.asynchronous
+    @gen.engine
+    def get(self):
+        self.render("ruleadd.html", tryagain=False)
+
+    def clean(self, arg, default=None):
+        arg = arg.strip()
+        if arg == '':
+            return default
+        elif arg == '*':
+            return True
+        return arg
+    
+    def post(self):
+        host = self.clean(self.get_argument('host'), False)
+        path = self.clean(self.get_argument('path'), False)
+        query = self.clean(self.get_argument('query'), False)
+        status = self.clean(self.get_argument('status'), False)
+        method = self.clean(self.get_argument('method'), False)
+        response = self.clean(self.get_argument('response'), False)
+
+        dynamic = True if response is False else False
+
+        if not host and not path and not query and not status:
+            response = False
+            #return self.render("ruleadd.html", tryagain=True)
+
+        collection = self.settings['db'].proxyservice['log_rules']
+        collection.insert({
+            'active': True,
+            'dynamic': dynamic,
+            'host': host,
+            'path': path,
+            'query': query,
+            'method': method,
+            'status': status,
+            'response': response
+        })
+
+        self.redirect('/rules')
+
 db = motor.MotorClient('mongodb://localhost:17017', tz_aware=True)
 EST = pytz.timezone('Europe/London')
 
@@ -284,6 +396,9 @@ handlers = [
     (r"/origin/(?P<origin>[^\/]+)/host/(?P<host>[^\/]+)", OriginHostHandler),
     (r"/item/(?P<ident>[^\/]+)", ViewHandler),
     (r"/domain/(?P<host>[^\/]+)", HostHandler),
+    (r"/rules", RulesHandler),
+    (r"/rules/add", RulesAddHandler),
+    (r"/rule/(?P<ident>[^\/]+)", RulesEditHandler),
 ]
     
 settings = dict(

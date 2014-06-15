@@ -1,0 +1,100 @@
+<html>
+  <head>
+    <title>Gianni's Proxy</title>
+<style type="text/css">
+  .hidden {
+    display: none;
+  }
+</style>
+<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/pure-min.css">
+<link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.5.0/grids-responsive-min.css">
+<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css"
+<link rel="stylesheet" href="http://purecss.io/combo/1.15.3?/css/main-grid.css&/css/main.css&/css/grids.css&/css/rainbow/baby-blue.css">
+
+  </head>
+  <body>
+
+  <div class="layout">
+
+    <a class="pure-button" href="/">Back to Home</a>
+
+    <a class="pure-button" href="/rules/add">Add Rule</a>
+<div class="pure-g">
+<div class="pure-u">
+
+{% if len(items) != 0 %}
+<table class="pure-table pure-table-horizontal pure-table-striped">
+  <thead>
+    <th>
+      Id
+    </th>
+    <th>
+      Active
+    </th>
+    <th>
+      Dynamic
+    </th>
+    <th>
+      Host
+    </th>
+    <th>
+      Path
+    </th>
+    <th>
+      Query
+    </th>
+    <th>
+      Method
+    </th>
+    <th>
+      Status
+    </th>
+    <th>
+      Response
+    </th>
+  </thead>
+  <tbody>
+{% for item in items %}
+  <tr>
+    <td>
+      <a href="/rule/{{ item['_id'] }}">
+      {{ item['_id'] }}
+      </a>
+    </td>
+    <td>
+      {{ item['active'] }}
+    </td>
+    <td>
+      {{ item['dynamic'] }}
+    </td>
+    <td>
+      {{ item['host'] }}
+    </td>
+    <td>
+      {{ item['path'] }}
+    </td>
+    <td>
+      {{ item['query'] }}
+    </td>
+    <td>
+      {{ item['method'] }}
+    </td>
+    <td>
+      {{ item['status'] }}
+    </td>
+    <td>
+      {{ item['response'] }}
+    </td>
+  </tr>
+{% end %}
+  </tbody>
+</table>
+{% end %}
+
+</div>
+</div>
+</div>
+
+<script src="/static/jquery.min.js"></script>
+</body>
+</html>
