@@ -20,6 +20,17 @@ from pygments.lexers import JsonLexer, TextLexer, IniLexer, get_lexer_for_mimety
 from pygments.formatters import HtmlFormatter
 import tempfile
 
+@gen.coroutine
+def get_gridfs_content(fs, ident):
+    data = None
+    try:
+        gridout = yield fs.get(ident)
+        if gridout:
+            data = yield gridout.read()
+    except Exception as e:
+        print e
+    raise gen.Return(data)
+
 class MySocket(SockJSConnection):
     def __init__(self, session):
         self.client = motor.MotorClient('mongodb://localhost:17017')
@@ -217,13 +228,9 @@ class ViewHandler(tornado.web.RequestHandler):
             filepath = os.path.join(tempfile.gettempdir(), "proxy-service", str(respfileid))
             #print filepath
             if not os.path.exists(filepath):
-                try:
-                    gridout = yield fs.get(respfileid)
-                    if gridout:
-                        responsebody = yield gridout.read()
-                        responsebody = nice_body(responsebody, responseheaders['Content-Type'])
-                except Exception as e:
-                    print e
+                responsebody = yield get_gridfs_content(fs, respfileid)
+                if responsebody:
+                    responsebody = nice_body(responsebody, responseheaders['Content-Type'])
             else:
                 ctype = 'application/json'
                 lines = open(filepath).readlines()
@@ -234,14 +241,9 @@ class ViewHandler(tornado.web.RequestHandler):
 
 
         if 'fileid' in entry['request'] and self.is_text_content(requestheaders):
-            reqfileid = entry['request']['fileid']
-            try:
-                gridout = yield fs.get(reqfileid)
-                if gridout:
-                    requestbody = yield gridout.read()
-                    requestbody = nice_body(requestbody, requestheaders['Content-Type'])
-            except Exception as e:
-                print e
+            requestbody = yield get_gridfs_content(fs, entry['request']['fileid'])
+            if requestbody:
+                requestbody = nice_body(requestbody, requestheaders['Content-Type'])
         #requestbody = nice_body(entry['request']['body'], requestheaders)
         #responsebody = nice_body(entry['response']['body'], responseheaders)
 
@@ -343,7 +345,7 @@ class RulesEditHandler(tornado.web.RequestHandler):
         origin = self.get_argument('origin', None)
         host = self.get_argument('host', None)
 
-        self.render("ruleedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=False)
+        self.render("ruleedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=False, body=None)
     
     @tornado.web.asynchronous
     @gen.engine
@@ -358,6 +360,7 @@ class RulesEditHandler(tornado.web.RequestHandler):
         status = self.clean(self.get_argument('status'), False)
         method = self.clean(self.get_argument('method'), False)
         response = self.clean(self.get_argument('response'), False)
+        body = self.clean(self.get_argument('body'), False)
 
         dynamic = True if response is False else False
 
@@ -365,7 +368,7 @@ class RulesEditHandler(tornado.web.RequestHandler):
         entry = yield motor.Op(collection.find_one, {'_id': self.get_id(ident)})
         if not rhost and not path and not query and not status:
 
-            self.render("ruleedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=True)
+            self.render("ruleedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=True, body=body)
             return
 
         collection = self.settings['db'].proxyservice['log_rules']
@@ -378,7 +381,8 @@ class RulesEditHandler(tornado.web.RequestHandler):
             'method': method,
             'status': status,
             'origin': origin,
-            'response': response
+            'response': response,
+            'body': body
         })
 
         params = {}
@@ -404,12 +408,16 @@ class RulesAddHandler(tornado.web.RequestHandler):
         item = self.get_argument('item', None)
         origin = self.get_argument('origin', None)
         host = self.get_argument('host', None)
+        body = None
         if item:
             collection = self.settings['db'].proxyservice['log_logentry']
             entry = yield motor.Op(collection.find_one, {'_id': self.get_id(item)})
+            if entry:
+                fs = motor.MotorGridFS(self.settings['db'].proxyservice)
+                body = yield get_gridfs_content(fs, entry['response']['fileid'])
         else:
             entry = None
-        self.render("ruleadd.html", tryagain=False, item=item, origin=origin, host=host, entry=entry)
+        self.render("ruleadd.html", tryagain=False, item=item, origin=origin, host=host, entry=entry, body=body)
     
     def get_id(self, ident):
         try:
@@ -421,6 +429,8 @@ class RulesAddHandler(tornado.web.RequestHandler):
         return oid
 
     def clean(self, arg, default=None):
+        if arg is None:
+            return default
         arg = arg.strip()
         if arg == '':
             return default
@@ -439,12 +449,13 @@ class RulesAddHandler(tornado.web.RequestHandler):
         status = self.clean(self.get_argument('status'), False)
         method = self.clean(self.get_argument('method'), False)
         response = self.clean(self.get_argument('response'), False)
+        body = self.clean(self.get_argument('body'), False)
 
         dynamic = True if response is False else False
 
         if not rhost and not path and not query and not status:
             response = False
-            self.render("ruleadd.html", tryagain=True, item=item, origin=origin, host=host, entry=None)
+            self.render("ruleadd.html", tryagain=True, item=item, origin=origin, host=host, entry=None, body=body)
 
         collection = self.settings['db'].proxyservice['log_rules']
         collection.insert({
@@ -456,7 +467,8 @@ class RulesAddHandler(tornado.web.RequestHandler):
             'method': method,
             'status': status,
             'origin': origin,
-            'response': response
+            'response': response,
+            'body': body
         })
 
         params = {}

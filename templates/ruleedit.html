@@ -23,7 +23,7 @@
   {% if item is not None %}
     <a class="pure-button" href="/item/{{ item }}?{% if origin is not None %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}">Back to Request</a>
   {% end %}
-  <h2 class="content-subhead">Edit Rule</h2>
+  <h1 class="content-subhead">Edit Rule</h1>
   <form class="pure-form pure-form-stacked" method="post">
     {% if host is not None %}
     <input type="hidden" name="host" value="{{ host }}" />
@@ -35,6 +35,7 @@
     <input type="hidden" name="item" value="{{ item }}" />
     {% end %}
     <input type="hidden" name="id" value="{{ entry['_id'] }}" />
+    <h2>Request</h2>
     <label for="host">Host</label>
     <input type="text" name="rhost" size="40" placeholder="google.com" value="{% if entry['host'] != False %}{{ entry['host'] }}{% end %}" />
     <label for="path">Path</label>
@@ -43,10 +44,12 @@
     <input type="text" name="query" size="40" placeholder="query=1" value="{% if entry['query'] != False %}{{ entry['query'] }}{% end %}" />
     <label for="method">Method</label>
     <input type="text" name="method" size="10" placeholder="GET" value="{% if entry['method'] != False %}{{ entry['method'] }}{% end %}" />
+    <h2>Response</h2>
     <label for="status">Status</label>
     <input type="text" name="status" size="10" placeholder="200" value="{% if entry['status'] != False %}{{ entry['status'] }}{% end %}" />
-    <label for="response">Response Id</label>
-    <input type="text" name="response" size="40" placeholder="5395c5a55b8e31ad95d4ed43" value="{% if entry['response'] != False %}{{ entry['response'] }}{% end %}" />
+    <input type="hidden" name="response" value="{% if entry['response'] != False %}{{ entry['response'] }}{% end %}" />
+    <label for="body">Body</label>
+    <textarea name="body" rows="10" cols="60" placeholder="body content">{% if body %}{{ body }}{% elif 'body' in entry %}{{ entry['body'] }}{% end %}</textarea>
     <button type="submit" class="pure-button pure-button-primary">Update</button>
   </form>
   {% if tryagain %}

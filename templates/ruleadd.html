@@ -23,7 +23,7 @@
   {% if item is not None %}
     <a class="pure-button" href="/item/{{ item }}?{% if origin is not None %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}">Back to Request</a>
   {% end %}
-  <h2 class="content-subhead">Add Rule</h2>
+  <h1 class="content-subhead">Add Rule</h1>
   <form class="pure-form pure-form-stacked" method="post">
     {% if host is not None %}
     <input type="hidden" name="host" value="{{ host }}" />
@@ -34,6 +34,7 @@
     {% if item is not None %}
     <input type="hidden" name="item" value="{{ item }}" />
     {% end %}
+    <h2>Request</h2>
     <label for="host">Host</label>
     <input type="text" name="rhost" size="40" {% if host %}value="{{ host }}"{% elif entry %}value="{{ entry['request']['host'] }}"{% end %} placeholder="google.com" />
     <label for="path">Path</label>
@@ -42,10 +43,12 @@
     <input type="text" name="query" size="40" placeholder="query=1" {% if entry %}value="{{ entry['request']['query'] }}"{% end %} />
     <label for="method">Method</label>
     <input type="text" name="method" size="10" placeholder="GET" {% if entry %}value="{{ entry['request']['method'] }}"{% end %} />
+    <h2>Response</h2>
     <label for="status">Status</label>
     <input type="text" name="status" size="10" placeholder="200" {% if entry %}value="{{ entry['response']['status'] }}"{% end %} />
-    <label for="response">Response Id</label>
-    <input type="text" name="response" size="40" placeholder="5395c5a55b8e31ad95d4ed43" value="{% if item %}{{ item }}{% end %}" />
+    <input type="hidden" name="response" value="{% if item %}{{ item }}{% end %}" />
+    <label for="body">Body</label>
+    <textarea name="body" rows="10" cols="60" placeholder="body content">{% if body %}{{ body }}{% end %}</textarea>
     <button type="submit" class="pure-button pure-button-primary">Save</button>
   </form>
   {% if tryagain %}
