@@ -24,6 +24,7 @@
 
 <form id="filterForm" class="pure-form">
   <input type="text" id="filterText" size="50" value="{% if host %}{{ host }}{% end %}" />
+  <input type="hidden" id="origin" value="{% if origin %}{{ origin }}{% end %}" />
   <button class="pure-button pure-button-primary">Filter by host</button>
 </form>
 
@@ -78,11 +79,12 @@
 <script src="/static/jquery.min.js"></script>
 <script type="text/javascript">
   var sock;
-function createSocket()
+function createSocket(origin)
 {
   sock = new SockJS('/listener');
   sock.onopen = function() {
       console.log('open');
+      sock.send(JSON.stringify({"filterOrigin":origin}));
   };
   sock.onmessage = function(e) {
       var shouldScroll = window.innerHeight + $(window).scrollTop() == $(window).height();
@@ -115,7 +117,8 @@ function createSocket()
       $(this).text('Start Recording');
   };
 }
-createSocket();
+var origin = $('#origin').val().trim();
+createSocket(origin);
 
 $('#onPlayPause').on('click', function(evt){
   if (sock != null) {
@@ -125,7 +128,7 @@ $('#onPlayPause').on('click', function(evt){
     sock = null;
     $(this).text('Start Recording');
   } else {
-    createSocket();
+    createSocket(origin);
     $(this).text('Stop');
   }
 });

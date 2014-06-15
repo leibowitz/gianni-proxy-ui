@@ -29,10 +29,12 @@ class MySocket(SockJSConnection):
 class EchoConnection(MySocket):
 
     @gen.coroutine
-    def tail(self):
+    def tail(self, origin=None):
         collection = self.db['log_logentry']
         dn = datetime.utcnow()
         query = {'date': {'$gte': dn} }
+        if origin is not None:
+            query['request.origin'] = origin
         #collection.find(query, tailable=True, await_data=True).tail(callback=self.on_new_requests)
 
         cursor = collection.find(query, tailable=True, await_data=True)
@@ -47,11 +49,12 @@ class EchoConnection(MySocket):
                 self.on_new_requests(cursor.next_object())
 
     def on_open(self, info):
-        self.tail()
+        #self.tail()
+        pass
         
     def on_message(self, msg):
-        #print "message ", msg
-        pass
+        data = json.loads(msg)
+        self.tail(origin=data['filterOrigin'])
 
     def on_new_requests(self, result):
         if result:
@@ -158,14 +161,14 @@ def nice_body(body, content):
 class MainHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     @gen.engine
-    def get(self):
+    def get(self, origin):
         #collection = self.settings['db']['log_logentry'].open_sync()
         collection = self.settings['db'].proxyservice['log_logentry']
-        cursor = collection.find({}).sort([("$natural", pymongo.DESCENDING)]).limit(10)#.sort([('date', pymongo.DESCENDING)]).limit(10)
+        cursor = collection.find({"request.origin": origin}).sort([("$natural", pymongo.DESCENDING)]).limit(10)#.sort([('date', pymongo.DESCENDING)]).limit(10)
         res = cursor.to_list(10)
         entries = yield res
         #cursor.count(callback=get_numbers)
-        self.render("list.html", items=reversed(entries), EST=EST, host=None)
+        self.render("list.html", items=reversed(entries), EST=EST, host=None, origin=origin)
 
 class ViewHandler(tornado.web.RequestHandler):
 
@@ -247,13 +250,25 @@ class HostHandler(tornado.web.RequestHandler):
         res = cursor.to_list(10)
         entries = yield res
         #cursor.count(callback=get_numbers)
-        self.render("list.html", items=reversed(entries), EST=EST, host=host)
+        self.render("list.html", items=reversed(entries), EST=EST, host=host, origin=None)
+
+class OriginHostHandler(tornado.web.RequestHandler):
+    @tornado.web.asynchronous
+    @gen.engine
+    def get(self, origin, host):
+        collection = self.settings['db'].proxyservice['log_logentry']
+        cursor = collection.find({"request.host": host, "request.origin": origin}).sort([("$natural", pymongo.DESCENDING)]).limit(10)#.sort([('date', pymongo.DESCENDING)]).limit(10)
+        res = cursor.to_list(10)
+        entries = yield res
+        #cursor.count(callback=get_numbers)
+        self.render("list.html", items=reversed(entries), EST=EST, host=host, origin=origin)
 
 db = motor.MotorClient('mongodb://localhost:17017', tz_aware=True)
 EST = pytz.timezone('Europe/London')
 
 handlers = [
-    (r"/", MainHandler),
+    (r"/origin/(?P<origin>[^\/]+)", MainHandler),
+    (r"/origin/(?P<origin>[^\/]+)/host/(?P<host>[^\/]+)", OriginHostHandler),
     (r"/item/(?P<ident>[^\/]+)", ViewHandler),
     (r"/domain/(?P<host>[^\/]+)", HostHandler),
 ]
