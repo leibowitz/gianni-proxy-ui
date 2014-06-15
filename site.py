@@ -404,7 +404,21 @@ class RulesAddHandler(tornado.web.RequestHandler):
         item = self.get_argument('item', None)
         origin = self.get_argument('origin', None)
         host = self.get_argument('host', None)
-        self.render("ruleadd.html", tryagain=False, item=item, origin=origin, host=host)
+        if item:
+            collection = self.settings['db'].proxyservice['log_logentry']
+            entry = yield motor.Op(collection.find_one, {'_id': self.get_id(item)})
+        else:
+            entry = None
+        self.render("ruleadd.html", tryagain=False, item=item, origin=origin, host=host, entry=entry)
+    
+    def get_id(self, ident):
+        try:
+            oid = objectid.ObjectId(ident)
+        except objectid.InvalidId as e:
+            print e
+            self.send_error(500)
+            return None
+        return oid
 
     def clean(self, arg, default=None):
         arg = arg.strip()
@@ -430,7 +444,7 @@ class RulesAddHandler(tornado.web.RequestHandler):
 
         if not rhost and not path and not query and not status:
             response = False
-            self.render("ruleadd.html", tryagain=True, item=item, origin=origin, host=host)
+            self.render("ruleadd.html", tryagain=True, item=item, origin=origin, host=host, entry=None)
 
         collection = self.settings['db'].proxyservice['log_rules']
         collection.insert({

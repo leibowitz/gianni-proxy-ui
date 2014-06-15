@@ -37,15 +37,15 @@
     <label for="host">Host</label>
     <input type="text" name="rhost" size="40" {% if host %}value="{{ host }}"{% end %} placeholder="google.com" />
     <label for="path">Path</label>
-    <input type="text" name="path" size="40" placeholder="/path/to" />
+    <input type="text" name="path" size="40" placeholder="/path/to" {% if entry %}value="{{ entry['request']['path'] }}"{% end %} />
     <label for="query">Query</label>
-    <input type="text" name="query" size="40" placeholder="query=1" />
+    <input type="text" name="query" size="40" placeholder="query=1" {% if entry %}value="{{ entry['request']['query'] }}"{% end %} />
     <label for="method">Method</label>
-    <input type="text" name="method" size="10" placeholder="GET" />
+    <input type="text" name="method" size="10" placeholder="GET" {% if entry %}value="{{ entry['request']['method'] }}"{% end %} />
     <label for="status">Status</label>
-    <input type="text" name="status" size="10" placeholder="200" />
+    <input type="text" name="status" size="10" placeholder="200" {% if entry %}value="{{ entry['response']['status'] }}"{% end %} />
     <label for="response">Response Id</label>
-    <input type="text" name="response" size="40" placeholder="5395c5a55b8e31ad95d4ed43" />
+    <input type="text" name="response" size="40" placeholder="5395c5a55b8e31ad95d4ed43" value="{% if item %}{{ item }}{% end %}" />
     <button type="submit" class="pure-button pure-button-primary">Save</button>
   </form>
   {% if tryagain %}
