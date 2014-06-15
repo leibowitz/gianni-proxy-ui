@@ -277,9 +277,12 @@ class OriginHostHandler(tornado.web.RequestHandler):
         self.render("list.html", items=reversed(entries), EST=EST, host=host, origin=origin)
 
 class RulesHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.show_list()
+
     @tornado.web.asynchronous
     @gen.engine
-    def get(self):
+    def show_list(self):
         item = self.get_argument('item', None)
         origin = self.get_argument('origin', None)
         host = self.get_argument('host', None)
@@ -301,6 +304,22 @@ class RulesHandler(tornado.web.RequestHandler):
         entries = yield res
         #cursor.count(callback=get_numbers)
         self.render("rules.html", items=entries, item=item, origin=origin, host=host)
+
+    def post(self):
+        ident = self.get_argument('ident', None)
+        collection = self.settings['db'].proxyservice['log_rules']
+        collection.remove({'_id': self.get_id(ident)})
+        self.show_list()
+
+    def get_id(self, ident):
+        try:
+            oid = objectid.ObjectId(ident)
+        except objectid.InvalidId as e:
+            print e
+            self.send_error(500)
+            return None
+        return oid
+
 
 class RulesEditHandler(tornado.web.RequestHandler):
 

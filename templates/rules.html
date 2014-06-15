@@ -59,6 +59,8 @@
     <th>
       Response
     </th>
+    <th>
+    </th>
   </thead>
   <tbody>
 {% for row in items %}
@@ -91,6 +93,12 @@
     </td>
     <td>
       {{ row['response'] }}
+    </td>
+    <td>
+      <form method="post">
+        <input type="hidden" name="ident" value="{{ row['_id'] }}" />
+        <button>X</button>
+      </form>
     </td>
   </tr>
 {% end %}
