@@ -25,7 +25,7 @@
     <a class="pure-button" href="/item/{{ item }}?{% if origin is not None %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}">Back to Request</a>
   {% end %}
   <h1 class="content-subhead">Add Rule</h1>
-  <form class="pure-form pure-form-stacked" method="post">
+  <form class="pure-form" method="post">
     {% if host is not None %}
     <input type="hidden" name="host" value="{{ host }}" />
     {% end %}
@@ -35,21 +35,66 @@
     {% if item is not None %}
     <input type="hidden" name="item" value="{{ item }}" />
     {% end %}
+
     <h2>Request</h2>
+
+    <div class="pure-form-aligned">
+
+    <div class="pure-control-group">
     <label for="host">Host</label>
     <input type="text" name="rhost" size="40" {% if host %}value="{{ host }}"{% elif entry %}value="{{ entry['request']['host'] }}"{% end %} placeholder="google.com" />
+    </div>
+
+    <div class="pure-control-group">
     <label for="path">Path</label>
     <input type="text" name="path" size="40" placeholder="/path/to" {% if entry %}value="{{ entry['request']['path'] }}"{% end %} />
+    </div>
+
+    <div class="pure-control-group">
     <label for="query">Query</label>
     <input type="text" name="query" size="40" placeholder="query=1" {% if entry %}value="{{ entry['request']['query'] }}"{% end %} />
+    </div>
+
+    <div class="pure-control-group">
     <label for="method">Method</label>
     <input type="text" name="method" size="10" placeholder="GET" {% if entry %}value="{{ entry['request']['method'] }}"{% end %} />
+    </div>
+
+    </div>
+
     <h2>Response</h2>
-    <label for="status">Status</label>
-    <input type="text" name="status" size="10" placeholder="200" {% if entry %}value="{{ entry['response']['status'] }}"{% end %} />
+
     <input type="hidden" name="response" value="{% if item %}{{ item }}{% end %}" />
-    <label for="body">Body</label>
+
+    <div class="pure-form-aligned">
+
+      <div class="pure-control-group">
+        <label for="status">Status</label>
+        <input type="text" name="status" size="10" placeholder="200" {% if entry %}value="{{ entry['response']['status'] }}"{% end %} />
+      </div>
+    
+    </div>
+
+    <h3>Body</h3>
     <textarea rows="10" style="width:100%" data-editor="{% if fmt %}{{ fmt }}{% end %}" name="body" placeholder="body content">{% if body %}{{ body }}{% end %}</textarea>
+
+    <h3>Headers</h3>
+      {% set x = 0 %}
+      {% for name, value in headers.iteritems() %}
+        <div class="pure-control-group">
+          <input type="text" name="header[{{ x }}][]" value="{{ name }}" />
+          <input type="text" name="header[{{ x }}][]" value="{{ value }}" />
+        </div>
+        {% set x = x + 1 %}
+
+      {% end %}
+
+      <div class="pure-control-group">
+        <input type="text" name="header[{{ x }}][]" value="" />
+        <input type="text" name="header[{{ x }}][]" value="" />
+      </div>
+
+
     <button type="submit" class="pure-button pure-button-primary">Save</button>
   </form>
   {% if tryagain %}
