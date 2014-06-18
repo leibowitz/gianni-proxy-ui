@@ -410,6 +410,8 @@ class RulesEditHandler(tornado.web.RequestHandler):
             self.render("ruleedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=True, body=body, fmt=fmt, headers=headers)
             return
 
+        headers = headers if headers else False
+
         collection = self.settings['db'].proxyservice['log_rules']
         collection.update({'_id': self.get_id(ident)}, {
             'active': True,
@@ -525,6 +527,9 @@ class RulesAddHandler(tornado.web.RequestHandler):
             response = False
             self.render("ruleadd.html", tryagain=True, item=item, origin=origin, host=host, entry=None, body=body, fmt=fmt, headers=headers)
             return
+
+        # filter headers, set field to false if nothing has been added
+        headers = headers if headers else False
 
         collection = self.settings['db'].proxyservice['log_rules']
         collection.insert({

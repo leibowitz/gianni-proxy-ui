@@ -77,10 +77,11 @@
   </div>
 
     <label for="body">Body</label>
-    <textarea rows="10" style="width:100%" data-editor="{% if fmt %}{{ fmt }}{% end %}" name="body" placeholder="body content">{% if body %}{{ body }}{% elif 'body' in entry %}{{ entry['body'] }}{% end %}</textarea>
+    <textarea rows="10" style="width:100%" data-editor="{% if fmt %}{{ fmt }}{% end %}" name="body" placeholder="body content">{% if body %}{{ body }}{% elif 'body' in entry and entry['body'] %}{{ entry['body'] }}{% end %}</textarea>
 
     <h3>Headers</h3>
       {% set x = 0 %}
+      {% if headers %}
       {% for name, value in headers.iteritems() %}
         <div class="pure-control-group">
           <input type="text" name="header[{{ x }}][]" value="{{ name }}" />
@@ -90,6 +91,7 @@
 
       {% end %}
 
+      {% end %}
       <div class="pure-control-group">
         <input type="text" name="header[{{ x }}][]" value="" />
         <input type="text" name="header[{{ x }}][]" value="" />
