@@ -18,6 +18,7 @@
 
     {% if origin is not None %}
     <a class="pure-button" href="/origin/{{ origin }}{% if host is not None %}/host/{{ host }}{% end %}">Back to Session</a>
+    <a class="pure-button" href="/rules">Show all rules</a>
     {% else %}
     <a class="pure-button" href="/">Back to Home</a>
     {% end %}
@@ -60,6 +61,12 @@
       Response
     </th>
     <th>
+      Headers
+    </th>
+    <th>
+      Origin
+    </th>
+    <th>
     </th>
   </thead>
   <tbody>
@@ -93,6 +100,12 @@
     </td>
     <td>
       {{ row['response'] }}
+    </td>
+    <td>
+      {{ row['headers'] }}
+    </td>
+    <td>
+      {{ row['origin'] }}
     </td>
     <td>
       <form method="post">
