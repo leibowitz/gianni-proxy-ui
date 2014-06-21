@@ -85,7 +85,8 @@ function createSocket(origin)
       $(this).text('Start Recording');
   };
 }
-var origin = $('#origin').val().trim();
+var eOrigin = $('#origin');
+var origin = eOrigin.length != 0 ? eOrigin.val().trim() : undefined;
 createSocket(origin);
 
 $('#onPlayPause').on('click', function(evt){

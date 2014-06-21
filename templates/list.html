@@ -80,7 +80,8 @@
 <script src="/static/jquery.min.js"></script>
 <script src="/static/purl.js"></script>
 <script type="text/javascript">
-var origin = $('#origin').val().trim();
+var eOrigin = $('#origin');
+var origin = eOrigin.length != 0 ? eOrigin.val().trim() : undefined;
 var host = purl().param('host');
 var sock;
 function createSocket(origin)
