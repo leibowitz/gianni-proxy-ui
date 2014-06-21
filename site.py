@@ -171,6 +171,10 @@ def get_numbers(ret, error):
 def nice_headers(headers):
     return {k: v[0] for k, v in headers.iteritems() if len(v) != 0}
 
+def array_headers(headers):
+    return {k: [v] for k, v in headers.iteritems()}
+
+
 def nice_body(body, content):
     if 'application/x-www-form-urlencoded' in content:
         params = "\n".join([k + "=" + v for k, v in dict(urlparse.parse_qsl(body)).iteritems()])
@@ -342,19 +346,19 @@ class RulesHandler(tornado.web.RequestHandler):
 
 class RulesEditHandler(tornado.web.RequestHandler):
 
-    def get_submitted_headers(self):
+    def get_submitted_headers(self, fieldname):
 
         headers = {}
 
         x = 0
-        row = self.get_arguments('header[' + str(x) + '][]', [])
+        row = self.get_arguments(fieldname+'[' + str(x) + '][]', [])
 
         while len(row) > 1:
 
             if len(row[0].strip()) != 0:
                 headers[ row[0] ] = row[1]
 
-            row = self.get_arguments('header[' + str(x) + '][]', [])
+            row = self.get_arguments(fieldname+'[' + str(x) + '][]', [])
 
             x += 1
 
@@ -372,17 +376,20 @@ class RulesEditHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     @gen.engine
     def get(self, ident):
-        #raise tornado.web.HTTPError(400)
         collection = self.settings['db'].proxyservice['log_rules']
         entry = yield motor.Op(collection.find_one, {'_id': self.get_id(ident)})
+        if not entry:
+            raise tornado.web.HTTPError(404)
 
         item = self.get_argument('item', None)
-        origin = self.get_argument('origin', None)
+        origin = entry['origin'] if 'origin' in entry else self.get_argument('origin', None)
         host = self.get_argument('host', None)
-        headers = entry['headers'] if entry and 'headers' in entry else {}
-        fmt = get_format(get_content_type(headers)) if headers else None
-
-        self.render("ruleedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=False, body=None, fmt=fmt, headers=headers)
+        reqheaders = entry['reqheaders'] if entry and 'reqheaders' in entry else {}
+        respheaders = entry['respheaders'] if entry and 'respheaders' in entry else {}
+        print respheaders
+        fmt = get_format(get_content_type(nice_headers(respheaders))) if respheaders else None
+        #print array_headers(respheaders)
+        self.render("ruleedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=False, body=None, fmt=fmt, reqheaders=reqheaders, respheaders=respheaders)
     
     @tornado.web.asynchronous
     @gen.engine
@@ -398,19 +405,20 @@ class RulesEditHandler(tornado.web.RequestHandler):
         method = self.clean(self.get_argument('method'), False)
         response = self.clean(self.get_argument('response'), False)
         body = self.clean(self.get_argument('body'), False)
-        headers = self.get_submitted_headers()
+        reqheaders = self.get_submitted_headers('reqheader')
+        respheaders = self.get_submitted_headers('respheader')
 
         dynamic = True if response is False else False
 
         collection = self.settings['db'].proxyservice['log_rules']
         entry = yield motor.Op(collection.find_one, {'_id': self.get_id(ident)})
-        fmt = get_format(get_content_type(headers)) if headers else None
+        fmt = get_format(get_content_type(respheaders)) if respheaders else None
 
         if not rhost and not path and not query and not status:
-            self.render("ruleedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=True, body=body, fmt=fmt, headers=headers)
+            self.render("ruleedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=True, body=body, fmt=fmt, reqheaders=reqheaders, respheaders=respheaders)
             return
 
-        headers = headers if headers else False
+        reqheaders = reqheaders if reqheaders else False
 
         collection = self.settings['db'].proxyservice['log_rules']
         collection.update({'_id': self.get_id(ident)}, {
@@ -423,7 +431,8 @@ class RulesEditHandler(tornado.web.RequestHandler):
             'status': status,
             'origin': origin,
             'response': response,
-            'headers': headers,
+            'reqheaders': reqheaders,
+            'respheaders': array_headers(respheaders),
             'body': body
         })
 
@@ -445,19 +454,19 @@ class RulesEditHandler(tornado.web.RequestHandler):
 
 class RulesAddHandler(tornado.web.RequestHandler):
 
-    def get_submitted_headers(self):
+    def get_submitted_headers(self, fieldname):
 
         headers = {}
         x = 0
 
-        row = self.get_arguments('header[' + str(x) + '][]', [])
+        row = self.get_arguments(fieldname+'[' + str(x) + '][]', [])
 
         while len(row) > 1:
 
             if len(row[0].strip()) != 0:
                 headers[ row[0] ] = row[1]
 
-            row = self.get_arguments('header[' + str(x) + '][]', [])
+            row = self.get_arguments(fieldname+'[' + str(x) + '][]', [])
             x += 1
 
         return headers
@@ -470,7 +479,8 @@ class RulesAddHandler(tornado.web.RequestHandler):
         host = self.get_argument('host', None)
         body = None
         fmt = None
-        headers = {}
+        reqheaders = {}
+        respheaders = {}
         if item:
             collection = self.settings['db'].proxyservice['log_logentry']
             entry = yield motor.Op(collection.find_one, {'_id': self.get_id(item)})
@@ -479,12 +489,13 @@ class RulesAddHandler(tornado.web.RequestHandler):
                 body = yield get_gridfs_content(fs, entry['response']['fileid'])
                 
                 if entry:
-                    headers = nice_headers(entry['response']['headers'])
-                    fmt = get_format(get_content_type(headers)) if headers else None
+                    reqheaders = nice_headers(entry['request']['headers'])
+                    respheaders = nice_headers(entry['response']['headers'])
+                    fmt = get_format(get_content_type(respheaders)) if respheaders else None
 
         else:
             entry = None
-        self.render("ruleadd.html", tryagain=False, item=item, origin=origin, host=host, entry=entry, body=body, fmt=fmt, headers=headers)
+        self.render("ruleadd.html", tryagain=False, item=item, origin=origin, host=host, entry=entry, body=body, fmt=fmt, reqheaders=reqheaders, respheaders=respheaders)
     
     def get_id(self, ident):
         try:
@@ -520,16 +531,17 @@ class RulesAddHandler(tornado.web.RequestHandler):
 
         dynamic = True if response is False else False
         
-        headers = self.get_submitted_headers()
-        fmt = get_format(get_content_type(headers)) if headers else None
+        reqheaders = self.get_submitted_headers('reqheader')
+        respheaders = self.get_submitted_headers('respheader')
+        fmt = get_format(get_content_type(respheaders)) if respheaders else None
 
         if not rhost and not path and not query and not status:
             response = False
-            self.render("ruleadd.html", tryagain=True, item=item, origin=origin, host=host, entry=None, body=body, fmt=fmt, headers=headers)
+            self.render("ruleadd.html", tryagain=True, item=item, origin=origin, host=host, entry=None, body=body, fmt=fmt, reqheaders=reqheaders, respheaders=respheaders)
             return
 
         # filter headers, set field to false if nothing has been added
-        headers = headers if headers else False
+        reqheaders = reqheaders if reqheaders else False
 
         collection = self.settings['db'].proxyservice['log_rules']
         collection.insert({
@@ -542,7 +554,8 @@ class RulesAddHandler(tornado.web.RequestHandler):
             'status': status,
             'origin': origin,
             'response': response,
-            'headers': headers,
+            'reqheaders': reqheaders,
+            'respheaders': array_headers(respheaders),
             'body': body
         })
 

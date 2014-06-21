@@ -62,6 +62,26 @@
     </div>
 
     </div>
+    
+    <h3>Headers</h3>
+      {% set x = 0 %}
+      {% if reqheaders %}
+      {% for name, value in reqheaders.iteritems() %}
+        <div class="pure-control-group">
+          <input type="text" name="reqheader[{{ x }}][]" value="{{ name }}" />
+          <input type="text" name="reaheader[{{ x }}][]" value="{{ value }}" />
+          <button name="delete">X</button>
+        </div>
+        {% set x = x + 1 %}
+
+      {% end %}
+
+      {% end %}
+      <div class="pure-control-group">
+        <input type="text" name="reqheader[{{ x }}][]" value="" />
+        <input type="text" name="reqheader[{{ x }}][]" value="" />
+        <button name="delete">X</button>
+      </div>
 
     <h2>Response</h2>
 
@@ -81,11 +101,12 @@
 
     <h3>Headers</h3>
       {% set x = 0 %}
-      {% if headers %}
-      {% for name, value in headers.iteritems() %}
+      {% if respheaders %}
+      {% for name, value in respheaders.iteritems() %}
         <div class="pure-control-group">
-          <input type="text" name="header[{{ x }}][]" value="{{ name }}" />
-          <input type="text" name="header[{{ x }}][]" value="{{ value }}" />
+          <input type="text" name="respheader[{{ x }}][]" value="{{ name }}" />
+          <input type="text" name="respheader[{{ x }}][]" value="{{ value }}" />
+          <button name="delete">X</button>
         </div>
         {% set x = x + 1 %}
 
@@ -93,8 +114,9 @@
 
       {% end %}
       <div class="pure-control-group">
-        <input type="text" name="header[{{ x }}][]" value="" />
-        <input type="text" name="header[{{ x }}][]" value="" />
+        <input type="text" name="respheader[{{ x }}][]" value="" />
+        <input type="text" name="respheader[{{ x }}][]" value="" />
+        <button name="delete">X</button>
       </div>
 
     <button type="submit" class="pure-button pure-button-primary">Update</button>

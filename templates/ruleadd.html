@@ -61,6 +61,26 @@
     </div>
 
     </div>
+    <h3>Headers</h3>
+      <div id="reqheaders">
+      {% set x = 0 %}
+      {% for name, value in reqheaders.iteritems() %}
+        <div class="pure-control-group">
+          <input type="text" name="reqheader[{{ x }}][]" value="{{ name }}" />
+          <input type="text" name="reqheader[{{ x }}][]" value="{{ value }}" />
+          <button name="delete">X</button>
+        </div>
+        {% set x = x + 1 %}
+
+      {% end %}
+
+      <div class="pure-control-group" id="reqheaders-template">
+        <input type="text" name="reqheader[{{ x }}][]" value="" />
+        <input type="text" name="reqheader[{{ x }}][]" value="" />
+        <button name="delete">X</button>
+      </div>
+
+      </div>
 
     <h2>Response</h2>
 
@@ -79,22 +99,25 @@
     <textarea rows="10" style="width:100%" data-editor="{% if fmt %}{{ fmt }}{% end %}" name="body" placeholder="body content">{% if body %}{{ body }}{% end %}</textarea>
 
     <h3>Headers</h3>
+      <div id="respheaders">
       {% set x = 0 %}
-      {% for name, value in headers.iteritems() %}
+      {% for name, value in respheaders.iteritems() %}
         <div class="pure-control-group">
-          <input type="text" name="header[{{ x }}][]" value="{{ name }}" />
-          <input type="text" name="header[{{ x }}][]" value="{{ value }}" />
+          <input type="text" name="respheader[{{ x }}][]" value="{{ name }}" />
+          <input type="text" name="respheader[{{ x }}][]" value="{{ value }}" />
+          <button name="delete">X</button>
         </div>
         {% set x = x + 1 %}
 
       {% end %}
 
-      <div class="pure-control-group" id="headers-template">
-        <input type="text" name="header[{{ x }}][]" value="" />
-        <input type="text" name="header[{{ x }}][]" value="" />
+      <div class="pure-control-group" id="respheaders-template">
+        <input type="text" name="respheader[{{ x }}][]" value="" />
+        <input type="text" name="respheader[{{ x }}][]" value="" />
         <button name="delete">X</button>
       </div>
 
+      </div>
 
     <button type="submit" class="pure-button pure-button-primary">Save</button>
   </form>
@@ -122,15 +145,14 @@
       evt.preventDefault();
       // Need to swap the names of this line with the last line
       var allButtons = $('button[name=delete]');
-      console.log(allButtons.last());
-      //$(this).parent().remove();
+      $(this).parent().remove();
     });
    /*
     * Adding headers line when we edit the last line
     */
-   var tmplElements = $('#headers-template').clone().removeAttr('id');
-   $(document).on('change paste keyup', 'input[type=text][name^="header"]', function(evt){
-     var elements = $('input[type=text][name^="header"]');
+   var tmplElements = $('#reqheaders-template').clone().removeAttr('id');
+   $(document).on('change paste keyup', 'input[type=text][name^="reqheader"]', function(evt){
+     var elements = $('input[type=text][name^="reqheader"]');
      var last = elements.last().get(0);
      var lineElements = $('input[type=text][name="'+$(this).attr('name')+'"]');
      var isLast = lineElements.filter(function(index, current){
@@ -140,8 +162,8 @@
      // if we edited the last header line, add a new one
      if (isLast) {
       var newElements = tmplElements.clone();
-      newElements.insertBefore("button[type=submit]");
-      newElements.find('input').attr('name', 'header['+(elements.length/2)+'][]');
+      newElements.appendTo("#reqheaders");
+      newElements.find('input').attr('name', 'reqheader['+(elements.length/2)+'][]');
      }
     });
   })();
