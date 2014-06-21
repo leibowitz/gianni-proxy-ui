@@ -2,6 +2,8 @@ import tornado.ioloop
 import tornado.web
 from tornado import gen
 from datetime import datetime
+import socket
+import uuid
 import motor
 import mimes
 import json
@@ -12,14 +14,17 @@ import pytz
 import pymongo
 import gridfs
 import os
+import sys
 import time
 from sockjs.tornado import SockJSRouter, SockJSConnection
+import sockjs
 from sockjs.tornado.periodic import Callback
 from bson import json_util, objectid
 from pygments import highlight
 from pygments.lexers import JsonLexer, TextLexer, IniLexer, get_lexer_for_mimetype
 from pygments.formatters import HtmlFormatter
 import tempfile
+from multiplex import MultiplexConnection
 
 @gen.coroutine
 def get_gridfs_content(fs, ident):
@@ -163,6 +168,31 @@ class BodyConnection(SockJSConnection):
         #if self.filet != None:
         #    print self.filet
 
+class HijackConnection(SockJSConnection):
+
+    def on_open(self, info):
+        self.info = info
+        uuid = self.session.name
+        self.sock = open_socket(uuid)
+        #print self, data
+        pass
+        
+    def on_message(self, msg):
+        #print self.info.arguments
+        #print self.session.conn
+        #print self.session.server
+        uuid = self.session.name
+        print "received ", msg
+        try:
+            # Send data
+            print >>sys.stderr, 'sending "%s"' % msg
+            self.sock.sendall(msg)
+        except Exception as e:
+            pass
+        
+    def on_close(self):
+        self.sock.close()
+        print "done"
 
 
 def get_numbers(ret, error):
@@ -237,11 +267,17 @@ class ViewHandler(tornado.web.RequestHandler):
         #raise tornado.web.HTTPError(400)
 
         entry = yield motor.Op(collection.find_one, {'_id': oid})
+        if not entry:
+            raise tornado.web.HTTPError(404)
+
         requestquery = nice_body(entry['request']['query'], 'application/x-www-form-urlencoded')
         requestheaders = nice_headers(entry['request']['headers'])
         responseheaders = nice_headers(entry['response']['headers'])
         requestbody = None
         responsebody = None
+
+        socketuuid = str(uuid.UUID(bytes=entry['uuid'])) if 'uuid' in entry else None
+
         #print entry['request']
         #print entry['response']
         if 'fileid' in entry['response'] and self.is_text_content(responseheaders):
@@ -268,12 +304,14 @@ class ViewHandler(tornado.web.RequestHandler):
         #requestbody = nice_body(entry['request']['body'], requestheaders)
         #responsebody = nice_body(entry['response']['body'], responseheaders)
 
-        self.render("one.html", item=entry, 
+        self.render("one.html", 
+                item=entry, 
                 requestheaders=requestheaders, 
                 responseheaders=responseheaders,
                 requestbody=requestbody, 
                 responsebody=responsebody,
                 requestquery=requestquery, 
+                socketuuid=socketuuid,
                 origin=origin,
                 host=host)
 
@@ -569,6 +607,25 @@ class RulesAddHandler(tornado.web.RequestHandler):
             params['item'] = item
         self.redirect('/rules?' + urllib.urlencode(params))
 
+def open_socket(name):
+    sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+
+    filepath = os.path.join(tempfile.gettempdir(), "proxy-sockets", name)
+    if not os.path.exists(filepath):
+        print "Socket does not exist", filepath
+        return None
+
+    # Connect the socket to the port where the server is listening
+    print >>sys.stderr, 'connecting to %s' % filepath
+    try:
+        sock.connect(filepath)
+    except socket.error, msg:
+        print >>sys.stderr, msg
+        return None
+
+    return sock
+
+
 db = motor.MotorClient('mongodb://localhost:17017', tz_aware=True)
 EST = pytz.timezone('Europe/London')
 
@@ -596,6 +653,13 @@ handlers.extend(EchoRouter.urls)
 
 BodyRouter = SockJSRouter(BodyConnection, '/body')
 handlers.extend(BodyRouter.urls)
+
+# Create multiplexer
+router = MultiplexConnection.get(objClass=HijackConnection)
+
+# Register multiplexer
+HijackRouter = SockJSRouter(router, '/hijack')
+handlers.extend(HijackRouter.urls)
 
 application = tornado.web.Application(
     **settings)

@@ -51,6 +51,10 @@
 </div>
 {% end %}
 <h2 class="content-subhead">Response</h2>
+<form method="post">
+  <textarea id="message"></textarea>
+  <button id="send">Send</button>
+</form>
 <table class="pure-table pure-table-horizontal pure-table-bordered">
 {% for key, value in responseheaders.iteritems() %}
   <tr>
@@ -77,12 +81,12 @@
 </div>
 <script src="/static/sockjs-0.3.min.js"></script>
 <script src="/static/jquery.min.js"></script>
+<script src="/static/multiplex.js"></script>
 
 <script type="text/javascript">
-var sock;
 function createSocket()
 {
-  sock = new SockJS('/body');
+  var sock = new SockJS('/body');
   sock.onopen = function() {
       console.log('open');
       sock.send('{{ item['response']['fileid'] }}')
@@ -103,6 +107,34 @@ function createSocket()
   };
 }
 createSocket();
+
+var uuid = '{{ socketuuid }}';
+function createHijackSocket(uuid)
+{
+  var hisock = new SockJS('/hijack');
+
+  var multiplexer = new MultiplexedWebSocket(hisock);
+  var chan = multiplexer.channel(uuid);
+  hisock.onopen = function() {
+      console.log('open');
+  };
+  hisock.onclose = function() {
+      console.log('close');
+      hisock = null;
+  };
+  chan.onopen = function() {
+  }
+  chan.onclose = function() {
+    chan = null;
+  }
+  
+  $('#send').on('click', function(evt){
+    evt.preventDefault();
+    chan.send($('#message').val()+"\n")
+    $('#message').val('');
+  });
+}
+createHijackSocket(uuid);
 </script>
 </body>
 </html>
