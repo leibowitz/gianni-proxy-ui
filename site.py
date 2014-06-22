@@ -1,7 +1,7 @@
-import tornado.ioloop
+from tornado.ioloop import IOLoop, PeriodicCallback
 import tornado.web
 from tornado import gen
-from datetime import datetime
+from datetime import datetime, timedelta
 import socket
 import uuid
 import motor
@@ -36,6 +36,9 @@ def get_gridfs_content(fs, ident):
     except Exception as e:
         print e
     raise gen.Return(data)
+
+def get_uuid(entry):
+   return str(uuid.UUID(bytes=entry['uuid'])) if 'uuid' in entry else None
 
 def get_content_type(headers):
     return headers['Content-Type']
@@ -88,12 +91,18 @@ class EchoConnection(MySocket):
         
     def on_message(self, msg):
         data = json.loads(msg)
-        self.tail(origin=data['filterOrigin'])
+        if 'filterOrigin' in data:
+            print 'Looking for new requests from', data['filterOrigin']
+            IOLoop.current().run_sync(lambda: self.tail(origin=data['filterOrigin']))
+            
 
     def on_new_requests(self, result):
         if result:
-            msg = json.dumps(result, default=json_util.default)
+            # uuid is a binary field, change it to string
+            # before sending it via websocket
+            result['uuid'] = get_uuid(result)
 
+            msg = json.dumps(result, default=json_util.default)
             self.send(msg)
 
 class BodyConnection(SockJSConnection):
@@ -123,7 +132,7 @@ class BodyConnection(SockJSConnection):
         self._file.seek(0,2)
         self.position = self._file.tell()
 
-        self.pcb = tornado.ioloop.PeriodicCallback(self.check_data, 1000)
+        self.pcb = PeriodicCallback(self.check_data, 1000)
         self.pcb.start()
 
         # check for new data every second        
@@ -276,7 +285,7 @@ class ViewHandler(tornado.web.RequestHandler):
         requestbody = None
         responsebody = None
 
-        socketuuid = str(uuid.UUID(bytes=entry['uuid'])) if 'uuid' in entry else None
+        socketuuid = get_uuid(entry)
 
         #print entry['request']
         #print entry['response']
@@ -666,6 +675,6 @@ application = tornado.web.Application(
 
 if __name__ == "__main__":
     application.listen(8002)
-    tornado.ioloop.IOLoop.instance().start()
+    IOLoop.instance().start()
 
 
