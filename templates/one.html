@@ -51,10 +51,12 @@
 </div>
 {% end %}
 <h2 class="content-subhead">Response</h2>
+{% if not finished %}
 <form method="post">
-  <textarea id="message"></textarea>
+  <textarea id="message" rows="10" style="width:100%" data-editor="json" name="body" placeholder="body content"></textarea>
   <button id="send">Send</button>
 </form>
+{% end %}
 <table class="pure-table pure-table-horizontal pure-table-bordered">
 {% for key, value in responseheaders.iteritems() %}
   <tr>
@@ -79,10 +81,10 @@
 </div>
 </div>
 </div>
+{% if not finished %}
 <script src="/static/sockjs-0.3.min.js"></script>
 <script src="/static/jquery.min.js"></script>
 <script src="/static/multiplex.js"></script>
-
 <script type="text/javascript">
 function createSocket()
 {
