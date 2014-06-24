@@ -61,12 +61,6 @@
       Response
     </th>
     <th>
-      Request Headers
-    </th>
-    <th>
-      Response Headers
-    </th>
-    <th>
       Origin
     </th>
     <th>
@@ -81,7 +75,11 @@
       </a>
     </td>
     <td>
-      {{ row['active'] }}
+      <form method="post">
+        <input type="hidden" name="ident" value="{{ row['_id'] }}" />
+        <input type="hidden" name="action" value="{% if row['active'] %}disable{% else %}enable{% end %}" />
+        <button>{% if row['active'] %}Turn OFF{% else %}Turn ON{% end %}</button>
+      </form>
     </td>
     <td>
       {{ row['dynamic'] }}
@@ -105,17 +103,12 @@
       {{ row['response'] }}
     </td>
     <td>
-      {{ row['reqheaders'] }}
-    </td>
-    <td>
-      {{ row['respheaders'] }}
-    </td>
-    <td>
       {{ row['origin'] }}
     </td>
     <td>
       <form method="post">
         <input type="hidden" name="ident" value="{{ row['_id'] }}" />
+        <input type="hidden" name="action" value="delete" />
         <button>X</button>
       </form>
     </td>

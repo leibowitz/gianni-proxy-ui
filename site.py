@@ -240,8 +240,9 @@ class MainHandler(tornado.web.RequestHandler):
     @gen.engine
     def get(self):
         collection = self.settings['db'].proxyservice['log_logentry']
-        entries = yield collection.distinct("request.origin")
-        self.render("index.html", items=entries)
+        d = datetime.utcnow() - timedelta(hours=1)
+        entries = yield collection.find({"date": {"$gte":d}}).sort([("$natural", pymongo.DESCENDING)]).limit(200).distinct("request.origin")
+        self.render("index.html", items=filter(None, entries), host=self.request.host)
 
 class OriginHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
@@ -394,9 +395,16 @@ class RulesHandler(tornado.web.RequestHandler):
         self.render("rules.html", items=entries, item=item, origin=origin, host=host)
 
     def post(self):
-        ident = self.get_argument('ident', None)
         collection = self.settings['db'].proxyservice['log_rules']
-        collection.remove({'_id': self.get_id(ident)})
+        ident = self.get_argument('ident', None)
+        action = self.get_argument('action', None)
+        if action == "delete":
+            collection.remove({'_id': self.get_id(ident)})
+        elif action == "enable":
+            collection.update({'_id': self.get_id(ident)}, {'$set': {"active": True}})
+        elif action == "disable":
+            collection.update({'_id': self.get_id(ident)}, {'$set': {"active": False}})
+
         self.show_list()
 
     def get_id(self, ident):
