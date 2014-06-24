@@ -69,9 +69,9 @@ class EchoConnection(MySocket):
         cursor = collection.find(query, tailable=True, await_data=True)
         while True:
             if not cursor.alive:
-                now = datetime.datetime.utcnow()
+                now = datetime.utcnow()
                 # While collection is empty, tailable cursor dies immediately
-                yield gen.Task(loop.add_timeout, datetime.timedelta(seconds=1))
+                yield gen.Task(IOloop.add_timeout, timedelta(seconds=1))
                 cursor = collection.find(query, tailable=True, await_data=True)
 
             if (yield cursor.fetch_next):
