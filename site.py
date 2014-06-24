@@ -329,9 +329,16 @@ class RulesHandler(tornado.web.RequestHandler):
         self.render("rules.html", items=entries, item=item, origin=origin, host=host)
 
     def post(self):
-        ident = self.get_argument('ident', None)
         collection = self.settings['db'].proxyservice['log_rules']
-        collection.remove({'_id': self.get_id(ident)})
+        ident = self.get_argument('ident', None)
+        action = self.get_argument('action', None)
+        if action == "delete":
+            collection.remove({'_id': self.get_id(ident)})
+        elif action == "enable":
+            collection.update({'_id': self.get_id(ident)}, {'$set': {"active": True}})
+        elif action == "disable":
+            collection.update({'_id': self.get_id(ident)}, {'$set': {"active": False}})
+
         self.show_list()
 
     def get_id(self, ident):
