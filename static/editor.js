@@ -9,6 +9,7 @@ $(function () {
             position: 'absolute',
             width: textarea.width(),
             height: textarea.height(),
+            'id': 'iace-' + textarea.attr('id'),
             'class': textarea.attr('class')
         })
 
@@ -17,6 +18,15 @@ $(function () {
         textarea.css('visibility', 'hidden').css('width', '0').css('height', '0');
 
         var editor = ace.edit(editDiv[0]);
+        editor.on('paste', function(s, ed){
+            setTimeout(function(){
+                try{
+                    ed.getSession().setValue(JSON.stringify(JSON.parse(s.text), null, '\t'));
+                } catch (e) {
+                }
+            }, 10);
+        });
+
         // https://github.com/ajaxorg/ace/tree/master/lib/ace/theme
         editor.setTheme('ace/theme/tomorrow');
         var modelist = ace.require('ace/ext/modelist');
@@ -35,11 +45,11 @@ $(function () {
         editor.getSession().setValue(content);
 
         // copy back to textarea on form submit...
-        textarea.closest('form').submit(function () {
+        textarea.closest('form').on('submit', function (evt) {
             textarea.val(editor.getSession().getValue());
         })
 
-        editDiv.resizable();
+        //editDiv.resizable();
         
     });
 });
