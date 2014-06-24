@@ -1,7 +1,7 @@
 import tornado.ioloop
 import tornado.web
 from tornado import gen
-from datetime import datetime
+from datetime import datetime, timedelta
 import motor
 import mimes
 import json
@@ -196,8 +196,9 @@ class MainHandler(tornado.web.RequestHandler):
     @gen.engine
     def get(self):
         collection = self.settings['db'].proxyservice['log_logentry']
-        entries = yield collection.distinct("request.origin")
-        self.render("index.html", items=entries)
+        d = datetime.utcnow() - timedelta(hours=1)
+        entries = yield collection.find({"date": {"$gte":d}}).sort([("$natural", pymongo.DESCENDING)]).limit(200).distinct("request.origin")
+        self.render("index.html", items=filter(None, entries), host=self.request.host)
 
 class OriginHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
