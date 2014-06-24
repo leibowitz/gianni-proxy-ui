@@ -77,9 +77,9 @@ class EchoConnection(MySocket):
         cursor = collection.find(query, tailable=True, await_data=True)
         while True:
             if not cursor.alive:
-                now = datetime.datetime.utcnow()
+                now = datetime.utcnow()
                 # While collection is empty, tailable cursor dies immediately
-                yield gen.Task(loop.add_timeout, datetime.timedelta(seconds=1))
+                yield gen.Task(IOloop.add_timeout, datetime.timedelta(seconds=1))
                 cursor = collection.find(query, tailable=True, await_data=True)
 
             if (yield cursor.fetch_next):
@@ -434,13 +434,14 @@ class RulesEditHandler(tornado.web.RequestHandler):
             raise tornado.web.HTTPError(404)
 
         item = self.get_argument('item', None)
-        origin = entry['origin'] if 'origin' in entry else self.get_argument('origin', None)
+        origin = entry['origin'] or None if 'origin' in entry else self.get_argument('origin', None)
         host = self.get_argument('host', None)
         reqheaders = entry['reqheaders'] if entry and 'reqheaders' in entry else {}
         respheaders = entry['respheaders'] if entry and 'respheaders' in entry else {}
-        print respheaders
         fmt = get_format(get_content_type(nice_headers(respheaders))) if respheaders else None
         #print array_headers(respheaders)
+        respheaders = nice_headers(respheaders) if respheaders else respheaders
+        reqheaders = nice_headers(reqheaders) if reqheaders else reqheaders
         self.render("ruleedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=False, body=None, fmt=fmt, reqheaders=reqheaders, respheaders=respheaders)
     
     @tornado.web.asynchronous
@@ -467,6 +468,8 @@ class RulesEditHandler(tornado.web.RequestHandler):
         fmt = get_format(get_content_type(respheaders)) if respheaders else None
 
         if not rhost and not path and not query and not status:
+            respheaders = nice_headers(respheaders)
+            reqheaders = nice_headers(reqheaders)
             self.render("ruleedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=True, body=body, fmt=fmt, reqheaders=reqheaders, respheaders=respheaders)
             return
 
