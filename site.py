@@ -38,7 +38,7 @@ def get_gridfs_content(fs, ident):
     raise gen.Return(data)
 
 def get_uuid(entry):
-   return str(uuid.UUID(bytes=entry['uuid'])) if 'uuid' in entry else None
+    return str(uuid.UUID(bytes=entry['uuid'])) if 'uuid' in entry else None
 
 def get_content_type(headers):
     return headers['Content-Type'] if 'Content-Type' in headers else None
@@ -92,7 +92,6 @@ class EchoConnection(MySocket):
     def on_message(self, msg):
         data = json.loads(msg)
         if 'filterOrigin' in data:
-            print 'Looking for new requests from', data['filterOrigin']
             IOLoop.current().run_sync(lambda: self.tail(origin=data['filterOrigin']))
             
 
@@ -213,19 +212,24 @@ def array_headers(headers):
     return {k: [v] for k, v in headers.iteritems()}
 
 def get_body_non_empty_lines(lines, ctype = 'application/json'):
-   return '\n'.join(map(lambda line: nice_body(line, ctype), filter(None, map(lambda line: line.strip(), lines))))
+    return '\n'.join(map(lambda line: nice_body(line, ctype), filter(None, map(lambda line: line.strip(), lines)))) if len(lines) != 0 else []
 
 def nice_body(body, content):
-    if 'application/x-www-form-urlencoded' in content:
-        params = "\n".join([k + "=" + v for k, v in dict(urlparse.parse_qsl(body)).iteritems()])
-        return highlight(params, IniLexer(), HtmlFormatter(cssclass='codehilite'))
-    if 'json' in content:
-        return highlight(json.dumps(json.loads(body), indent=4), JsonLexer(), HtmlFormatter(cssclass='codehilite'))
+    if content is None:
+        return body
+    try:
+        if 'application/x-www-form-urlencoded' in content:
+            params = "\n".join([k + "=" + v for k, v in dict(urlparse.parse_qsl(body)).iteritems()])
+            return highlight(params, IniLexer(), HtmlFormatter(cssclass='codehilite'))
+        if 'json' in content:
+            return highlight(json.dumps(json.loads(body), indent=4), JsonLexer(), HtmlFormatter(cssclass='codehilite'))
 
-    ctype, chars = parse_media_type(content, with_parameters=False)
-    lex = get_lexer_for_mimetype('/'.join(filter(None, ctype)))
-    #print lex
-    return highlight(body, lex, HtmlFormatter(cssclass='codehilite'))
+        ctype, chars = parse_media_type(content, with_parameters=False)
+        lex = get_lexer_for_mimetype('/'.join(filter(None, ctype)))
+        print lex
+        return highlight(body, lex, HtmlFormatter(cssclass='codehilite'))
+    except Exception as e:
+        return body
     #if headers != None and 'Content-Type' in headers and headers['Content-Type'].split(';')[0] == 'application/json':
     #    return highlight(body, JsonLexer(), HtmlFormatter())
     #    #return json.dumps(json.loads(body), indent=4)
@@ -253,81 +257,90 @@ class OriginHandler(tornado.web.RequestHandler):
 
 class ViewHandler(tornado.web.RequestHandler):
 
-   def is_text_content(self, headers):
-      #print headers
-      if 'Content-Type' not in headers:
-         return False
-      return 'text' in headers['Content-Type'] or 'json' in headers['Content-Type'] or 'application/x-www-form-urlencoded' in headers['Content-Type']
+    def is_text_content(self, headers):
+        #print headers
+        if 'Content-Type' not in headers:
+            return False
+        return 'text' in headers['Content-Type'] or 'json' in headers['Content-Type'] or 'application/x-www-form-urlencoded' in headers['Content-Type']
 
 
-   @tornado.web.asynchronous
-   @gen.engine
-   def get(self, ident):
-      origin = self.get_argument('origin', None)
-      host = self.get_argument('host', None)
-      collection = self.settings['db'].proxyservice['log_logentry']
-      fs = motor.MotorGridFS(self.settings['db'].proxyservice)
+    @tornado.web.asynchronous
+    @gen.engine
+    def get(self, ident):
+        origin = self.get_argument('origin', None)
+        host = self.get_argument('host', None)
+        collection = self.settings['db'].proxyservice['log_logentry']
+        fs = motor.MotorGridFS(self.settings['db'].proxyservice)
 
-      try:
-         oid = objectid.ObjectId(ident)
-      except objectid.InvalidId as e:
-         print e
-         self.send_error(500)
-         return
-      #raise tornado.web.HTTPError(400)
+        try:
+            oid = objectid.ObjectId(ident)
+        except objectid.InvalidId as e:
+            print e
+            self.send_error(500)
+            return
+        #raise tornado.web.HTTPError(400)
 
-      entry = yield motor.Op(collection.find_one, {'_id': oid})
-      if not entry:
-         raise tornado.web.HTTPError(404)
+        entry = yield motor.Op(collection.find_one, {'_id': oid})
+        if not entry:
+            raise tornado.web.HTTPError(404)
 
-      requestquery = nice_body(entry['request']['query'], 'application/x-www-form-urlencoded')
-      requestheaders = nice_headers(entry['request']['headers'])
-      responseheaders = nice_headers(entry['response']['headers'])
-      requestbody = None
-      responsebody = None
+        requestquery = nice_body(entry['request']['query'], 'application/x-www-form-urlencoded')
+        requestheaders = nice_headers(entry['request']['headers'])
+        responseheaders = nice_headers(entry['response']['headers'])
+        requestbody = None
+        responsebody = None
 
-      socketuuid = get_uuid(entry)
+        socketuuid = get_uuid(entry)
 
-      # consider the response finished
-      finished = True
+        # consider the response finished
+        finished = True
 
-      #print entry['request']
-      #print entry['response']
-      if 'fileid' in entry['response'] and self.is_text_content(responseheaders):
-         respfileid = entry['response']['fileid']
-         filepath = os.path.join(tempfile.gettempdir(), "proxy-service", str(respfileid))
-         #print filepath
-         if not os.path.exists(filepath):
-            responsebody = yield get_gridfs_content(fs, respfileid)
-            if responsebody:
-               responsebody = get_body_non_empty_lines(responsebody.strip().split("\n"), get_content_type(responseheaders))
-         else:
-            lines = open(filepath).readlines()
-            responsebody = get_body_non_empty_lines(lines)
-            # request seems to be still open
-            finished = False
-            #responsebody = open(filepath).read()
-            #ctype = responseheaders['Content-Type']
-            #responsebody = nice_body(responsebody, ctype)
+        #print entry['request']
+        #print entry['response']
+        if 'fileid' in entry['response'] and self.is_text_content(responseheaders):
 
-      if 'fileid' in entry['request'] and self.is_text_content(requestheaders):
-         requestbody = yield get_gridfs_content(fs, entry['request']['fileid'])
-         if requestbody:
-            requestbody = nice_body(requestbody, get_content_type(requestheaders))
-      #requestbody = nice_body(entry['request']['body'], requestheaders)
-      #responsebody = nice_body(entry['response']['body'], responseheaders)
+            respfileid = entry['response']['fileid']
+            filepath = os.path.join(tempfile.gettempdir(), "proxy-service", str(respfileid))
+            #print filepath
+            if not os.path.exists(filepath):
+                responsebody = yield get_gridfs_content(fs, respfileid)
+                if responsebody:
+                    if 'text/plain' in get_content_type(responseheaders):
+                        responsebody = get_body_non_empty_lines(responsebody.strip().split("\n"), 'application/json')
+                    else:
+                        responsebody = nice_body(responsebody, get_content_type(responseheaders))
+            else:
+                print filepath
+                if 'text/plain' in get_content_type(responseheaders):
+                    lines = open(filepath).readlines()
+                    responsebody = get_body_non_empty_lines(lines, 'application/json')
+                else:
+                    content = open(filepath).read()
+                    responsebody = nice_body(content, get_content_type(responseheaders))
+                # request seems to be still open
+                finished = False
+                #responsebody = open(filepath).read()
+                #ctype = responseheaders['Content-Type']
+                #responsebody = nice_body(responsebody, ctype)
 
-      self.render("one.html", 
-               item=entry, 
-               requestheaders=requestheaders, 
-               responseheaders=responseheaders,
-               requestbody=requestbody, 
-               responsebody=responsebody,
-               requestquery=requestquery, 
-               finished=finished,
-               socketuuid=socketuuid,
-               origin=origin,
-               host=host)
+        if 'fileid' in entry['request'] and self.is_text_content(requestheaders):
+            requestbody = yield get_gridfs_content(fs, entry['request']['fileid'])
+            if requestbody:
+                requestbody = nice_body(requestbody, get_content_type(requestheaders))
+        #requestbody = nice_body(entry['request']['body'], requestheaders)
+        #responsebody = nice_body(entry['response']['body'], responseheaders)
+
+        self.render("one.html", 
+                item=entry, 
+                requestheaders=requestheaders, 
+                responseheaders=responseheaders,
+                requestbody=requestbody, 
+                responsebody=responsebody,
+                requestquery=requestquery, 
+                finished=finished,
+                socketuuid=socketuuid,
+                origin=origin,
+                host=host)
 
 class HostHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
