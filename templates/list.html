@@ -92,7 +92,9 @@ function createSocket(origin)
       sock.send(JSON.stringify({"filterOrigin":origin}));
   };
   sock.onmessage = function(e) {
-      var shouldScroll = window.innerHeight + $(window).scrollTop() == $(window).height();
+      // Use a threshold to avoid difference of a few pixels causing problems
+      var threshold = 30;
+      var shouldScroll = Math.abs(window.innerHeight + $(window).scrollTop() - $(window).height()) < threshold;
       var msg = JSON.parse(e.data);
       if (origin && msg['request']['origin'] != origin) {
         // ignore this as we are not looking at this origin now
