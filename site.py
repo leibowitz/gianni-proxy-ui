@@ -57,17 +57,22 @@ def get_format(content):
     return None
 
 class MySocket(SockJSConnection):
+    #db = motor.MotorClient('mongodb://localhost:17017').proxyservice
+
     def __init__(self, session):
-        self.client = motor.MotorClient('mongodb://localhost:17017')
-        self.db = self.client.proxyservice
         super(MySocket, self).__init__(session)
 
 
-class EchoConnection(MySocket):
+class EchoConnection(SockJSConnection):
 
+    #is_connection_alive = True
+    listeners = set()
+    origin = None
+
+    @staticmethod
     @gen.coroutine
-    def tail(self, origin=None):
-        collection = self.db['log_logentry']
+    def tail(collection, origin=None):
+        print 'Opening a global tailable cursor', collection
         dn = datetime.utcnow()
         query = {'date': {'$gte': dn} }
         if origin is not None:
@@ -76,33 +81,50 @@ class EchoConnection(MySocket):
 
         cursor = collection.find(query, tailable=True, await_data=True)
         while True:
+
             if not cursor.alive:
                 now = datetime.utcnow()
                 # While collection is empty, tailable cursor dies immediately
-                yield gen.Task(IOloop.add_timeout, timedelta(seconds=1))
+                yield gen.Task(IOLoop.current().add_timeout, timedelta(seconds=1))
                 cursor = collection.find(query, tailable=True, await_data=True)
 
             if (yield cursor.fetch_next):
-                self.on_new_requests(cursor.next_object())
+                EchoConnection.on_new_requests(cursor.next_object())
 
     def on_open(self, info):
+        self.listeners.add(self)
         #self.tail()
         pass
+
+    def on_close(self):
+        self.listeners.remove(self)
+        #print 'close'
+        #self.is_connection_alive = False
         
     def on_message(self, msg):
         data = json.loads(msg)
         if 'filterOrigin' in data:
-            IOLoop.current().run_sync(lambda: self.tail(origin=data['filterOrigin']))
+            self.origin = data['filterOrigin']
+            #self.tail(collection=self.db['log_logentry'])#, origin=data['filterOrigin'])
+            #IOLoop.current().run_sync(lambda: self.tail(origin=data['filterOrigin']))
             
 
-    def on_new_requests(self, result):
-        if result:
-            # uuid is a binary field, change it to string
-            # before sending it via websocket
-            result['uuid'] = get_uuid(result)
+    @staticmethod
+    def on_new_requests(result):
+        if result and EchoConnection.listeners:
+            #for listener in EchoConnection.listeners:
+                #if listener.origin is not None and result['request']['origin'] == listener.origin:
+                    #print 'sending to listener ', listener
+                    # uuid is a binary field, change it to string
+                    # before sending it via websocket
+                    result['uuid'] = get_uuid(result)
 
-            msg = json.dumps(result, default=json_util.default)
-            self.send(msg)
+                    msg = json.dumps(result, separators=(',', ':'), default=json_util.default)
+                    #msg = proto.json_encode(result)
+                    listener = next(iter(EchoConnection.listeners))
+                    #listener.send(msg)
+                    #listener = EchoConnection.listeners[0]
+                    listener.broadcast(EchoConnection.listeners, msg)
 
 class BodyConnection(SockJSConnection):
     filet = None
@@ -704,6 +726,9 @@ application = tornado.web.Application(
 
 if __name__ == "__main__":
     application.listen(8002)
+    # open a global tailable cursor on log_logentry
+    EchoConnection.tail(db.proxyservice['log_logentry'])
+    
     IOLoop.instance().start()
 
 

@@ -94,6 +94,10 @@ function createSocket(origin)
   sock.onmessage = function(e) {
       var shouldScroll = window.innerHeight + $(window).scrollTop() == $(window).height();
       var msg = JSON.parse(e.data);
+      if (origin && msg['request']['origin'] != origin) {
+        // ignore this as we are not looking at this origin now
+        return;
+      }
       //console.log(msg);
       //console.log(JSON.stringify(msg, null, 4));
       var row = $("<tr>" +
