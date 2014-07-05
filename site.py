@@ -1,3 +1,4 @@
+import collections
 from tornado.ioloop import IOLoop, PeriodicCallback
 import tornado.web
 from tornado import gen
@@ -241,7 +242,8 @@ def nice_body(body, content):
         return body
     try:
         if 'application/x-www-form-urlencoded' in content:
-            params = "\n".join([k + "=" + v for k, v in dict(urlparse.parse_qsl(body)).iteritems()])
+            args = collections.OrderedDict(sorted(urlparse.parse_qsl(body)))
+            params = "\n".join([k + "=" + v for k, v in args.iteritems()])
             return highlight(params, IniLexer(), HtmlFormatter(cssclass='codehilite'))
         if 'json' in content:
             return highlight(json.dumps(json.loads(body), indent=4), JsonLexer(), HtmlFormatter(cssclass='codehilite'))
@@ -285,6 +287,21 @@ class ViewHandler(tornado.web.RequestHandler):
         if 'Content-Type' not in headers:
             return False
         return 'text' in headers['Content-Type'] or 'json' in headers['Content-Type'] or 'application/x-www-form-urlencoded' in headers['Content-Type']
+    
+    def is_binary(self, headers):
+        #assume not binary if missing headers
+        if 'Content-Type' not in headers:
+            return False
+
+        if self.is_text_content(headers):
+            return False
+
+        if 'binary' in headers['Content-Type'] or 'image' in headers['Content-Type'] or 'pdf' in headers['Content-Type']:
+            return True
+
+        # assume binary in all other cases
+        return True
+
 
 
     @tornado.web.asynchronous
@@ -308,6 +325,7 @@ class ViewHandler(tornado.web.RequestHandler):
             raise tornado.web.HTTPError(404)
 
         requestquery = nice_body(entry['request']['query'], 'application/x-www-form-urlencoded')
+        #print entry['request']['headers']
         requestheaders = nice_headers(entry['request']['headers'])
         responseheaders = nice_headers(entry['response']['headers'])
         requestbody = None
@@ -346,10 +364,14 @@ class ViewHandler(tornado.web.RequestHandler):
                 #ctype = responseheaders['Content-Type']
                 #responsebody = nice_body(responsebody, ctype)
 
-        if 'fileid' in entry['request'] and self.is_text_content(requestheaders):
+        if 'fileid' in entry['request'] and not self.is_binary(requestheaders):
             requestbody = yield get_gridfs_content(fs, entry['request']['fileid'])
             if requestbody:
-                requestbody = nice_body(requestbody, get_content_type(requestheaders))
+                ctype = get_content_type(requestheaders)
+                # default to x-www-form-urlencoded
+                ctype = ctype if ctype is not None else 'application/x-www-form-urlencoded'
+                #if self.is_text_content(requestheaders)
+                requestbody = nice_body(requestbody, ctype)
         #requestbody = nice_body(entry['request']['body'], requestheaders)
         #responsebody = nice_body(entry['response']['body'], responseheaders)
 
