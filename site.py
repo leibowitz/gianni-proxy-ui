@@ -271,7 +271,7 @@ class MainHandler(tornado.web.RequestHandler):
 class OriginHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
     @gen.engine
-    def get(self, origin):
+    def get(self, origin=None):
         #collection = self.settings['db']['log_logentry'].open_sync()
         collection = self.settings['db'].proxyservice['log_logentry']
         cursor = collection.find({"request.origin": origin}).sort([("$natural", pymongo.DESCENDING)]).limit(10)#.sort([('date', pymongo.DESCENDING)]).limit(10)
@@ -714,6 +714,7 @@ EST = pytz.timezone('Europe/London')
 handlers = [
     (r"/", MainHandler),
     (r"/origin/(?P<origin>[^\/]+)", OriginHandler),
+    (r"/all", OriginHandler),
     (r"/origin/(?P<origin>[^\/]+)/host/(?P<host>[^\/]+)", OriginHostHandler),
     (r"/item/(?P<ident>[^\/]+)", ViewHandler),
     (r"/domain/(?P<host>[^\/]+)", HostHandler),

@@ -28,7 +28,7 @@
 
   <div class="layout">
     <div class="fixed">
-    {% if origin %}<a class="pure-button" href="/">Sessions List</a>{% end %}
+    <a class="pure-button" href="/">Sessions List</a>
     {% if host %}<a class="pure-button" href="/origin/{{ origin }}">Remove Host Filter</a>{% end %}
     <a class="pure-button" href="/rules?{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host %}&amp;host={{ host }}{% end %}">View Rules</a>
 <div>
