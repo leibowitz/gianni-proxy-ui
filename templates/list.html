@@ -29,17 +29,18 @@
   <div class="layout">
     <div class="fixed">
     <a class="pure-button" href="/">Sessions List</a>
-    {% if host %}<a class="pure-button" href="/origin/{{ origin }}">Remove Host Filter</a>{% end %}
-    <a class="pure-button" href="/rules?{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host %}&amp;host={{ host }}{% end %}">View Rules</a>
+    <a class="pure-button" href="/rules{% if origin %}?&amp;origin={{ url_escape(origin) }}{% end %}">View Rules</a>
 <div>
 <button class="pure-button" id="onPlayPause">Stop Recording</button>
 <button class="pure-button" id="onClear">Clear list</button>
 </div>
 
 <form id="filterForm" class="pure-form">
-  <input type="text" id="filterText" size="50" value="{% if host %}{{ host }}{% end %}" />
+  <div>{% if host %}Host filter: {{ host }}<a class="pure-button" href="{% if origin %}/origin/{{ origin }}{% else %}/all{% end %}">X</a>{% end %}</div>
+  <input type="text" id="filterText" placeholder="Filter by {% if not host %}host or {% end %}path" size="50" />
+  <input type="hidden" id="host" value="{% if host %}{{ host }}{% end %}" />
   <input type="hidden" id="origin" value="{% if origin %}{{ origin }}{% end %}" />
-  <button class="pure-button pure-button-primary">Filter by host</button>
+  <button class="pure-button pure-button-primary">Apply host filter</button>
 </form>
 </div>
 
@@ -74,7 +75,7 @@
       {{ item['request']['method'] }}
     </td>
     <td>
-      <a href="/item/{{ item['_id'] }}?origin={{ url_escape(origin) }}{% if host is not None %}&host={{ host }}{% end %}">
+      <a href="/item/{{ item['_id'] }}{% if origin %}?origin={{ url_escape(origin) }}{% end %}">
       {{ item['request']['host'] }}{{ item['request']['path'] }}
       </a>
     </td>
@@ -96,7 +97,7 @@
 <script type="text/javascript">
 var eOrigin = $('#origin');
 var origin = eOrigin.length != 0 ? eOrigin.val().trim() : undefined;
-var host = purl().param('host');
+var host = $('#host').val().trim();
 var sock;
 function createSocket(origin)
 {
@@ -114,13 +115,17 @@ function createSocket(origin)
         // ignore this as we are not looking at this origin now
         return;
       }
+      if (host && msg['request']['host'] != host) {
+        // ignore this as we are not looking at this origin now
+        return;
+      }
       //console.log(msg);
       //console.log(JSON.stringify(msg, null, 4));
       var row = $("<tr>" +
             "<td>" + moment(msg['date']['$date']).tz("Europe/London").format('YYYY-MM-DD HH:mm:ss.SSS000ZZ') + "</td>" +
             "<td>" + msg['response']['status'] + "</td>" +
             "<td>" + msg['request']['method'] + "</td>" +
-            "<td><a href='/item/" + msg['_id']['$oid'] + "?" + (origin.length != 0 ? "origin="+ encodeURIComponent(origin) : "")+(host != undefined ? "&amp;host="+host : "")+"'>" + 
+            "<td><a href='/item/" + msg['_id']['$oid'] + "?" + (origin.length != 0 ? "origin="+ encodeURIComponent(origin) : "")+"'>" + 
             msg['request']['host'] + 
             msg['request']['path'] + 
             "</a></td>" +
@@ -215,7 +220,11 @@ $('#filterForm').on('submit', function(evt){
     evt.preventDefault();
     var shost = $('#filterText').val().trim();
     if (shost.length != 0) {
-      document.location.href='/origin/'+origin+'/host/'+shost;
+      if(origin) {
+        document.location.href='/origin/'+origin+'/host/'+shost;
+      } else {
+        document.location.href='/host/'+shost;
+      }
     }
   });
 //setTimeout(function(){sock.close();}, 2000);

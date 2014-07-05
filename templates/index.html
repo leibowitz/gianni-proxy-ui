@@ -142,7 +142,7 @@ $('#filterForm').on('submit', function(evt){
     event.preventDefault();
     var host = $('#filterText').val().trim();
     if (host.length != 0) {
-      document.location.href='/domain/'+host;
+      document.location.href='/host/'+host;
     }
   });
 //setTimeout(function(){sock.close();}, 2000);
