@@ -742,7 +742,12 @@ class RewritesAddHandler(tornado.web.RequestHandler):
         item = self.get_argument('item', None)
         origin = self.get_argument('origin', None)
         host = self.get_argument('host', None)
-        self.render("rewriteadd.html", tryagain=False, origin=origin, host=host, item=item, ohost=None, dhost=None, protocol=None, dprotocol=None)
+        entry = None
+        if item:
+            collection = self.settings['db'].proxyservice['log_logentry']
+            entry = yield motor.Op(collection.find_one, {'_id': self.get_id(item)})
+
+        self.render("rewriteadd.html", tryagain=False, origin=origin, host=host, item=item, entry=entry, ohost=None, dhost=None, protocol=None, dprotocol=None)
     
     def get_id(self, ident):
         try:

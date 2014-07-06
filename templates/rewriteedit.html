@@ -35,23 +35,15 @@
 
     <div class="pure-form-aligned">
 
+    <h2>Destination</h2>
     <div class="pure-control-group">
-    <label for="protocol">Protocol</label>
-    <input type="text" name="protocol" size="40" placeholder="http" value="{% if entry['protocol'] %}{{ entry['protocol'] }}{% end %}" />
-    </div>
-    
-    <div class="pure-control-group">
-    <label for="ohost">Host</label>
+    <label for="ohost"><input type="text" name="protocol" size="10" placeholder="http" value="{% if entry['protocol'] %}{{ entry['protocol'] }}{% end %}" /></label>
     <input type="text" name="ohost" size="40" placeholder="google.com" value="{% if entry['host'] %}{{ entry['host'] }}{% end %}" />
     </div>
 
+    <h2>Rewrite To</h2>
     <div class="pure-control-group">
-    <label for="dprotocol">Destination Protocol</label>
-    <input type="text" name="dprotocol" size="40" placeholder="http" value="{% if entry['dprotocol'] %}{{ entry['dprotocol'] }}{% end %}" />
-    </div>
-
-    <div class="pure-control-group">
-    <label for="dhost">Destination Host</label>
+    <label for="dhost"><input type="text" name="dprotocol" size="10" placeholder="http" value="{% if entry['dprotocol'] %}{{ entry['dprotocol'] }}{% end %}" /></label>
     <input type="text" name="dhost" size="40" placeholder="google.dev" value="{% if entry['dhost'] %}{{ entry['dhost'] }}{% end %}" />
     </div>
     
