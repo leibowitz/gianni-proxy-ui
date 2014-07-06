@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Gianni's Proxy</title>
+<style type="text/css">
+  .hidden {
+    display: none;
+  }
+</style>
+<link rel="stylesheet" href="/static/pure-min.css">
+<link rel="stylesheet" href="/static/grids-responsive-min.css">
+<link rel="stylesheet" href="/static/pure-main-grids-baby-blue-1.15.3.css">
+<link rel="stylesheet" href="/static/jquery-ui.min.css">
+
+  </head>
+  <body>
+
+  <div id="layout">
+
+    <div id="main">
+<div class="content">
+    <a class="pure-button" href="/rewrites?{% if item is not None %}&amp;item={{ item }}{% end %}{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}">Rewrites list</a>
+  {% if item is not None %}
+    <a class="pure-button" href="/item/{{ item }}?{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}">Back to Request</a>
+  {% end %}
+  <h1 class="content-subhead">Edit Rewrite</h1>
+  <form class="pure-form" method="post">
+    {% if host is not None %}
+    <input type="hidden" name="host" value="{{ host }}" />
+    {% end %}
+    {% if origin %}
+    <input type="hidden" name="origin" value="{{ origin }}" />
+    {% end %}
+    <input type="hidden" name="id" value="{{ entry['_id'] }}" />
+
+    <div class="pure-form-aligned">
+
+    <div class="pure-control-group">
+    <label for="protocol">Protocol</label>
+    <input type="text" name="protocol" size="40" placeholder="http" value="{% if entry['protocol'] %}{{ entry['protocol'] }}{% end %}" />
+    </div>
+    
+    <div class="pure-control-group">
+    <label for="ohost">Host</label>
+    <input type="text" name="ohost" size="40" placeholder="google.com" value="{% if entry['host'] %}{{ entry['host'] }}{% end %}" />
+    </div>
+
+    <div class="pure-control-group">
+    <label for="dprotocol">Destination Protocol</label>
+    <input type="text" name="dprotocol" size="40" placeholder="http" value="{% if entry['dprotocol'] %}{{ entry['dprotocol'] }}{% end %}" />
+    </div>
+
+    <div class="pure-control-group">
+    <label for="dhost">Destination Host</label>
+    <input type="text" name="dhost" size="40" placeholder="google.dev" value="{% if entry['dhost'] %}{{ entry['dhost'] }}{% end %}" />
+    </div>
+    
+    </div>
+    
+
+    <button type="submit" class="pure-button pure-button-primary">Update</button>
+  </form>
+  {% if tryagain %}
+    Try again
+  {% end %}
+
+</div>
+</div>
+</div>
+
+<script src="/static/jquery.min.js"></script>
+</body>
+</html>

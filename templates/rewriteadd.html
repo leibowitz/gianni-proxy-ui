@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Gianni's Proxy</title>
+<style type="text/css">
+  .hidden {
+    display: none;
+  }
+</style>
+<link rel="stylesheet" href="/static/pure-min.css">
+<link rel="stylesheet" href="/static/grids-responsive-min.css">
+<link rel="stylesheet" href="/static/pure-main-grids-baby-blue-1.15.3.css">
+<link rel="stylesheet" href="/static/jquery-ui.min.css">
+
+  </head>
+  <body>
+
+  <div id="layout">
+
+    <div id="main">
+<div class="content">
+    <a class="pure-button" href="/rewrites?{% if item is not None %}&amp;item={{ item }}{% end %}{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}">Rewrites list</a>
+  {% if item is not None %}
+    <a class="pure-button" href="/item/{{ item }}?{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}">Back to Request</a>
+  {% end %}
+  <h1 class="content-subhead">Add Rewrite</h1>
+  <form class="pure-form" method="post">
+    {% if host is not None %}
+    <input type="hidden" name="host" value="{{ host }}" />
+    {% end %}
+    {% if origin %}
+    <input type="hidden" name="origin" value="{{ origin }}" />
+    {% end %}
+
+    <div class="pure-form-aligned">
+
+    <div class="pure-control-group">
+    <label for="protocol">Protocol</label>
+    <input type="text" name="protocol" size="40" {% if protocol %}value="{{ protocol }}"{% end %} placeholder="http" />
+    </div>
+    
+    <div class="pure-control-group">
+    <label for="host">Host</label>
+    <input type="text" name="ohost" size="40" {% if ohost %}value="{{ ohost }}"{% end %} placeholder="google.com" />
+    </div>
+    
+    <div class="pure-control-group">
+    <label for="dprotocol">Destination Protocol</label>
+    <input type="text" name="dprotocol" size="40" {% if dprotocol %}value="{{ dprotocol }}"{% end %} placeholder="http" />
+    </div>
+
+    <div class="pure-control-group">
+    <label for="dhost">Destination Host</label>
+    <input type="text" name="dhost" size="40" {% if dhost %}value="{{ dhost }}"{% end %} placeholder="google.com" />
+    </div>
+
+    </div>
+
+    <button type="submit" class="pure-button pure-button-primary">Save</button>
+  </form>
+  {% if tryagain %}
+    Try again
+  {% end %}
+
+</div>
+</div>
+</div>
+
+<script src="/static/jquery.min.js"></script>
+<script type="text/javascript">
+  (function(){
+   /*
+    * Handling the removal of a headers line
+    */
+   $(document).on('click', 'button[name=delete]', function(evt){
+      evt.preventDefault();
+      // Need to swap the names of this line with the last line
+      var allButtons = $('button[name=delete]');
+      $(this).parent().remove();
+    });
+</script>
+
+</body>
+</html>

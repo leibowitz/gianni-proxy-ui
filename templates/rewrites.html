@@ -1,0 +1,96 @@
+<html>
+  <head>
+    <title>Gianni's Proxy</title>
+<style type="text/css">
+  .hidden {
+    display: none;
+  }
+</style>
+<link rel="stylesheet" href="/static/pure-min.css">
+<link rel="stylesheet" href="/static/grids-responsive-min.css">
+<link rel="stylesheet" href="/static/pure-main-grids-baby-blue-1.15.3.css">
+
+  </head>
+  <body>
+
+  <div class="layout">
+
+    {% if origin %}
+    <a class="pure-button" href="/origin/{{ origin }}{% if host is not None %}/host/{{ host }}{% end %}">Back to Session</a>
+    <a class="pure-button" href="/rewrites">Show all rewrites</a>
+    {% else %}
+    <a class="pure-button" href="/">Back to Home</a>
+    {% end %}
+    {% if item is not None %}
+    <a class="pure-button" href="/item/{{ item }}?{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}">Back to Request</a>
+    {% end %}
+
+    <a class="pure-button" href="/rewrites/add?{% if item is not None %}&amp;item={{ item }}{% end %}{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}">Add Rewrite</a>
+<div class="pure-g">
+<div class="pure-u">
+
+{% if len(items) != 0 %}
+<table class="pure-table pure-table-horizontal pure-table-striped">
+  <thead>
+    <th>
+      Id
+    </th>
+    <th>
+      Active
+    </th>
+    <th>
+      Host
+    </th>
+    <th>
+      Rewrite Host
+    </th>
+    <th>
+      Origin
+    </th>
+    <th>
+    </th>
+  </thead>
+  <tbody>
+{% for row in items %}
+  <tr>
+    <td>
+      <a href="/rewrite/{{ row['_id'] }}?{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}{% if item is not None %}&amp;item={{ item }}{% end %}">
+      {{ row['_id'] }}
+      </a>
+    </td>
+    <td>
+      <form method="post">
+        <input type="hidden" name="ident" value="{{ row['_id'] }}" />
+        <input type="hidden" name="action" value="{% if row['active'] %}disable{% else %}enable{% end %}" />
+        <button>{% if row['active'] %}Turn OFF{% else %}Turn ON{% end %}</button>
+      </form>
+    </td>
+    <td>
+      {% if row['protocol'] %}{{ row['protocol'] }}://{% end %}{% if row['host'] %}{{ row['host'] }}{% end %}
+    </td>
+    <td>
+      {% if row['dprotocol'] %}{{ row['dprotocol'] }}://{% end %}{% if row['dhost'] %}{{ row['dhost'] }}{% elif row['host'] %}{{ row['host'] }}{% end %}
+    </td>
+    <td>
+      {% if 'origin' in row %}{{ row['origin'] }}{% end %}
+    </td>
+    <td>
+      <form method="post">
+        <input type="hidden" name="ident" value="{{ row['_id'] }}" />
+        <input type="hidden" name="action" value="delete" />
+        <button>X</button>
+      </form>
+    </td>
+  </tr>
+{% end %}
+  </tbody>
+</table>
+{% end %}
+
+</div>
+</div>
+</div>
+
+<script src="/static/jquery.min.js"></script>
+</body>
+</html>

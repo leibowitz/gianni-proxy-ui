@@ -27,6 +27,16 @@ from pygments.formatters import HtmlFormatter
 import tempfile
 from multiplex import MultiplexConnection
 
+def cleanarg(arg, default=None):
+    if arg is None:
+        return default
+    arg = arg.strip()
+    if arg == '':
+        return default
+    elif arg == '*':
+        return True
+    return arg
+    
 @gen.coroutine
 def get_gridfs_content(fs, ident):
     data = None
@@ -516,13 +526,13 @@ class RulesEditHandler(tornado.web.RequestHandler):
         origin = self.get_argument('origin', None)
         host = self.get_argument('host', None)
 
-        rhost = self.clean(self.get_argument('rhost'), False)
-        path = self.clean(self.get_argument('path'), False)
-        query = self.clean(self.get_argument('query'), False)
-        status = self.clean(self.get_argument('status'), False)
-        method = self.clean(self.get_argument('method'), False)
-        response = self.clean(self.get_argument('response'), False)
-        body = self.clean(self.get_argument('body'), False)
+        rhost = cleanarg(self.get_argument('rhost'), False)
+        path = cleanarg(self.get_argument('path'), False)
+        query = cleanarg(self.get_argument('query'), False)
+        status = cleanarg(self.get_argument('status'), False)
+        method = cleanarg(self.get_argument('method'), False)
+        response = cleanarg(self.get_argument('response'), False)
+        body = cleanarg(self.get_argument('body'), False)
         reqheaders = self.get_submitted_headers('reqheader')
         respheaders = self.get_submitted_headers('respheader')
 
@@ -566,11 +576,6 @@ class RulesEditHandler(tornado.web.RequestHandler):
             params['item'] = item
         self.redirect('/rules?' + urllib.urlencode(params))
 
-
-    def clean(self, arg, default=None):
-        if arg.strip() == '':
-            return default
-        return arg
 
 class RulesAddHandler(tornado.web.RequestHandler):
 
@@ -626,28 +631,18 @@ class RulesAddHandler(tornado.web.RequestHandler):
             return None
         return oid
 
-    def clean(self, arg, default=None):
-        if arg is None:
-            return default
-        arg = arg.strip()
-        if arg == '':
-            return default
-        elif arg == '*':
-            return True
-        return arg
-    
     def post(self):
         item = self.get_argument('item', None)
         origin = self.get_argument('origin', None)
         host = self.get_argument('host', None)
 
-        rhost = self.clean(self.get_argument('rhost'), False)
-        path = self.clean(self.get_argument('path'), False)
-        query = self.clean(self.get_argument('query'), False)
-        status = self.clean(self.get_argument('status'), False)
-        method = self.clean(self.get_argument('method'), False)
-        response = self.clean(self.get_argument('response'), False)
-        body = self.clean(self.get_argument('body'), False)
+        rhost = cleanarg(self.get_argument('rhost'), False)
+        path = cleanarg(self.get_argument('path'), False)
+        query = cleanarg(self.get_argument('query'), False)
+        status = cleanarg(self.get_argument('status'), False)
+        method = cleanarg(self.get_argument('method'), False)
+        response = cleanarg(self.get_argument('response'), False)
+        body = cleanarg(self.get_argument('body'), False)
 
         dynamic = True if response is False else False
         
@@ -689,6 +684,176 @@ class RulesAddHandler(tornado.web.RequestHandler):
             params['item'] = item
         self.redirect('/rules?' + urllib.urlencode(params))
 
+class RewritesHandler(tornado.web.RequestHandler):
+    def get(self):
+        self.show_list()
+
+    @tornado.web.asynchronous
+    @gen.engine
+    def show_list(self):
+        item = self.get_argument('item', None)
+        origin = self.get_argument('origin', None)
+        host = self.get_argument('host', None)
+        
+        query = {}
+
+        if origin:
+            query['origin'] = {'$in': [origin, None]}
+        if host:
+            query['host'] = {'$in': [host, None]}
+        # merge all conditions with an and
+        if len(query) > 1:
+            query = {'$and': map(lambda x: {x[0]: x[1]}, query.iteritems())}
+
+        collection = self.settings['db'].proxyservice['log_hostrewrite']
+        cursor = collection.find(query)
+        res = cursor.to_list(100)
+        entries = yield res
+        self.render("rewrites.html", items=entries, item=item, origin=origin, host=host)
+
+    def post(self):
+        collection = self.settings['db'].proxyservice['log_hostrewrite']
+        ident = self.get_argument('ident', None)
+        action = self.get_argument('action', None)
+        if action == "delete":
+            collection.remove({'_id': self.get_id(ident)})
+        elif action == "enable":
+            collection.update({'_id': self.get_id(ident)}, {'$set': {"active": True}})
+        elif action == "disable":
+            collection.update({'_id': self.get_id(ident)}, {'$set': {"active": False}})
+
+        self.show_list()
+
+    def get_id(self, ident):
+        try:
+            oid = objectid.ObjectId(ident)
+        except objectid.InvalidId as e:
+            print e
+            self.send_error(500)
+            return None
+        return oid
+
+class RewritesAddHandler(tornado.web.RequestHandler):
+
+
+    @tornado.web.asynchronous
+    @gen.engine
+    def get(self):
+        item = self.get_argument('item', None)
+        origin = self.get_argument('origin', None)
+        host = self.get_argument('host', None)
+        self.render("rewriteadd.html", tryagain=False, origin=origin, host=host, item=item, ohost=None, dhost=None, protocol=None, dprotocol=None)
+    
+    def get_id(self, ident):
+        try:
+            oid = objectid.ObjectId(ident)
+        except objectid.InvalidId as e:
+            print e
+            self.send_error(500)
+            return None
+        return oid
+
+    def post(self):
+        item = self.get_argument('item', None)
+        origin = self.get_argument('origin', False)
+        host = self.get_argument('host', None)
+
+        dhost = self.get_argument('dhost', False)
+        ohost = self.get_argument('ohost', False)
+        
+        protocol = self.get_argument('protocol', False)
+        dprotocol = self.get_argument('dprotocol', False)
+
+        if not dhost and not dprotocol or not ohost and not protocol:
+            self.render("rewriteadd.html", tryagain=True, item=item, origin=origin, host=host, ohost=ohost, dhost=dhost, protocol=protocol, dprotocol=dprotocol)
+            return
+
+        collection = self.settings['db'].proxyservice['log_hostrewrite']
+        collection.insert({
+            'active': True,
+            'host': ohost,
+            'dhost': dhost,
+            'protocol': protocol,
+            'dprotocol': dprotocol,
+            'origin': origin
+        })
+
+        params = {}
+        if origin:
+            params['origin'] = origin
+        # this is required otherwise we will filter out this rule after the redirect
+        #if host and host == ohost:
+        #    params['host'] = host
+        if item:
+            params['item'] = item
+        self.redirect('/rewrites?' + urllib.urlencode(params))
+
+class RewritesEditHandler(tornado.web.RequestHandler):
+
+    def get_id(self, ident):
+        try:
+            oid = objectid.ObjectId(ident)
+        except objectid.InvalidId as e:
+            print e
+            self.send_error(500)
+            return None
+        return oid
+
+    @tornado.web.asynchronous
+    @gen.engine
+    def get(self, ident):
+        collection = self.settings['db'].proxyservice['log_hostrewrite']
+        entry = yield motor.Op(collection.find_one, {'_id': self.get_id(ident)})
+        if not entry:
+            raise tornado.web.HTTPError(404)
+
+        item = self.get_argument('item', None)
+        origin = entry['origin'] or None if 'origin' in entry else self.get_argument('origin', None)
+        host = self.get_argument('host', None)
+        self.render("rewriteedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=False, ohost=entry['host'], dhost=entry['dhost'], protocol=entry['protocol'], dprotocol=entry['dprotocol'])
+    
+    @tornado.web.asynchronous
+    @gen.engine
+    def post(self, ident):
+        item = self.get_argument('item', None)
+        origin = self.get_argument('origin', False)
+        host = self.get_argument('host', None)
+
+        ohost = cleanarg(self.get_argument('ohost'), False)
+        dhost = cleanarg(self.get_argument('dhost'), False)
+        
+        protocol = cleanarg(self.get_argument('protocol'), False)
+        dprotocol = cleanarg(self.get_argument('dprotocol'), False)
+
+        collection = self.settings['db'].proxyservice['log_hostrewrite']
+        entry = yield motor.Op(collection.find_one, {'_id': self.get_id(ident)})
+
+        if not dhost and not dprotocol or not ohost and not protocol:
+            self.render("rewriteedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=True, ohost=ohost, dhost=dhost, protocol=protocol, dprotocol=dprotocol)
+            return
+
+        collection = self.settings['db'].proxyservice['log_hostrewrite']
+        collection.update({'_id': self.get_id(ident)}, {
+            'active': True,
+            'host': ohost,
+            'dhost': dhost,
+            'origin': origin,
+            'protocol': protocol,
+            'dprotocol': dprotocol
+        })
+
+        params = {}
+        if origin:
+            params['origin'] = origin
+        # this is required otherwise we will filter out this rule after the redirect
+        #if host and host == host:
+        #    params['host'] = host
+        if item:
+            params['item'] = item
+        self.redirect('/rewrites?' + urllib.urlencode(params))
+
+
+
 def open_socket(name):
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
 
@@ -721,6 +886,9 @@ handlers = [
     (r"/rules", RulesHandler),
     (r"/rules/add", RulesAddHandler),
     (r"/rule/(?P<ident>[^\/]+)", RulesEditHandler),
+    (r"/rewrites", RewritesHandler),
+    (r"/rewrites/add", RewritesAddHandler),
+    (r"/rewrite/(?P<ident>[^\/]+)", RewritesEditHandler),
 ]
     
 settings = dict(
