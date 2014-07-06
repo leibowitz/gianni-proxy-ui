@@ -92,6 +92,11 @@
         <input type="text" name="status" size="10" placeholder="200" {% if entry %}value="{{ entry['response']['status'] }}"{% end %} />
       </div>
     
+      <div class="pure-control-group">
+        <label for="delay">Delay</label>
+        <input type="text" name="delay" size="10" placeholder="seconds" value="" /> in seconds
+      </div>
+
     </div>
 
     <h3>Body</h3>

@@ -57,6 +57,8 @@ def get_content_type(headers):
 # http://www.iana.org/assignments/media-types/media-types.xhtml
 # http://en.wikipedia.org/wiki/Internet_media_type#Type_text
 def get_format(content):
+    if content is None:
+        return None
     mtype = mimes.MIMEType.from_string(content)
     if mtype.format:
         return mtype.format
@@ -532,6 +534,7 @@ class RulesEditHandler(tornado.web.RequestHandler):
         status = cleanarg(self.get_argument('status'), False)
         method = cleanarg(self.get_argument('method'), False)
         response = cleanarg(self.get_argument('response'), False)
+        delay = int(cleanarg(self.get_argument('delay', 0), 0))
         body = cleanarg(self.get_argument('body'), False)
         reqheaders = self.get_submitted_headers('reqheader')
         respheaders = self.get_submitted_headers('respheader')
@@ -560,6 +563,7 @@ class RulesEditHandler(tornado.web.RequestHandler):
             'method': method,
             'status': status,
             'origin': origin,
+            'delay': delay,
             'response': response,
             'reqheaders': reqheaders,
             'respheaders': array_headers(respheaders),
@@ -642,6 +646,7 @@ class RulesAddHandler(tornado.web.RequestHandler):
         status = cleanarg(self.get_argument('status'), False)
         method = cleanarg(self.get_argument('method'), False)
         response = cleanarg(self.get_argument('response'), False)
+        delay = int(cleanarg(self.get_argument('delay', 0), 0))
         body = cleanarg(self.get_argument('body'), False)
 
         dynamic = True if response is False else False
@@ -668,6 +673,7 @@ class RulesAddHandler(tornado.web.RequestHandler):
             'method': method,
             'status': status,
             'origin': origin,
+            'delay': delay,
             'response': response,
             'reqheaders': reqheaders,
             'respheaders': array_headers(respheaders),
