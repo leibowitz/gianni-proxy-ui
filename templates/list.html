@@ -147,7 +147,7 @@ function createSocket(origin)
       console.log('close');
       sock = null;
       $('#onPlayPause').text('Start Recording');
-      document.title = 'GProxy';
+      document.title = 'MockProxy';
   };
 }
 createSocket(origin);
@@ -159,7 +159,7 @@ $('#onPlayPause').on('click', function(evt){
     }
     sock = null;
     $(this).text('Start Recording');
-    document.title = 'GProxy';
+    document.title = 'MockProxy';
   } else {
     createSocket(origin);
     $(this).text('Stop Recording');
