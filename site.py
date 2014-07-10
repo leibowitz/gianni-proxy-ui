@@ -241,7 +241,7 @@ def get_numbers(ret, error):
     pass
 
 def nice_headers(headers):
-    return {k: v[0] for k, v in headers.iteritems() if len(v) != 0}
+    return dict(map(lambda (k,v): (k, v[0] if type(v) is list else v), headers.iteritems()))
 
 def array_headers(headers):
     return {k: [v] for k, v in headers.iteritems()}
