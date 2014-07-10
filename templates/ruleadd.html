@@ -19,17 +19,14 @@
 
     <div id="main">
 <div class="content">
-    <a class="pure-button" href="/rules?{% if item is not None %}&amp;item={{ item }}{% end %}{% if origin is not None %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}">Rules list</a>
+    <a class="pure-button" href="/rules?{% if item is not None %}&amp;item={{ item }}{% end %}{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}">Rules list</a>
   {% if item is not None %}
-    <a class="pure-button" href="/item/{{ item }}?{% if origin is not None %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}">Back to Request</a>
+    <a class="pure-button" href="/item/{{ item }}?{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}">Back to Request</a>
   {% end %}
   <h1 class="content-subhead">Add Rule</h1>
   <form class="pure-form" method="post">
     {% if host is not None %}
     <input type="hidden" name="host" value="{{ host }}" />
-    {% end %}
-    {% if origin is not None %}
-    <input type="hidden" name="origin" value="{{ origin }}" />
     {% end %}
     {% if item is not None %}
     <input type="hidden" name="item" value="{{ item }}" />
@@ -38,6 +35,11 @@
     <h2>Request</h2>
 
     <div class="pure-form-aligned">
+
+    <div class="pure-control-group">
+    <label for="host">Origin</label>
+    <input type="text" name="origin" size="40" placeholder="IP of client" value="{% if origin %}{{ origin }}{% end %}" />
+    </div>
 
     <div class="pure-control-group">
     <label for="host">Host</label>

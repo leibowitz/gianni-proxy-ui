@@ -551,6 +551,7 @@ class RulesEditHandler(tornado.web.RequestHandler):
             self.render("ruleedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=True, body=body, fmt=fmt, reqheaders=reqheaders, respheaders=respheaders)
             return
 
+        oriign = origin if origin else False
         reqheaders = reqheaders if reqheaders else False
 
         collection = self.settings['db'].proxyservice['log_rules']
@@ -662,6 +663,7 @@ class RulesAddHandler(tornado.web.RequestHandler):
 
         # filter headers, set field to false if nothing has been added
         reqheaders = reqheaders if reqheaders else False
+        origin = origin if origin else False
 
         collection = self.settings['db'].proxyservice['log_rules']
         collection.insert({
