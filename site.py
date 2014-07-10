@@ -10,7 +10,6 @@ import mimes
 import json
 import urlparse
 import urllib
-from httpheader import parse_media_type
 import pytz
 import pymongo
 import gridfs
