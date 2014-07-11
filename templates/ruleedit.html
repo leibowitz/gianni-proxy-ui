@@ -79,7 +79,7 @@
       <div class="pure-control-group">
         <input type="text" name="reqheader[{{ x }}][]" value="" />
         <input type="text" name="reqheader[{{ x }}][]" value="" />
-        <button name="delete">X</button>
+        {% if x != 0 %}<button name="delete">X</button>{% end %}
       </div>
     
       </div>
@@ -123,7 +123,7 @@
       <div class="pure-control-group">
         <input type="text" name="respheader[{{ x }}][]" value="" />
         <input type="text" name="respheader[{{ x }}][]" value="" />
-        <button name="delete">X</button>
+        {% if x != 0 %}<button name="delete">X</button>{% end %}
       </div>
 
       </div>

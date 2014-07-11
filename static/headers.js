@@ -8,12 +8,27 @@
     var allButtons = $('button[name=delete]');
     var nodeToRemove = $(this).parent();
     var group = nodeToRemove.parent();
-    nodeToRemove.remove();
+
+    // Don't delete if there's only one line
+    if (group.find("div").length != 1) {
+      nodeToRemove.remove();
+    }
+
+    var rows = group.find("div");
+
     var name = group.attr('id');
     var prefix = name.substr(0, name.indexOf('header-group'));
-    group.find("div").each(function(index, node){
-        $(node).find("input[type=text]").attr('name', prefix + 'header[' + index + '][]');
+    rows.each(function(index, node){
+        var main = $(node);
+        var nodes = main.find("input[type=text]");
+        nodes.attr('name', prefix + 'header[' + index + '][]');
+        if (index == 0 && rows.length == 1) {
+          // remove the delete button if there's only one line left
+          main.find("button").remove();
+          nodes.attr('value', '');
+        }
       });
+
   });
   /*
   * Adding headers line when we edit the last line
