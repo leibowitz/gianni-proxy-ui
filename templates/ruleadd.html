@@ -59,7 +59,7 @@
 
     </div>
     <h3>Headers</h3>
-      <div id="reqheaders">
+      <div id="reqheader-group">
       {% set x = 0 %}
       {% for name, value in reqheaders.iteritems() %}
         <div class="pure-control-group">
@@ -71,7 +71,7 @@
 
       {% end %}
 
-      <div class="pure-control-group" id="reqheaders-template">
+      <div class="pure-control-group">
         <input type="text" name="reqheader[{{ x }}][]" value="" />
         <input type="text" name="reqheader[{{ x }}][]" value="" />
         <button name="delete">X</button>
@@ -101,7 +101,7 @@
     <textarea rows="10" style="width:100%" data-editor="{% if fmt %}{{ fmt }}{% end %}" name="body" placeholder="body content">{% if body %}{{ body }}{% end %}</textarea>
 
     <h3>Headers</h3>
-      <div id="respheaders">
+      <div id="respheader-group">
       {% set x = 0 %}
       {% for name, value in respheaders.iteritems() %}
         <div class="pure-control-group">
@@ -113,7 +113,7 @@
 
       {% end %}
 
-      <div class="pure-control-group" id="respheaders-template">
+      <div class="pure-control-group">
         <input type="text" name="respheader[{{ x }}][]" value="" />
         <input type="text" name="respheader[{{ x }}][]" value="" />
         <button name="delete">X</button>
@@ -127,6 +127,11 @@
     Try again
   {% end %}
 
+      <div class="hidden" id="headers-template">
+        <input type="text" value="" />
+        <input type="text" value="" />
+        <button name="delete">X</button>
+      </div>
 </div>
 </div>
 </div>
@@ -145,14 +150,23 @@
       evt.preventDefault();
       // Need to swap the names of this line with the last line
       var allButtons = $('button[name=delete]');
-      $(this).parent().remove();
+      var nodeToRemove = $(this).parent();
+      var group = nodeToRemove.parent();
+      nodeToRemove.remove();
+      var name = group.attr('id');
+      var prefix = name.substr(0, name.indexOf('header-group'));
+      group.find("div").each(function(index, node){
+          $(node).find("input[type=text]").attr('name', prefix + 'header[' + index + '][]');
+        });
     });
    /*
     * Adding headers line when we edit the last line
     */
-   var tmplElements = $('#reqheaders-template').clone().removeAttr('id');
-   $(document).on('change paste keyup', 'input[type=text][name^="reqheader"]', function(evt){
-     var elements = $('input[type=text][name^="reqheader"]');
+   var tmplElements = $('#headers-template').clone().removeAttr('id').removeAttr('class');
+   $(document).on('change paste keyup', 'input[type=text][name^="reqheader"], input[type=text][name^="respheader"]', function(evt){
+     // get the prefix name, aka reqheader or respheader
+     var prefixName = this.name.substr(0, this.name.indexOf('['));
+     var elements = $('input[type=text][name^="' + prefixName +'"]');
      var last = elements.last().get(0);
      var lineElements = $('input[type=text][name="'+$(this).attr('name')+'"]');
      var isLast = lineElements.filter(function(index, current){
@@ -162,8 +176,8 @@
      // if we edited the last header line, add a new one
      if (isLast) {
       var newElements = tmplElements.clone();
-      newElements.appendTo("#reqheaders");
-      newElements.find('input').attr('name', 'reqheader['+(elements.length/2)+'][]');
+      newElements.appendTo("#" + prefixName + "-group");
+      newElements.find('input').attr('name', prefixName + '['+(elements.length/2)+'][]');
      }
     });
   })();
