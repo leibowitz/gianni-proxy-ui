@@ -884,44 +884,46 @@ def open_socket(name):
     return sock
 
 
-db = motor.MotorClient('mongodb://localhost:17017', tz_aware=True)
-EST = pytz.timezone('Europe/London')
-
-handlers = [
-    (r"/", MainHandler),
-    (r"/origin/(?P<origin>[^\/]+)", OriginHandler),
-    (r"/all", OriginHandler),
-    (r"/origin/(?P<origin>[^\/]+)/host/(?P<host>[^\/]+)", OriginHostHandler),
-    (r"/item/(?P<ident>[^\/]+)", ViewHandler),
-    (r"/host/(?P<host>[^\/]+)", HostHandler),
-    (r"/rules", RulesHandler),
-    (r"/rules/add", RulesAddHandler),
-    (r"/rule/(?P<ident>[^\/]+)", RulesEditHandler),
-    (r"/rewrites", RewritesHandler),
-    (r"/rewrites/add", RewritesAddHandler),
-    (r"/rewrite/(?P<ident>[^\/]+)", RewritesEditHandler),
-]
-    
-EchoRouter = SockJSRouter(EchoConnection, '/listener')
-handlers.extend(EchoRouter.urls)
-
-BodyRouter = SockJSRouter(BodyConnection, '/body')
-handlers.extend(BodyRouter.urls)
-
-# Create multiplexer
-router = MultiplexConnection.get(objClass=HijackConnection)
-
-# Register multiplexer
-HijackRouter = SockJSRouter(router, '/hijack')
-handlers.extend(HijackRouter.urls)
-
-options = OptionParser()
-options.define("port", default=8002, help="run on the given port", type=int)
-options.define("proxyport", default=8989, help="port the proxy is running on", type=int)
-options.define("proxyhost", default=None, help="host the proxy is running on", type=str)
-
 if __name__ == "__main__":
+    EST = pytz.timezone('Europe/London')
+
+    handlers = [
+        (r"/", MainHandler),
+        (r"/origin/(?P<origin>[^\/]+)", OriginHandler),
+        (r"/all", OriginHandler),
+        (r"/origin/(?P<origin>[^\/]+)/host/(?P<host>[^\/]+)", OriginHostHandler),
+        (r"/item/(?P<ident>[^\/]+)", ViewHandler),
+        (r"/host/(?P<host>[^\/]+)", HostHandler),
+        (r"/rules", RulesHandler),
+        (r"/rules/add", RulesAddHandler),
+        (r"/rule/(?P<ident>[^\/]+)", RulesEditHandler),
+        (r"/rewrites", RewritesHandler),
+        (r"/rewrites/add", RewritesAddHandler),
+        (r"/rewrite/(?P<ident>[^\/]+)", RewritesEditHandler),
+    ]
+        
+    EchoRouter = SockJSRouter(EchoConnection, '/listener')
+    handlers.extend(EchoRouter.urls)
+
+    BodyRouter = SockJSRouter(BodyConnection, '/body')
+    handlers.extend(BodyRouter.urls)
+
+    # Create multiplexer
+    router = MultiplexConnection.get(objClass=HijackConnection)
+
+    # Register multiplexer
+    HijackRouter = SockJSRouter(router, '/hijack')
+    handlers.extend(HijackRouter.urls)
+
+    options = OptionParser()
+    options.define("port", default=8002, help="run on the given port", type=int)
+    options.define("proxyport", default=8989, help="port the proxy is running on", type=int)
+    options.define("proxyhost", default=None, help="host the proxy is running on", type=str)
+    options.define("mongourl", default="localhost:27017", help="mongodb url", type=str)
+
     options.parse_command_line()
+
+    db = motor.MotorClient('mongodb://'+options.mongourl, tz_aware=True)
 
     settings = dict(
         handlers=handlers,
