@@ -1,5 +1,6 @@
 import collections
 from tornado.ioloop import IOLoop, PeriodicCallback
+from tornado.options import OptionParser
 import tornado.web
 from tornado import gen
 from datetime import datetime, timedelta
@@ -277,7 +278,7 @@ class MainHandler(tornado.web.RequestHandler):
         collection = self.settings['db'].proxyservice['log_logentry']
         d = datetime.utcnow() - timedelta(hours=1)
         entries = yield collection.find({"date": {"$gte":d}}).sort([("$natural", pymongo.DESCENDING)]).limit(200).distinct("request.origin")
-        self.render("index.html", items=filter(None, entries), host=self.request.host)
+        self.render("index.html", items=filter(None, entries), host=self.request.host, port=self.settings['proxyport'], ip=self.settings['proxyhost'] or self.request.host.split(':')[0], yourip=self.request.remote_ip)
 
 class OriginHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
@@ -901,14 +902,6 @@ handlers = [
     (r"/rewrite/(?P<ident>[^\/]+)", RewritesEditHandler),
 ]
     
-settings = dict(
-    handlers=handlers,
-    static_path=os.path.join(os.path.dirname(__file__), 'static'),
-    db=db,
-    template_path=os.path.join(os.path.dirname(__file__), "templates"),
-    debug=True
-)               
-
 EchoRouter = SockJSRouter(EchoConnection, '/listener')
 handlers.extend(EchoRouter.urls)
 
@@ -922,11 +915,28 @@ router = MultiplexConnection.get(objClass=HijackConnection)
 HijackRouter = SockJSRouter(router, '/hijack')
 handlers.extend(HijackRouter.urls)
 
-application = tornado.web.Application(
-    **settings)
+options = OptionParser()
+options.define("port", default=8002, help="run on the given port", type=int)
+options.define("proxyport", default=8989, help="port the proxy is running on", type=int)
+options.define("proxyhost", default=None, help="host the proxy is running on", type=str)
 
 if __name__ == "__main__":
-    application.listen(8002)
+    options.parse_command_line()
+
+    settings = dict(
+        handlers=handlers,
+        static_path=os.path.join(os.path.dirname(__file__), 'static'),
+        db=db,
+        template_path=os.path.join(os.path.dirname(__file__), "templates"),
+        proxyhost=options.proxyhost,
+        proxyport=options.proxyport,
+        debug=True
+    )               
+
+    application = tornado.web.Application(
+        **settings)
+
+    application.listen(options.port)
     # open a global tailable cursor on log_logentry
     EchoConnection.tail(db.proxyservice['log_logentry'])
     

@@ -18,6 +18,10 @@
 <div class="pure-g">
 <div class="pure-u">
 
+  <div>
+  Hello {{ yourip }}
+</div>
+
   <a href="/all">See all traffic</a>
 <table class="pure-table pure-table-horizontal pure-table-striped">
   <thead>
@@ -39,7 +43,14 @@
 <h2></h2>
 <div>
 To Install the certificate on your device,
-go to <a href="/static/ca.crt">http://{{ host }}/static/ca.crt</a>
+point the browser to <a href="/static/ca.crt">http://{{ host }}/static/ca.crt</a>
+
+<br/>
+Then change the WIFI settings on the device to point
+to the proxy<br/>
+Host: {{ ip }}<br/>
+Port: {{ port }}
+
 </div>
 
 </div>
