@@ -86,7 +86,7 @@
     </td>
     {% end %}
     <td>
-      <form method="post">
+      <form method="post" name="deleteForm">
         <input type="hidden" name="ident" value="{{ row['_id'] }}" />
         <input type="hidden" name="action" value="delete" />
         <button>X</button>
@@ -103,4 +103,11 @@
 </div>
 
 <script src="/static/jquery.min.js"></script>
+<script type="text/javascript">
+    $('form[name=deleteForm]').on('submit', function(evt){
+      if (!confirm("Are you sure you want to delete this rule?")) {
+        return false;
+      }
+    });
+</script>
 {% end %}
