@@ -5,40 +5,54 @@
 <div class="pure-g">
 <div class="pure-u">
 
-  <div>
-  Hello {{ yourip }}
-</div>
-
-  <a href="/all">See all traffic</a>
-<table class="pure-table pure-table-horizontal pure-table-striped">
-  <thead>
-    <th>
-      Sessions
-    </th>
-  </thead>
-  <tbody>
-{% for item in items %}
-  <tr>
-    <td>
-      <a href="/origin/{{ item }}">{{ item }}</a>
-    </td>
-  </tr>
-{% end %}
-  </tbody>
-</table>
-
-<h2></h2>
 <div>
-To Install the certificate on your device,
-point the browser to <a href="/static/ca.crt">http://{{ host }}/static/ca.crt</a>
+You will need to install the certificate on the device before using the proxy.
+To install the certificate, simply navigate to <a href="/static/ca.crt">http://{{ host }}/static/ca.crt</a> from the device browser.
 
 <br/>
 Then change the WIFI settings on the device to point
 to the proxy<br/>
 Host: {{ ip }}<br/>
 Port: {{ port }}
-
+    <br/>
+    Now click on a client IP in the list to start listening
 </div>
+
+<div>
+    If you don't know what your client IP is, navigate to this page from the device browser.
+    <br />
+    Your IP is <strong>{{ yourip }}</strong>
+    <br />
+    
+    Alternatively, watch <a href="/all">all clients traffic</a>
+    
+</div>
+
+
+
+<table class="pure-table pure-table-horizontal pure-table-striped">
+  <thead>
+    <th>
+      Client IP
+    </th>
+    <th>
+      User-agent
+    </th>
+  </thead>
+  <tbody>
+{% for item, agent in items.iteritems() %}
+  <tr>
+    <td>
+        <a href="/origin/{{ item }}">{{ item }}</a>
+    </td>
+    <td>
+        {% if agent %}{{ agent }}{% end %}
+    </td>
+  </tr>
+{% end %}
+  </tbody>
+</table>
+
 
 </div>
 </div>
