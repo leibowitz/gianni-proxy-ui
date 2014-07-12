@@ -1,4 +1,5 @@
 {% extends "default.html" %}
+{% block title %}{{ item['request']['method'] }} - {{ item['request']['host'] }}{{ item['request']['path'] }}{% end %}
 {% block stylesheets %}
 <link href="/static/default.css" media="all" rel="stylesheet" type="text/css" />
 {% end %}

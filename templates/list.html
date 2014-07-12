@@ -1,5 +1,5 @@
 {% extends "default.html" %}
-{% block title %}● Recording{% end %}
+{% block title %}● Recording {% if origin %}{{ origin }}{% end %}{% end %}
 {% block stylesheets %}
 <style type="text/css">
   .fixed {
@@ -146,10 +146,9 @@ function createSocket(origin)
       }
   };
   sock.onclose = function() {
-      console.log('close');
       sock = null;
       $('#onPlayPause').text('Start Recording');
-      document.title = 'MockProxy';
+      document.title = 'MockProxy{% if origin %} - {{ origin }}{% end %} (not listening)';
   };
 }
 createSocket(origin);
@@ -161,14 +160,13 @@ $('#onPlayPause').on('click', function(evt){
     }
     sock = null;
     $(this).text('Start Recording');
-    document.title = 'MockProxy';
+    document.title = 'MockProxy{% if origin %} - {{ origin }}{% end %} (not listening)';
   } else {
     createSocket(origin);
     $(this).text('Stop Recording');
-    document.title = '● Recording';
+    document.title = '● Recording {% if origin %}{{ origin }}{% end %}';
   }
 });
-console.log(sock);
 function setHidden(row, s)
 {
     return s ? row.attr('class', 'hidden') : row.removeAttr('class');
