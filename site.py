@@ -452,8 +452,8 @@ class HostHandler(tornado.web.RequestHandler):
     @gen.engine
     def get(self, host):
         collection = self.settings['db'].proxyservice['log_logentry']
-        cursor = collection.find({"request.host": host}).sort([("$natural", pymongo.DESCENDING)]).limit(10)#.sort([('date', pymongo.DESCENDING)]).limit(10)
-        res = cursor.to_list(10)
+        cursor = collection.find({"request.host": host}).sort([("$natural", pymongo.DESCENDING)])
+        res = cursor.to_list(200)
         entries = yield res
         #cursor.count(callback=get_numbers)
         self.render("list.html", items=reversed(entries), EST=EST, host=host, origin=None)
@@ -463,8 +463,8 @@ class OriginHostHandler(tornado.web.RequestHandler):
     @gen.engine
     def get(self, origin, host):
         collection = self.settings['db'].proxyservice['log_logentry']
-        cursor = collection.find({"request.host": host, "request.origin": origin}).sort([("$natural", pymongo.DESCENDING)]).limit(10)#.sort([('date', pymongo.DESCENDING)]).limit(10)
-        res = cursor.to_list(10)
+        cursor = collection.find({"request.host": host, "request.origin": origin}).sort([("$natural", pymongo.DESCENDING)])
+        res = cursor.to_list(200)
         entries = yield res
         #cursor.count(callback=get_numbers)
         self.render("list.html", items=reversed(entries), EST=EST, host=host, origin=origin)
