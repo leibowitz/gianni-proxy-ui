@@ -1,6 +1,10 @@
 // Hook up ACE editor to all textareas with data-editor attribute
 $(function () {
     $('textarea[data-editor]').each(function () {
+        if (typeof(ace) == typeof(undefined)) {
+          return;
+        }
+
         var textarea = $(this);
 
         var mode = textarea.data('editor');
