@@ -1,6 +1,6 @@
-<html>
-  <head>
-    <title>● Recording</title>
+{% extends "default.html" %}
+{% block title %}● Recording{% end %}
+{% block stylesheets %}
 <style type="text/css">
   .fixed {
     background-color: white;
@@ -16,14 +16,8 @@
   }
 
 </style>
-<link rel="stylesheet" href="/static/pure-min.css">
-<link rel="stylesheet" href="/static/grids-responsive-min.css">
-<link rel="stylesheet" href="/static/pure-main-grids-baby-blue-1.15.3.css">
-<link href="/static/main.css" media="all" rel="stylesheet" type="text/css" />
-
-  </head>
-  <body>
-
+{% end %}
+{% block content %}
   <div class="layout">
     <div class="fixed">
     <a class="pure-button" href="/">Sessions List</a>
@@ -228,5 +222,4 @@ $('#filterForm').on('submit', function(evt){
   });
 //setTimeout(function(){sock.close();}, 2000);
 </script>
-</body>
-</html>
+{% end %}

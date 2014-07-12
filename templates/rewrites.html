@@ -1,14 +1,5 @@
-<html>
-  <head>
-    <title>MockProxy</title>
-<link rel="stylesheet" href="/static/pure-min.css">
-<link rel="stylesheet" href="/static/grids-responsive-min.css">
-<link rel="stylesheet" href="/static/pure-main-grids-baby-blue-1.15.3.css">
-<link href="/static/main.css" media="all" rel="stylesheet" type="text/css" />
-
-  </head>
-  <body>
-
+{% extends "default.html" %}
+{% block content %}
   <div class="layout">
 
     {% if origin %}
@@ -88,5 +79,4 @@
 </div>
 
 <script src="/static/jquery.min.js"></script>
-</body>
-</html>
+{% end %}
