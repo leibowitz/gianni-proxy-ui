@@ -21,31 +21,22 @@
 <table class="pure-table pure-table-horizontal pure-table-striped">
   <thead>
     <th>
-      Id
-    </th>
-    <th>
       Active
     </th>
     <th>
-      Host
+      Host Rewrite
     </th>
-    <th>
-      Rewrite Host
-    </th>
+    {% if not origin %}
     <th>
       Origin
     </th>
+    {% end %}
     <th>
     </th>
   </thead>
   <tbody>
 {% for row in items %}
   <tr>
-    <td>
-      <a href="/rewrite/{{ row['_id'] }}?{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}{% if item is not None %}&amp;item={{ item }}{% end %}">
-      {{ row['_id'] }}
-      </a>
-    </td>
     <td>
       <form method="post">
         <input type="hidden" name="ident" value="{{ row['_id'] }}" />
@@ -54,14 +45,17 @@
       </form>
     </td>
     <td>
+      <a href="/rewrite/{{ row['_id'] }}?{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}{% if item is not None %}&amp;item={{ item }}{% end %}">
       {% if row['protocol'] %}{{ row['protocol'] }}://{% end %}{% if row['host'] %}{{ row['host'] }}{% end %}
+      <br />
+      => {% if row['dprotocol'] %}{{ row['dprotocol'] }}://{% end %}{% if row['dhost'] %}{{ row['dhost'] }}{% elif row['host'] %}{{ row['host'] }}{% end %}
+      </a>
     </td>
-    <td>
-      {% if row['dprotocol'] %}{{ row['dprotocol'] }}://{% end %}{% if row['dhost'] %}{{ row['dhost'] }}{% elif row['host'] %}{{ row['host'] }}{% end %}
-    </td>
+    {% if not origin %}
     <td>
       {% if 'origin' in row %}{{ row['origin'] }}{% end %}
     </td>
+    {% end %}
     <td>
       <form method="post">
         <input type="hidden" name="ident" value="{{ row['_id'] }}" />

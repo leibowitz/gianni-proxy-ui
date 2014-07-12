@@ -22,13 +22,10 @@
 <table class="pure-table pure-table-horizontal pure-table-striped">
   <thead>
     <th>
-      Id
-    </th>
-    <th>
       Active
     </th>
     <th>
-      Dynamic
+      Method
     </th>
     <th>
       Host
@@ -37,31 +34,25 @@
       Path
     </th>
     <th>
-      Query
-    </th>
-    <th>
-      Method
-    </th>
-    <th>
       Status
     </th>
     <th>
-      Response
+      Query
     </th>
+    <th>
+      Dynamic
+    </th>
+    {% if not origin %}
     <th>
       Origin
     </th>
+    {% end %}
     <th>
     </th>
   </thead>
   <tbody>
 {% for row in items %}
   <tr>
-    <td>
-      <a href="/rule/{{ row['_id'] }}?{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}{% if item is not None %}&amp;item={{ item }}{% end %}">
-      {{ row['_id'] }}
-      </a>
-    </td>
     <td>
       <form method="post">
         <input type="hidden" name="ident" value="{{ row['_id'] }}" />
@@ -70,29 +61,30 @@
       </form>
     </td>
     <td>
-      {{ row['dynamic'] }}
+      {{ row['method'] }}
     </td>
     <td>
+      <a href="/rule/{{ row['_id'] }}?{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}{% if item is not None %}&amp;item={{ item }}{% end %}">
       {{ row['host'] }}
+      </a>
     </td>
     <td>
       {{ row['path'] }}
     </td>
     <td>
-      {{ row['query'] }}
-    </td>
-    <td>
-      {{ row['method'] }}
-    </td>
-    <td>
       {{ row['status'] }}
     </td>
     <td>
-      {{ row['response'] }}
+      {{ row['query'] }}
     </td>
     <td>
-      {{ row['origin'] }}
+      {{ row['dynamic'] }}
     </td>
+    {% if not origin %}
+    <td>
+        <a href="/rules?origin={{ row['origin'] }}">{{ row['origin'] }}</a>
+    </td>
+    {% end %}
     <td>
       <form method="post">
         <input type="hidden" name="ident" value="{{ row['_id'] }}" />
