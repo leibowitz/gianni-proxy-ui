@@ -45,6 +45,11 @@
     <th>
       Date
     </th>
+    {% if not origin %}
+    <th>
+      Origin
+    </th>
+    {% end %}
     <th>
       Status
     </th>
@@ -61,6 +66,11 @@
     <td>
       {{ item['date'].astimezone(EST).strftime('%Y-%m-%d %H:%M:%S.%f%z') }}
     </td>
+    {% if not origin %}
+    <td>
+        <a href="/origin/{{ item['request']['origin'] }}">{{ item['request']['origin'] }}</a>
+    </td>
+    {% end %}
     <td>
       {{ item['response']['status'] }}
     </td>

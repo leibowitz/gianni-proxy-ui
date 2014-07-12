@@ -331,8 +331,11 @@ class OriginHandler(tornado.web.RequestHandler):
     def get(self, origin=None):
         #collection = self.settings['db']['log_logentry'].open_sync()
         collection = self.settings['db'].proxyservice['log_logentry']
-        cursor = collection.find({"request.origin": origin}).sort([("$natural", pymongo.DESCENDING)]).limit(10)#.sort([('date', pymongo.DESCENDING)]).limit(10)
-        res = cursor.to_list(10)
+        query = {}
+        if origin:
+            query['request.origin'] = origin
+        cursor = collection.find(query).sort([("$natural", pymongo.DESCENDING)])
+        res = cursor.to_list(200)
         entries = yield res
         #cursor.count(callback=get_numbers)
         self.render("list.html", items=reversed(entries), EST=EST, host=None, origin=origin)
