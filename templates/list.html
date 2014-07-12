@@ -14,6 +14,22 @@
   .top-space{
       padding-top: {% if not host %}7em{% else %}9em{% end %};
   }
+  .pure-table th.compact,
+  .pure-table td.compact
+  {
+      padding-left: 5;
+      padding-right: 5;
+  }
+  .pure-table th.compact-right,
+  .pure-table td.compact-right{
+      padding-right:10;
+  }
+  .pure-table th.compact-left,
+  .pure-table td.compact-left{
+      padding-left:10;
+  }
+
+
 
 </style>
 {% end %}
@@ -46,40 +62,40 @@
       Time
     </th>
     {% if not origin %}
-    <th>
+    <th class="compact-right">
       Origin
     </th>
     {% end %}
-    <th>
-      Status
+    <th class="compact">
+      St. 
     </th>
-    <th>
-      Method
+    <th class="compact">
+      Met.
     </th>
-    <th>
+    <th class="compact-left">
       Url
     </th>
   </thead>
   <tbody>
-{% for i, item in enumerate(items) %}
-<tr {% if i % 2 == 0 %}class="stripped"{% end %}>
+{% for num, item in enumerate(items) %}
+<tr {% if num % 2 == 0 %}class="stripped"{% end %}>
     <td>
       {{ item['date'].astimezone(EST).strftime('%H:%M:%S') }}
     </td>
     {% if not origin %}
-    <td>
+    <td class="compact-right">
         <a href="/origin/{{ item['request']['origin'] }}">{{ item['request']['origin'] }}</a>
     </td>
     {% end %}
-    <td>
-      {{ item['response']['status'] }}
+    <td class="compact">
+      {{ item['response']['status'] }} 
     </td>
-    <td>
+    <td class="compact">
       {{ item['request']['method'] }}
     </td>
-    <td>
-      <a href="/item/{{ item['_id'] }}{% if origin %}?origin={{ url_escape(origin) }}{% end %}">
-      {{ item['request']['host'] }}{{ item['request']['path'] }}
+    <td class="compact-left">
+        <a href="/item/{{ item['_id'] }}{% if origin %}?origin={{ url_escape(origin) }}{% end %}" title="{{ item['request']['path'] }}">
+          {{ item['request']['host'] }}{% if len(item['request']['path']) > 50 %}{{ item['request']['path'][:50] }}...{% else %}{{ item['request']['path'] }}{% end %}
       </a>
     </td>
   </tr>
