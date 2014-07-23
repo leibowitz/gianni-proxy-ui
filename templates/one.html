@@ -19,7 +19,7 @@
 <h2 class="content-subhead">Request</h2>
 {{ item['request']['method'] }}
 {{ item['response']['status'] }}
-<a href="/origin/{{ origin }}/host/{{ item['request']['host'] }}">{{ item['request']['host'] }}</a>{{ item['request']['path'] }}
+<a href="{% if origin %}/origin/{{ origin }}{% end %}/host/{{ item['request']['host'] }}">{{ item['request']['host'] }}</a>{{ item['request']['path'] }}
 
 {{ requestquery }}
 
