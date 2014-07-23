@@ -95,7 +95,7 @@
     </td>
     <td class="compact-left">
         <a href="/item/{{ item['_id'] }}{% if origin %}?origin={{ url_escape(origin) }}{% end %}" title="{{ item['request']['path'] }}">
-          {{ item['request']['host'] }}{% if len(item['request']['path']) > 50 %}{{ item['request']['path'][:50] }}...{% else %}{{ item['request']['path'] }}{% end %}
+            {% if 'scheme' in item['request'] %}{{ item['request']['scheme'] }}://{% end %}{{ item['request']['host'] }}{% if len(item['request']['path']) > 50 %}{{ item['request']['path'][:50] }}...{% else %}{{ item['request']['path'] }}{% end %}
       </a>
     </td>
   </tr>
@@ -152,9 +152,11 @@ function createSocket(origin)
             '<td class="compact">' + msg['response']['status'] + "</td>" +
             '<td class="compact">' + msg['request']['method'] + "</td>" +
             '<td class="compact-left">' + "<a href='/item/" + msg['_id']['$oid'] + "?" + (origin.length != 0 ? "origin="+ encodeURIComponent(origin) : "")+"' title='"+
+            msg['request']['scheme'] + '://' +
             msg['request']['host'] + 
             msg['request']['path'] + 
             "'>" + 
+            msg['request']['scheme'] + '://' +
             msg['request']['host'] + 
             ( msg['request']['path'].length > 50 ? msg['request']['path'].substr(0, 50) + '...' : msg['request']['path'] ) + 
             "</a></td>" +
