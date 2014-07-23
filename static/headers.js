@@ -34,7 +34,7 @@
   * Adding headers line when we edit the last line
   */
   var tmplElements = $('#headers-template').clone().removeAttr('id').removeAttr('class');
-  $(document).on('change paste keyup', 'input[type=text][name^="reqheader"], input[type=text][name^="respheader"]', function(evt){
+  $(document).on('change paste keyup', 'input[type=text][name*="header"]', function(evt){
     // get the prefix name, aka reqheader or respheader
     var prefixName = this.name.substr(0, this.name.indexOf('['));
     var elements = $('input[type=text][name^="' + prefixName +'"]');
