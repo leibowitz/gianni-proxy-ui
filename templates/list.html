@@ -146,11 +146,17 @@ function createSocket(origin)
       }
       var row = $("<tr>" +
             "<td>" + moment(msg['date']['$date']).tz("Europe/London").format(jsDateFormat) + "</td>" +
-            "<td>" + msg['response']['status'] + "</td>" +
-            "<td>" + msg['request']['method'] + "</td>" +
-            "<td><a href='/item/" + msg['_id']['$oid'] + "?" + (origin.length != 0 ? "origin="+ encodeURIComponent(origin) : "")+"'>" + 
+            {% if not origin %}
+            '<td class="compact-right">' + msg['request']['origin'] + "</td>" +
+            {% end %}
+            '<td class="compact">' + msg['response']['status'] + "</td>" +
+            '<td class="compact">' + msg['request']['method'] + "</td>" +
+            '<td class="compact-left">' + "<a href='/item/" + msg['_id']['$oid'] + "?" + (origin.length != 0 ? "origin="+ encodeURIComponent(origin) : "")+"' title='"+
             msg['request']['host'] + 
             msg['request']['path'] + 
+            "'>" + 
+            msg['request']['host'] + 
+            ( msg['request']['path'].length > 50 ? msg['request']['path'].substr(0, 50) + '...' : msg['request']['path'] ) + 
             "</a></td>" +
             "</tr>");
       var text = $('#filterText').val().trim();
