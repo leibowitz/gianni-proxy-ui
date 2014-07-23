@@ -1,0 +1,77 @@
+{% extends "default.html" %}
+{% block title %}MockProxy - New request{% end %}
+{% block content %}
+  <div class="layout">
+    <div id="main">
+<div class="content">
+    <form class="pure-form" method="post" id="form">
+        
+    <div class="pure-form-aligned">
+
+    <div class="pure-control-group">
+    <label for="method">Method</label>
+    <input type="text" name="method" size="5" placeholder="GET" value="{% if method %}{{ method }}{% end %}" />
+    </div>
+    
+    <div class="pure-control-group">
+    <label for="url">Url</label>
+    <input type="text" name="url" size="35" placeholder="http://www.google.com" value="{% if url %}{{ url }}{% end %}" />
+    </div>
+
+    <div class="pure-control-group">
+    <label for="body">body</label>
+    <textarea name="body">{% if body %}{{ body }}{% end %}</textarea>
+    </div>
+
+</div>
+
+    <h3>Request Headers</h3>
+      <div id="header-group">
+      {% set x = 0 %}
+      {% for name, value in headers.iteritems() %}
+        <div class="pure-control-group">
+          <input type="text" name="header[{{ x }}][]" value="{{ name }}" />
+          <input type="text" name="header[{{ x }}][]" value="{{ value }}" />
+          <button name="delete">X</button>
+        </div>
+        {% set x = x + 1 %}
+
+      {% end %}
+
+      <div class="pure-control-group">
+        <input type="text" name="header[{{ x }}][]" value="" />
+        <input type="text" name="header[{{ x }}][]" value="" />
+        {% if x != 0 %}<button name="delete">X</button>{% end %}
+      </div>
+
+      </div>
+
+    <button type="submit" class="pure-button pure-button-primary">Send</button>
+    </form>
+  </div>
+</div>
+</div>
+      <div class="hidden" id="headers-template">
+        <input type="text" value="" />
+        <input type="text" value="" />
+        <button name="delete">X</button>
+      </div>
+  <script src="/static/jquery.min.js"></script>
+<script src="/static/headers.js"></script>
+  <script type="text/javascript">
+    $('#form').on('submit', function(evt){
+        /*evt.preventDefault();
+
+        $.ajax({
+            type: $('#form input[name="method"]').val(),
+            url: $('#form input[name="url"]').val(),
+            data: $('#form textarea[name="body"]').val(),
+            success: function(data, textstatus, jqXHR){
+                console.log('DONE');
+                console.log(data);
+            }
+        });*/
+      });
+  </script>
+{% end %}
+
