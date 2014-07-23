@@ -145,7 +145,7 @@ function createSocket(origin)
         return;
       }
       var row = $("<tr>" +
-            "<td>" + moment(msg['date']['$date']).tz("Europe/London").format(jsDateFormat) + "</td>" +
+            "<td>" + moment(msg['date']['$date']).tz("{{ tz.zone }}").format(jsDateFormat) + "</td>" +
             {% if not origin %}
             '<td class="compact-right">' + msg['request']['origin'] + "</td>" +
             {% end %}
