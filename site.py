@@ -286,7 +286,34 @@ def nice_body(body, content):
     #    #return json.dumps(json.loads(body), indent=4)
     #return body
 
-class MainHandler(tornado.web.RequestHandler):
+class BaseRequestHandler(tornado.web.RequestHandler):
+    def get_id(self, ident):
+        try:
+            oid = objectid.ObjectId(ident)
+        except objectid.InvalidId as e:
+            print e
+            self.send_error(500)
+            return None
+        return oid
+
+    def get_submitted_headers(self, fieldname):
+
+        headers = {}
+        x = 0
+
+        row = self.get_arguments(fieldname+'[' + str(x) + '][]', [])
+
+        while len(row) > 1:
+
+            if len(row[0].strip()) != 0:
+                headers[ row[0] ] = row[1]
+
+            row = self.get_arguments(fieldname+'[' + str(x) + '][]', [])
+            x += 1
+
+        return headers
+
+class MainHandler(BaseRequestHandler):
     @tornado.web.asynchronous
     @gen.engine
     def get(self):
@@ -325,7 +352,7 @@ class MainHandler(tornado.web.RequestHandler):
                 ip=proxyip, 
                 yourip=self.request.remote_ip)
 
-class OriginHandler(tornado.web.RequestHandler):
+class OriginHandler(BaseRequestHandler):
     @tornado.web.asynchronous
     @gen.engine
     def get(self, origin=None):
@@ -340,7 +367,7 @@ class OriginHandler(tornado.web.RequestHandler):
         #cursor.count(callback=get_numbers)
         self.render("list.html", items=reversed(entries), tz=TZ, host=None, origin=origin)
 
-class ViewHandler(tornado.web.RequestHandler):
+class ViewHandler(BaseRequestHandler):
 
     def is_text_content(self, headers):
         #print headers
@@ -369,12 +396,12 @@ class ViewHandler(tornado.web.RequestHandler):
         msgid = self.get_argument('msgid', None)        
         if msgid is not None:
             collection = self.settings['db'].proxyservice['log_messages']
-            entry = yield motor.Op(collection.find_one, {'_id': get_id(msgid)})
+            entry = yield motor.Op(collection.find_one, {'_id': self.get_id(msgid)})
             rulecollection = self.settings['db'].proxyservice['log_rules']
             if entry:
                 for ruleid, active in entry['rules'].iteritems():
                     print 'switching rule ', ruleid, ' to ', active
-                    rulecollection.update({'_id': get_id(ruleid)}, {'$set': {'active': active}})
+                    rulecollection.update({'_id': self.get_id(ruleid)}, {'$set': {'active': active}})
 
             
         self.write('done')
@@ -474,7 +501,7 @@ class ViewHandler(tornado.web.RequestHandler):
                 origin=origin,
                 host=host)
 
-class HostHandler(tornado.web.RequestHandler):
+class HostHandler(BaseRequestHandler):
     @tornado.web.asynchronous
     @gen.engine
     def get(self, host):
@@ -485,7 +512,7 @@ class HostHandler(tornado.web.RequestHandler):
         #cursor.count(callback=get_numbers)
         self.render("list.html", items=reversed(entries), tz=TZ, host=host, origin=None)
 
-class OriginHostHandler(tornado.web.RequestHandler):
+class OriginHostHandler(BaseRequestHandler):
     @tornado.web.asynchronous
     @gen.engine
     def get(self, origin, host):
@@ -496,7 +523,7 @@ class OriginHostHandler(tornado.web.RequestHandler):
         #cursor.count(callback=get_numbers)
         self.render("list.html", items=reversed(entries), tz=TZ, host=host, origin=origin)
 
-class RulesHandler(tornado.web.RequestHandler):
+class RulesHandler(BaseRequestHandler):
     def get(self):
         self.show_list()
 
@@ -538,44 +565,8 @@ class RulesHandler(tornado.web.RequestHandler):
 
         self.show_list()
 
-    def get_id(self, ident):
-        try:
-            oid = objectid.ObjectId(ident)
-        except objectid.InvalidId as e:
-            print e
-            self.send_error(500)
-            return None
-        return oid
 
-
-class RulesEditHandler(tornado.web.RequestHandler):
-
-    def get_submitted_headers(self, fieldname):
-
-        headers = {}
-
-        x = 0
-        row = self.get_arguments(fieldname+'[' + str(x) + '][]', [])
-
-        while len(row) > 1:
-
-            if len(row[0].strip()) != 0:
-                headers[ row[0] ] = row[1]
-
-            row = self.get_arguments(fieldname+'[' + str(x) + '][]', [])
-
-            x += 1
-
-        return headers
-
-    def get_id(self, ident):
-        try:
-            oid = objectid.ObjectId(ident)
-        except objectid.InvalidId as e:
-            print e
-            self.send_error(500)
-            return None
-        return oid
+class RulesEditHandler(BaseRequestHandler):
 
     @tornado.web.asynchronous
     @gen.engine
@@ -656,24 +647,7 @@ class RulesEditHandler(tornado.web.RequestHandler):
         self.redirect('/rules?' + urllib.urlencode(params))
 
 
-class RulesAddHandler(tornado.web.RequestHandler):
-
-    def get_submitted_headers(self, fieldname):
-
-        headers = {}
-        x = 0
-
-        row = self.get_arguments(fieldname+'[' + str(x) + '][]', [])
-
-        while len(row) > 1:
-
-            if len(row[0].strip()) != 0:
-                headers[ row[0] ] = row[1]
-
-            row = self.get_arguments(fieldname+'[' + str(x) + '][]', [])
-            x += 1
-
-        return headers
+class RulesAddHandler(BaseRequestHandler):
 
     @tornado.web.asynchronous
     @gen.engine
@@ -700,15 +674,6 @@ class RulesAddHandler(tornado.web.RequestHandler):
         else:
             entry = None
         self.render("ruleadd.html", tryagain=False, item=item, origin=origin, host=host, entry=entry, body=body, fmt=fmt, reqheaders=reqheaders, respheaders=respheaders)
-    
-    def get_id(self, ident):
-        try:
-            oid = objectid.ObjectId(ident)
-        except objectid.InvalidId as e:
-            print e
-            self.send_error(500)
-            return None
-        return oid
 
     def post(self):
         item = self.get_argument('item', None)
@@ -739,6 +704,7 @@ class RulesAddHandler(tornado.web.RequestHandler):
         reqheaders = reqheaders if reqheaders else False
 
         collection = self.settings['db'].proxyservice['log_rules']
+
         collection.insert({
             'active': True,
             'dynamic': dynamic,
@@ -765,7 +731,7 @@ class RulesAddHandler(tornado.web.RequestHandler):
             params['item'] = item
         self.redirect('/rules?' + urllib.urlencode(params))
 
-class RewritesHandler(tornado.web.RequestHandler):
+class RewritesHandler(BaseRequestHandler):
     def get(self):
         self.show_list()
 
@@ -805,16 +771,7 @@ class RewritesHandler(tornado.web.RequestHandler):
 
         self.show_list()
 
-    def get_id(self, ident):
-        try:
-            oid = objectid.ObjectId(ident)
-        except objectid.InvalidId as e:
-            print e
-            self.send_error(500)
-            return None
-        return oid
-
-class RewritesAddHandler(tornado.web.RequestHandler):
+class RewritesAddHandler(BaseRequestHandler):
 
 
     @tornado.web.asynchronous
@@ -830,15 +787,6 @@ class RewritesAddHandler(tornado.web.RequestHandler):
 
         self.render("rewriteadd.html", tryagain=False, origin=origin, host=host, item=item, entry=entry, ohost=None, dhost=None, protocol=None, dprotocol=None)
     
-    def get_id(self, ident):
-        try:
-            oid = objectid.ObjectId(ident)
-        except objectid.InvalidId as e:
-            print e
-            self.send_error(500)
-            return None
-        return oid
-
     def post(self):
         item = self.get_argument('item', None)
         origin = self.get_argument('origin', False)
@@ -874,16 +822,7 @@ class RewritesAddHandler(tornado.web.RequestHandler):
             params['item'] = item
         self.redirect('/rewrites?' + urllib.urlencode(params))
 
-class RewritesEditHandler(tornado.web.RequestHandler):
-
-    def get_id(self, ident):
-        try:
-            oid = objectid.ObjectId(ident)
-        except objectid.InvalidId as e:
-            print e
-            self.send_error(500)
-            return None
-        return oid
+class RewritesEditHandler(BaseRequestHandler):
 
     @tornado.web.asynchronous
     @gen.engine
