@@ -363,6 +363,22 @@ class ViewHandler(tornado.web.RequestHandler):
         return True
 
 
+    @tornado.web.asynchronous
+    @gen.coroutine
+    def post(self, ident):
+        msgid = self.get_argument('msgid', None)        
+        if msgid is not None:
+            collection = self.settings['db'].proxyservice['log_messages']
+            entry = yield motor.Op(collection.find_one, {'_id': get_id(msgid)})
+            rulecollection = self.settings['db'].proxyservice['log_rules']
+            if entry:
+                for ruleid, active in entry['rules'].iteritems():
+                    print 'switching rule ', ruleid, ' to ', active
+                    rulecollection.update({'_id': get_id(ruleid)}, {'$set': {'active': active}})
+
+            
+        self.write('done')
+
 
     @tornado.web.asynchronous
     @gen.engine
@@ -432,11 +448,22 @@ class ViewHandler(tornado.web.RequestHandler):
                 ctype = ctype if ctype is not None else 'application/x-www-form-urlencoded'
                 #if self.is_text_content(requestheaders)
                 requestbody = nice_body(requestbody, ctype)
+            else:
+                print 'nobody'
+        else:
+            print 'not reading body because maybe binary'
         #requestbody = nice_body(entry['request']['body'], requestheaders)
         #responsebody = nice_body(entry['response']['body'], responseheaders)
 
+        if entry['request']['method'] == 'GET':
+            collection = self.settings['db'].proxyservice['log_messages']
+            messages = yield collection.find({"host": entry['request']['host']}).sort('_id').to_list(100)
+        else:
+            messages = {}
+
         self.render("one.html", 
                 item=entry, 
+                messages=messages,
                 requestheaders=requestheaders, 
                 responseheaders=responseheaders,
                 requestbody=requestbody, 
