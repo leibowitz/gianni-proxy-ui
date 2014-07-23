@@ -338,7 +338,7 @@ class OriginHandler(tornado.web.RequestHandler):
         res = cursor.to_list(200)
         entries = yield res
         #cursor.count(callback=get_numbers)
-        self.render("list.html", items=reversed(entries), EST=EST, host=None, origin=origin)
+        self.render("list.html", items=reversed(entries), tz=TZ, host=None, origin=origin)
 
 class ViewHandler(tornado.web.RequestHandler):
 
@@ -456,7 +456,7 @@ class HostHandler(tornado.web.RequestHandler):
         res = cursor.to_list(200)
         entries = yield res
         #cursor.count(callback=get_numbers)
-        self.render("list.html", items=reversed(entries), EST=EST, host=host, origin=None)
+        self.render("list.html", items=reversed(entries), tz=TZ, host=host, origin=None)
 
 class OriginHostHandler(tornado.web.RequestHandler):
     @tornado.web.asynchronous
@@ -467,7 +467,7 @@ class OriginHostHandler(tornado.web.RequestHandler):
         res = cursor.to_list(200)
         entries = yield res
         #cursor.count(callback=get_numbers)
-        self.render("list.html", items=reversed(entries), EST=EST, host=host, origin=origin)
+        self.render("list.html", items=reversed(entries), tz=TZ, host=host, origin=origin)
 
 class RulesHandler(tornado.web.RequestHandler):
     def get(self):
@@ -933,7 +933,7 @@ def open_socket(name):
 
 
 if __name__ == "__main__":
-    EST = pytz.timezone('Europe/London')
+    TZ = pytz.timezone('Europe/London')
 
     handlers = [
         (r"/", MainHandler),

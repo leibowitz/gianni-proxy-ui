@@ -80,7 +80,7 @@
 {% for num, item in enumerate(items) %}
 <tr {% if num % 2 == 0 %}class="stripped"{% end %}>
     <td>
-      {{ item['date'].astimezone(EST).strftime('%H:%M:%S') }}
+      {{ item['date'].astimezone(tz).strftime('%H:%M:%S') }}
     </td>
     {% if not origin %}
     <td class="compact-right">
