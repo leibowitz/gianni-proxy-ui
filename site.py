@@ -721,6 +721,8 @@ class RulesAddHandler(BaseRequestHandler):
             entry = None
         self.render("ruleadd.html", tryagain=False, item=item, origin=origin, host=host, entry=entry, body=body, fmt=fmt, reqheaders=reqheaders, respheaders=respheaders)
 
+    @tornado.web.asynchronous
+    @gen.coroutine
     def post(self):
         item = self.get_argument('item', None)
         origin = cleanarg(self.get_argument('origin', False), False)
@@ -751,7 +753,7 @@ class RulesAddHandler(BaseRequestHandler):
 
         collection = self.settings['db'].proxyservice['log_rules']
 
-        collection.insert({
+        yield motor.Op(collection.insert, {
             'active': True,
             'dynamic': dynamic,
             'host': rhost,
