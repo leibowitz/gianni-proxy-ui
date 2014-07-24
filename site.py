@@ -85,14 +85,49 @@ def get_format(content):
 
     return None
 
-class MySocket(SockJSConnection):
+class BaseRequestHandler(tornado.web.RequestHandler):
+    def get_id(self, ident):
+        try:
+            oid = objectid.ObjectId(ident)
+        except objectid.InvalidId as e:
+            print e
+            self.send_error(500)
+            return None
+        return oid
+
+    def get_submitted_headers(self, fieldname):
+
+        headers = {}
+        x = 0
+
+        row = self.get_arguments(fieldname+'[' + str(x) + '][]', [])
+
+        while len(row) > 1:
+
+            if len(row[0].strip()) != 0:
+                headers[ row[0] ] = row[1]
+
+            row = self.get_arguments(fieldname+'[' + str(x) + '][]', [])
+            x += 1
+
+        return headers
+
+    @staticmethod
+    def s_nice_headers(headers = {}):
+        return dict(map(lambda (k,v): (k, v[0] if type(v) is list else v), headers.iteritems()))
+    
+    def nice_headers(self, headers):
+        return BaseRequestHandler.s_nice_headers(headers)
+
+class BaseSockJSConnection(SockJSConnection, BaseRequestHandler):
     #db = motor.MotorClient('mongodb://localhost:17017').proxyservice
 
-    def __init__(self, session):
-        super(MySocket, self).__init__(session)
+    #def __init__(self, session):
+    #    super(BaseSockJSConnection, self).__init__(session)
+    pass
 
 
-class EchoConnection(SockJSConnection):
+class EchoConnection(BaseSockJSConnection):
 
     #is_connection_alive = True
     listeners = set()
@@ -147,6 +182,7 @@ class EchoConnection(SockJSConnection):
                     # uuid is a binary field, change it to string
                     # before sending it via websocket
                     result['uuid'] = get_uuid(result)
+                    result['request']['headers'] = EchoConnection.s_nice_headers(result['request']['headers'])
 
                     msg = json.dumps(result, separators=(',', ':'), default=json_util.default)
                     #msg = proto.json_encode(result)
@@ -155,7 +191,7 @@ class EchoConnection(SockJSConnection):
                     #listener = EchoConnection.listeners[0]
                     listener.broadcast(EchoConnection.listeners, msg)
 
-class BodyConnection(SockJSConnection):
+class BodyConnection(BaseSockJSConnection):
     filet = None
     position = 0
 
@@ -226,13 +262,12 @@ class BodyConnection(SockJSConnection):
         #if self.filet != None:
         #    print self.filet
 
-class HijackConnection(SockJSConnection):
+class HijackConnection(BaseSockJSConnection):
 
     def on_open(self, info):
         self.info = info
         uuid = self.session.name
         self.sock = open_socket(uuid)
-        #print self, data
         pass
         
     def on_message(self, msg):
@@ -255,9 +290,6 @@ class HijackConnection(SockJSConnection):
 
 def get_numbers(ret, error):
     pass
-
-def nice_headers(headers):
-    return dict(map(lambda (k,v): (k, v[0] if type(v) is list else v), headers.iteritems()))
 
 def array_headers(headers):
     return {k: [v] for k, v in headers.iteritems()}
@@ -287,32 +319,6 @@ def nice_body(body, content):
     #    #return json.dumps(json.loads(body), indent=4)
     #return body
 
-class BaseRequestHandler(tornado.web.RequestHandler):
-    def get_id(self, ident):
-        try:
-            oid = objectid.ObjectId(ident)
-        except objectid.InvalidId as e:
-            print e
-            self.send_error(500)
-            return None
-        return oid
-
-    def get_submitted_headers(self, fieldname):
-
-        headers = {}
-        x = 0
-
-        row = self.get_arguments(fieldname+'[' + str(x) + '][]', [])
-
-        while len(row) > 1:
-
-            if len(row[0].strip()) != 0:
-                headers[ row[0] ] = row[1]
-
-            row = self.get_arguments(fieldname+'[' + str(x) + '][]', [])
-            x += 1
-
-        return headers
 
 class RequestHandler(BaseRequestHandler):
     @tornado.web.asynchronous
@@ -327,7 +333,7 @@ class RequestHandler(BaseRequestHandler):
             collection = self.settings['db'].proxyservice['log_logentry']
             entry = yield motor.Op(collection.find_one, {'_id': self.get_id(itemid)})
             if entry and entry['request']:
-                headers = nice_headers(entry['request']['headers'])
+                headers = self.nice_headers(entry['request']['headers'])
                 url = entry['request']['url'] if 'url' in entry['request'] else (entry['request']['scheme'] if 'scheme' in entry['request'] else '') + entry['request']['host'] + entry['request']['path']
                 method = entry['request']['method']
 
@@ -342,7 +348,7 @@ class RequestHandler(BaseRequestHandler):
         method = self.get_argument('method', 'GET')
         if not url:
             self.send_error(500)
-        headers = nice_headers(headers)
+        headers = self.nice_headers(headers)
         target = urlparse.urlparse(url)
         params = {}
 
@@ -378,7 +384,7 @@ class MainHandler(BaseRequestHandler):
         entries = {}
         for host in hosts:
             request = yield collection.find_one({'request.origin':host}, {"request.headers":1})
-            entries[host] = find_agent(get_header(nice_headers(request['request']['headers']), 'User-Agent'))
+            entries[host] = find_agent(get_header(self.nice_headers(request['request']['headers']), 'User-Agent'))
 
         # if proxyhost was set when starting, use it
         # otherwise determine host/ip by looking at the Host request header
@@ -469,8 +475,8 @@ class ViewHandler(BaseRequestHandler):
 
         requestquery = nice_body(entry['request']['query'], 'application/x-www-form-urlencoded')
         #print entry['request']['headers']
-        requestheaders = nice_headers(entry['request']['headers'])
-        responseheaders = nice_headers(entry['response']['headers'])
+        requestheaders = self.nice_headers(entry['request']['headers'])
+        responseheaders = self.nice_headers(entry['response']['headers'])
         requestbody = None
         responsebody = None
 
@@ -621,10 +627,10 @@ class RulesEditHandler(BaseRequestHandler):
         host = self.get_argument('host', None)
         reqheaders = entry['reqheaders'] if entry and 'reqheaders' in entry else {}
         respheaders = entry['respheaders'] if entry and 'respheaders' in entry else {}
-        fmt = get_format(get_content_type(nice_headers(respheaders))) if respheaders else None
+        fmt = get_format(get_content_type(self.nice_headers(respheaders))) if respheaders else None
         #print array_headers(respheaders)
-        respheaders = nice_headers(respheaders) if respheaders else respheaders
-        reqheaders = nice_headers(reqheaders) if reqheaders else reqheaders
+        respheaders = self.nice_headers(respheaders) if respheaders else respheaders
+        reqheaders = self.nice_headers(reqheaders) if reqheaders else reqheaders
         self.render("ruleedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=False, body=None, fmt=fmt, reqheaders=reqheaders, respheaders=respheaders)
     
     @tornado.web.asynchronous
@@ -652,8 +658,8 @@ class RulesEditHandler(BaseRequestHandler):
         fmt = get_format(get_content_type(respheaders)) if respheaders else None
 
         if not rhost and not path and not query and not status:
-            respheaders = nice_headers(respheaders)
-            reqheaders = nice_headers(reqheaders)
+            respheaders = self.nice_headers(respheaders)
+            reqheaders = self.nice_headers(reqheaders)
             self.render("ruleedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=True, body=body, fmt=fmt, reqheaders=reqheaders, respheaders=respheaders)
             return
 
@@ -707,8 +713,8 @@ class RulesAddHandler(BaseRequestHandler):
                 body = yield get_gridfs_content(fs, entry['response']['fileid'])
                 
                 if entry:
-                    reqheaders = nice_headers(entry['request']['headers'])
-                    respheaders = nice_headers(entry['response']['headers'])
+                    reqheaders = self.nice_headers(entry['request']['headers'])
+                    respheaders = self.nice_headers(entry['response']['headers'])
                     fmt = get_format(get_content_type(respheaders)) if respheaders else None
 
         else:
@@ -979,6 +985,7 @@ if __name__ == "__main__":
 
     db = motor.MotorClient('mongodb://'+options.mongourl, tz_aware=True)
 
+    ui_methods={'nice_headers': BaseRequestHandler.nice_headers}
     settings = dict(
         handlers=handlers,
         static_path=os.path.join(os.path.dirname(__file__), 'static'),
@@ -986,7 +993,8 @@ if __name__ == "__main__":
         template_path=os.path.join(os.path.dirname(__file__), "templates"),
         proxyhost=options.proxyhost,
         proxyport=options.proxyport,
-        debug=True
+        debug=True,
+        ui_methods=ui_methods
     )               
 
     application = tornado.web.Application(
