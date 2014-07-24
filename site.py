@@ -639,6 +639,8 @@ class RulesEditHandler(BaseRequestHandler):
         item = self.get_argument('item', None)
         origin = cleanarg(self.get_argument('origin', False), False)
         host = self.get_argument('host', None)
+        active = self.get_argument('active', False)
+        active = active if active is False else True
 
         rhost = cleanarg(self.get_argument('rhost'), False)
         path = cleanarg(self.get_argument('path'), False)
@@ -667,7 +669,7 @@ class RulesEditHandler(BaseRequestHandler):
 
         collection = self.settings['db'].proxyservice['log_rules']
         collection.update({'_id': self.get_id(ident)}, {
-            'active': True,
+            'active': active,
             'dynamic': dynamic,
             'host': rhost,
             'path': path,

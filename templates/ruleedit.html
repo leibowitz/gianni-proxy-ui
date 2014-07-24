@@ -28,6 +28,11 @@
     </div>
 
     <div class="pure-form-aligned">
+        
+    <div class="pure-control-group">
+    <label for="active">Active</label>
+    <input type="checkbox" name="active" {% if entry['active'] %}checked="checked"{% end %} />
+    </div>
       
     <div class="pure-control-group">
     <label for="origin">Origin</label>
