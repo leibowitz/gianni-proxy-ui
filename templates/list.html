@@ -247,7 +247,12 @@ $('#onClear').on('click', function(evt){
 $('#filterForm').on('submit', function(evt){
     evt.preventDefault();
     var shost = $('#filterText').val().trim();
+    var idx = shost.indexOf('://');
+    if (idx != -1) {
+        shost = shost.substr(idx+3);
+    }
     if (shost.length != 0) {
+      shost = encodeURIComponent(shost);
       if(origin) {
         document.location.href='/origin/'+origin+'/host/'+shost;
       } else {
