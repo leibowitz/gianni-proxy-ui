@@ -125,10 +125,14 @@ function scrollToBottom(){
   $("html, body").animate({ scrollTop: $(document).height() });
 }
 
+var retries = 0;
+
 function createSocket(origin)
 {
   sock = new SockJS('/listener');
   sock.onopen = function() {
+      setStatus(true);
+      retries = 0;
       sock.send(JSON.stringify({"filterOrigin":origin}));
   };
   sock.onmessage = function(e) {
@@ -174,25 +178,41 @@ function createSocket(origin)
       }
   };
   sock.onclose = function() {
-      sock = null;
-      $('#onPlayPause').text('Start Recording');
-      document.title = 'MockProxy{% if origin %} - {{ origin }}{% end %} (not listening)';
+      setStatus(false);
+      if (sock != null) {
+        sock = null;
+        console.log('Socket closed, retried: ' + retries + ' times');
+        if (retries < 3) {
+            console.log('Going to retry connection in 10s');
+            retries += 1;
+            setTimeout(function(){
+              createSocket(origin);
+            }, 5000);
+        }
+      }
   };
 }
 createSocket(origin);
 
+function setStatus(status) {
+  if (!status) {
+    $('#onPlayPause').text('Start Recording');
+    document.title = 'MockProxy{% if origin %} - {{ origin }}{% end %} (not listening)';
+  } else {
+    $('#onPlayPause').text('Stop Recording');
+    document.title = '● Recording {% if origin %}{{ origin }}{% end %}';
+  }
+}
+
 $('#onPlayPause').on('click', function(evt){
   if (sock != null) {
     if (sock.readyState < SockJS.CLOSING) {
-      sock.close();
+        var b = sock;
+        sock = null;
+        b.close();
     }
-    sock = null;
-    $(this).text('Start Recording');
-    document.title = 'MockProxy{% if origin %} - {{ origin }}{% end %} (not listening)';
   } else {
     createSocket(origin);
-    $(this).text('Stop Recording');
-    document.title = '● Recording {% if origin %}{{ origin }}{% end %}';
   }
 });
 function setHidden(row, s)
