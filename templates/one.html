@@ -136,7 +136,8 @@ function createHijackSocket(uuid)
     }
     chan.send(content+"\n")
     editor.getSession().setValue();
-    var msgid = $(this).find('input[name=id]').val();
+    var $input = $(this).find('input[name=id]');
+    var msgid = $input.val();
     if (msgid.length != 0) {
         console.log('this is a message, calling the rules associated with it');
         $.ajax({
@@ -147,6 +148,8 @@ function createHijackSocket(uuid)
                 console.log(data);
             }
         });
+        // reset the msg id
+        $input.val('');
     }
   });
 }
