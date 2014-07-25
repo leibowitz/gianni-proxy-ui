@@ -14,11 +14,13 @@
     {% if host is not None %}
     <input type="hidden" name="host" value="{{ host }}" />
     {% end %}
-    {% if origin %}
-    <input type="hidden" name="origin" value="{{ origin }}" />
-    {% end %}
 
     <div class="pure-form-aligned">
+
+    <div class="pure-control-group">
+    <label for="origin">Origin</label>
+    <input type="text" name="origin" size="35" placeholder="IP of client" value="{% if origin %}{{ origin }}{% end %}" />
+    </div>
 
     <h2>Destination</h2>
     <div class="pure-control-group">

@@ -53,7 +53,7 @@
     </td>
     {% if not origin %}
     <td>
-      {% if 'origin' in row %}{{ row['origin'] }}{% end %}
+        {% if 'origin' in row and row['origin'] %}<a href="/rewrites?origin={{ row['origin'] }}">{{ row['origin'] }}</a>{% end %}
     </td>
     {% end %}
     <td>

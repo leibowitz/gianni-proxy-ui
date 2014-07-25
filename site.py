@@ -839,6 +839,8 @@ class RewritesAddHandler(BaseRequestHandler):
 
         self.render("rewriteadd.html", tryagain=False, origin=origin, host=host, item=item, entry=entry, ohost=None, dhost=None, protocol=None, dprotocol=None)
     
+    @tornado.web.asynchronous
+    @gen.coroutine
     def post(self):
         item = self.get_argument('item', None)
         origin = self.get_argument('origin', False)
@@ -855,7 +857,7 @@ class RewritesAddHandler(BaseRequestHandler):
             return
 
         collection = self.settings['db'].proxyservice['log_hostrewrite']
-        collection.insert({
+        yield motor.Op(collection.insert, {
             'active': True,
             'host': ohost,
             'dhost': dhost,
@@ -902,6 +904,9 @@ class RewritesEditHandler(BaseRequestHandler):
         protocol = cleanarg(self.get_argument('protocol'), False)
         dprotocol = cleanarg(self.get_argument('dprotocol'), False)
 
+        active = self.get_argument('active', False)
+        active = active if active is False else True
+
         collection = self.settings['db'].proxyservice['log_hostrewrite']
         entry = yield motor.Op(collection.find_one, {'_id': self.get_id(ident)})
 
@@ -911,7 +916,7 @@ class RewritesEditHandler(BaseRequestHandler):
 
         collection = self.settings['db'].proxyservice['log_hostrewrite']
         collection.update({'_id': self.get_id(ident)}, {
-            'active': True,
+            'active': active,
             'host': ohost,
             'dhost': dhost,
             'origin': origin,

@@ -82,7 +82,7 @@
     </td>
     {% if not origin %}
     <td>
-        <a href="/rules?origin={{ row['origin'] }}">{{ row['origin'] }}</a>
+        {% if row['origin'] %}<a href="/rules?origin={{ row['origin'] }}">{{ row['origin'] }}</a>{% end %}
     </td>
     {% end %}
     <td>
