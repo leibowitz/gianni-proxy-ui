@@ -154,7 +154,7 @@ createHijackSocket(uuid);
 {% for msg in messages %}
 $('#msg-{{ msg['_id'] }}').on('click', function(){
     var editor = ace.edit("iace-message");
-    editor.getSession().setValue("{{ msg['message'].replace('"', '\\"') }}");
+    editor.getSession().setValue("{{ msg['message'] }}");
     $('#format').trigger('click');
     $('#form').find('input[name=id]').val('{{ msg['_id'] }}');
 });

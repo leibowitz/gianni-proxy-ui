@@ -531,6 +531,8 @@ class ViewHandler(BaseRequestHandler):
         if entry['request']['method'] == 'GET':
             collection = self.settings['db'].proxyservice['log_messages']
             messages = yield collection.find({"host": entry['request']['host']}).sort('_id').to_list(100)
+            for msg in messages:
+                msg['message'] = re.escape(msg['message'])
         else:
             messages = {}
 
