@@ -965,6 +965,7 @@ if __name__ == "__main__":
         (r"/origin/(?P<origin>[^\/]+)/host/(?P<host>[^\/]+)", OriginHostHandler),
         (r"/item/(?P<ident>[^\/]+)", ViewHandler),
         (r"/host/(?P<host>[^\/]+)", HostHandler),
+        (r"/request", RequestHandler),
         (r"/rules", RulesHandler),
         (r"/rules/add", RulesAddHandler),
         (r"/rule/(?P<ident>[^\/]+)", RulesEditHandler),
