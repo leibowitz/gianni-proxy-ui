@@ -607,7 +607,25 @@ class MessagesHandler(BaseRequestHandler):
 
         self.show_list()
 
-class MessagesAddHandler(BaseRequestHandler):
+class MessagesRulesHandler(BaseRequestHandler):
+    def get_rules(self):
+        x = 0
+        rid = self.get_argument('rules_ids[' + str(x) + ']', None)
+        rstate = self.get_argument('rules_states[' + str(x) + ']', False)
+        rstate = False if rstate == False else True
+        rules = []
+        
+        while rid is not None:
+            rules.append([rid, rstate])
+            x = x + 1
+            rid = self.get_argument('rules_ids[' + str(x) + ']', None)
+            rstate = self.get_argument('rules_states[' + str(x) + ']', False)
+            rstate = False if rstate == False else True
+
+        return dict([[rid, rstate] for rid, rstate in rules if rid])
+
+
+class MessagesAddHandler(MessagesRulesHandler):
 
     @tornado.web.asynchronous
     @gen.engine
@@ -624,7 +642,7 @@ class MessagesAddHandler(BaseRequestHandler):
 
         else:
             entry = None
-        self.render("messageadd.html", tryagain=False, item=item, origin=origin, host=host, entry=entry, body=body)
+        self.render("messageadd.html", tryagain=False, item=item, origin=origin, host=host, entry=entry, body=body, rules={})
 
     @tornado.web.asynchronous
     @gen.coroutine
@@ -632,19 +650,19 @@ class MessagesAddHandler(BaseRequestHandler):
         item = self.get_argument('item', None)
         origin = cleanarg(self.get_argument('origin', False), False)
         host = self.get_argument('host', None)
-
         body = cleanarg(self.get_argument('body'), False)
+        rules = self.get_rules()
 
         if not body or not host:
-            self.render("messageadd.html", tryagain=True, item=item, origin=origin, host=host, entry=None, body=body)
+            self.render("messageadd.html", tryagain=True, item=item, origin=origin, host=host, entry=None, body=body, rules=rules)
             return
 
         collection = self.settings['db'].proxyservice['log_messages']
 
         yield motor.Op(collection.insert, {
             'host': host,
-            'message': body
-            # need to add rules
+            'message': body,
+            'rules': rules
         })
 
         params = {}
@@ -657,7 +675,7 @@ class MessagesAddHandler(BaseRequestHandler):
             params['item'] = item
         self.redirect('/messages?' + urllib.urlencode(params))
 
-class MessagesEditHandler(BaseRequestHandler):
+class MessagesEditHandler(MessagesRulesHandler):
 
     @tornado.web.asynchronous
     @gen.engine
@@ -667,10 +685,11 @@ class MessagesEditHandler(BaseRequestHandler):
         if not entry:
             raise tornado.web.HTTPError(404)
 
+        rules = entry['rules'] if 'rules' in entry else {}
         item = self.get_argument('item', None)
         host = self.get_argument('host', None)
         origin = self.get_argument('origin', None)
-        self.render("messageedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=False, body=None)
+        self.render("messageedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=False, body=None, rules=rules)
     
     @tornado.web.asynchronous
     @gen.engine
@@ -679,16 +698,19 @@ class MessagesEditHandler(BaseRequestHandler):
         origin = cleanarg(self.get_argument('origin', False), False)
         host = self.get_argument('host', None)
         body = cleanarg(self.get_argument('body'), False)
+        rules = self.get_rules()
 
         if not body or not host:
-            self.render("messageedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=True, body=body)
+            self.render("messageedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=True, body=body, rules=rules)
             return
 
         collection = self.settings['db'].proxyservice['log_messages']
+
         collection.update({'_id': self.get_id(ident)}, {
             "$set": {
                 'host': host,
-                'message': body
+                'message': body,
+                'rules': rules
             }
         })
 
