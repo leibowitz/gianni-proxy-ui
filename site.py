@@ -444,7 +444,7 @@ class ViewHandler(BaseRequestHandler):
             collection = self.settings['db'].proxyservice['log_messages']
             entry = yield motor.Op(collection.find_one, {'_id': self.get_id(msgid)})
             rulecollection = self.settings['db'].proxyservice['log_rules']
-            if entry:
+            if entry and 'rules' in entry:
                 for ruleid, active in entry['rules'].iteritems():
                     print 'switching rule ', ruleid, ' to ', active
                     rulecollection.update({'_id': self.get_id(ruleid)}, {'$set': {'active': active}})
