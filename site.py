@@ -571,6 +571,137 @@ class OriginHostHandler(BaseRequestHandler):
         #cursor.count(callback=get_numbers)
         self.render("list.html", items=reversed(entries), tz=TZ, host=host, origin=origin)
 
+class MessagesHandler(BaseRequestHandler):
+    def get(self):
+        self.show_list()
+
+    @tornado.web.asynchronous
+    @gen.engine
+    def show_list(self):
+        item = self.get_argument('item', None)
+        origin = self.get_argument('origin', None)
+        host = self.get_argument('host', None)
+        
+        query = {}
+
+        if origin:
+            query['origin'] = {'$in': [origin, None]}
+        if host:
+            query['host'] = {'$in': [host, None]}
+        # merge all conditions with an and
+        if len(query) > 1:
+            query = {'$and': map(lambda x: {x[0]: x[1]}, query.iteritems())}
+
+        collection = self.settings['db'].proxyservice['log_messages']
+        cursor = collection.find(query).sort([('origin', 1), ('host', 1)])
+        res = cursor.to_list(100)
+        entries = yield res
+        self.render("messages.html", items=entries, item=item, origin=origin, host=host)
+
+    def post(self):
+        collection = self.settings['db'].proxyservice['log_messages']
+        ident = self.get_argument('ident', None)
+        action = self.get_argument('action', None)
+        if action == "delete":
+            collection.remove({'_id': self.get_id(ident)})
+
+        self.show_list()
+
+class MessagesAddHandler(BaseRequestHandler):
+
+    @tornado.web.asynchronous
+    @gen.engine
+    def get(self):
+        item = self.get_argument('item', None)
+        origin = self.get_argument('origin', None)
+        host = self.get_argument('host', None)
+        body = None
+        if item:
+            collection = self.settings['db'].proxyservice['log_logentry']
+            entry = yield motor.Op(collection.find_one, {'_id': self.get_id(item)})
+            if entry:
+                pass
+
+        else:
+            entry = None
+        self.render("messageadd.html", tryagain=False, item=item, origin=origin, host=host, entry=entry, body=body)
+
+    @tornado.web.asynchronous
+    @gen.coroutine
+    def post(self):
+        item = self.get_argument('item', None)
+        origin = cleanarg(self.get_argument('origin', False), False)
+        host = self.get_argument('host', None)
+
+        body = cleanarg(self.get_argument('body'), False)
+
+        if not body or not host:
+            self.render("messageadd.html", tryagain=True, item=item, origin=origin, host=host, entry=None, body=body)
+            return
+
+        collection = self.settings['db'].proxyservice['log_messages']
+
+        yield motor.Op(collection.insert, {
+            'host': host,
+            'message': body
+            # need to add rules
+        })
+
+        params = {}
+        if origin:
+            params['origin'] = origin
+        # this is required otherwise we will filter out this rule after the redirect
+        #if host and host == rhost:
+        #    params['host'] = host
+        if item:
+            params['item'] = item
+        self.redirect('/messages?' + urllib.urlencode(params))
+
+class MessagesEditHandler(BaseRequestHandler):
+
+    @tornado.web.asynchronous
+    @gen.engine
+    def get(self, ident):
+        collection = self.settings['db'].proxyservice['log_messages']
+        entry = yield motor.Op(collection.find_one, {'_id': self.get_id(ident)})
+        if not entry:
+            raise tornado.web.HTTPError(404)
+
+        item = self.get_argument('item', None)
+        host = self.get_argument('host', None)
+        origin = self.get_argument('origin', None)
+        self.render("messageedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=False, body=None)
+    
+    @tornado.web.asynchronous
+    @gen.engine
+    def post(self, ident):
+        item = self.get_argument('item', None)
+        origin = cleanarg(self.get_argument('origin', False), False)
+        host = self.get_argument('host', None)
+        body = cleanarg(self.get_argument('body'), False)
+
+        if not body or not host:
+            self.render("messageedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=True, body=body)
+            return
+
+        collection = self.settings['db'].proxyservice['log_messages']
+        collection.update({'_id': self.get_id(ident)}, {
+            "$set": {
+                'host': host,
+                'message': body
+            }
+        })
+
+        params = {}
+        if origin:
+            params['origin'] = origin
+        # this is required otherwise we will filter out this rule after the redirect
+        #if host and host == rhost:
+        #    params['host'] = host
+        if item:
+            params['item'] = item
+        self.redirect('/messages?' + urllib.urlencode(params))
+
 class RulesHandler(BaseRequestHandler):
     def get(self):
         self.show_list()
@@ -966,6 +1097,9 @@ if __name__ == "__main__":
         (r"/item/(?P<ident>[^\/]+)", ViewHandler),
         (r"/host/(?P<host>[^\/]+)", HostHandler),
         (r"/request", RequestHandler),
+        (r"/messages", MessagesHandler),
+        (r"/messages/add", MessagesAddHandler),
+        (r"/message/(?P<ident>[^\/]+)", MessagesEditHandler),
         (r"/rules", RulesHandler),
         (r"/rules/add", RulesAddHandler),
         (r"/rule/(?P<ident>[^\/]+)", RulesEditHandler),
