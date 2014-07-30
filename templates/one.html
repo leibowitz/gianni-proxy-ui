@@ -81,6 +81,10 @@
 <script src="/static/sockjs-0.3.min.js"></script>
 <script src="/static/jquery.min.js"></script>
 <script src="/static/multiplex.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js" type="text/javascript"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ext-modelist.js" type="text/javascript"></script>
+<script src="/static/editor.js"></script>
+<script src="/static/formatjson.js"></script>
 <script type="text/javascript">
 function createSocket()
 {
@@ -162,20 +166,9 @@ $('#msg-{{ msg['_id'] }}').on('click', function(){
     $('#form').find('input[name=id]').val('{{ msg['_id'] }}');
 });
 {% end %}
-  $('#format').on('click', function(evt){
-    var editor = ace.edit("iace-message");
-    var content = editor.getSession().getValue().trim().replace(/\n/g, '');
-    console.log(content);
-    try {
-      content = JSON.stringify(JSON.parse(content), null, '\t');
-      editor.getSession().setValue(content);
-    } catch (e) {
-    console.log(e);
-    }
-  });
+$('#format').on('click', function(evt){
+  formatJsonContent("iace-message");
+});
 </script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js" type="text/javascript"></script>
-<script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ext-modelist.js" type="text/javascript"></script>
-<script src="/static/editor.js"></script>
 {% end %}
 {% end %}
