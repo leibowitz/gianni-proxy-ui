@@ -45,7 +45,7 @@
 <button id="format">FORMAT</button>
 <br/>
 {% for msg in messages %}
-<button id="msg-{{ msg['_id'] }}">{{ msg['name'] }}</button>
+<button id="msg-{{ msg['_id'] }}">{% if 'name' in msg %}{{ msg['name'] }}{% else %}{{ msg['_id'] }}{% end %}</button>
 {% end %}
 <form method="post" id="form">
   <input type="hidden" name="id" value="" />

@@ -16,6 +16,11 @@
     <h2>Message</h2>
 
     <div class="pure-form-aligned">
+    
+    <div class="pure-control-group">
+    <label for="name">Name</label>
+    <input type="text" name="name" size="35" {% if name %}value="{{ name }}"{% end %} placeholder="Message 1" />
+    </div>
 
     <div class="pure-control-group">
     <label for="host">Host</label>

@@ -642,7 +642,7 @@ class MessagesAddHandler(MessagesRulesHandler):
 
         else:
             entry = None
-        self.render("messageadd.html", tryagain=False, item=item, origin=origin, host=host, entry=entry, body=body, rules={})
+        self.render("messageadd.html", tryagain=False, item=item, origin=origin, host=host, entry=entry, body=body, rules={}, name=None)
 
     @tornado.web.asynchronous
     @gen.coroutine
@@ -650,17 +650,19 @@ class MessagesAddHandler(MessagesRulesHandler):
         item = self.get_argument('item', None)
         origin = cleanarg(self.get_argument('origin', False), False)
         host = self.get_argument('host', None)
+        name = self.get_argument('name', None)
         body = cleanarg(self.get_argument('body'), False)
         rules = self.get_rules()
 
         if not body or not host:
-            self.render("messageadd.html", tryagain=True, item=item, origin=origin, host=host, entry=None, body=body, rules=rules)
+            self.render("messageadd.html", tryagain=True, item=item, origin=origin, host=host, entry=None, body=body, rules=rules, name=name)
             return
 
         collection = self.settings['db'].proxyservice['log_messages']
 
         yield motor.Op(collection.insert, {
             'host': host,
+            'name': name,
             'message': body,
             'rules': rules
         })
@@ -688,8 +690,9 @@ class MessagesEditHandler(MessagesRulesHandler):
         rules = entry['rules'] if 'rules' in entry else {}
         item = self.get_argument('item', None)
         host = self.get_argument('host', None)
+        name = self.get_argument('name', None)
         origin = self.get_argument('origin', None)
-        self.render("messageedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=False, body=None, rules=rules)
+        self.render("messageedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=False, body=None, rules=rules, name=name)
     
     @tornado.web.asynchronous
     @gen.engine
@@ -697,11 +700,12 @@ class MessagesEditHandler(MessagesRulesHandler):
         item = self.get_argument('item', None)
         origin = cleanarg(self.get_argument('origin', False), False)
         host = self.get_argument('host', None)
+        name = self.get_argument('name', None)
         body = cleanarg(self.get_argument('body'), False)
         rules = self.get_rules()
 
         if not body or not host:
-            self.render("messageedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=True, body=body, rules=rules)
+            self.render("messageedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=True, body=body, rules=rules, name=name)
             return
 
         collection = self.settings['db'].proxyservice['log_messages']
@@ -709,6 +713,7 @@ class MessagesEditHandler(MessagesRulesHandler):
         collection.update({'_id': self.get_id(ident)}, {
             "$set": {
                 'host': host,
+                'name': name,
                 'message': body,
                 'rules': rules
             }

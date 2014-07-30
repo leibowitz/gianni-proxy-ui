@@ -20,6 +20,11 @@
     <h2>Message</h2>
 
     <div class="pure-form-aligned">
+
+    <div class="pure-control-group">
+    <label for="name">Name</label>
+    <input type="text" name="name" size="35" placeholder="Message 1" value="{% if 'name' in entry %}{{ entry['name'] }}{% end %}" />
+    </div>
         
     <div class="pure-control-group">
     <label for="host">Host</label>
