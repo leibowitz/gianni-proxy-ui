@@ -116,6 +116,8 @@ class BaseRequestHandler(tornado.web.RequestHandler):
 
     @staticmethod
     def s_nice_headers(headers = {}):
+        if not headers:
+            return {}
         return dict(map(lambda (k,v): (k, v[0] if type(v) is list else v), headers.iteritems()))
     
     def nice_headers(self, headers):
@@ -815,7 +817,7 @@ class RulesEditHandler(BaseRequestHandler):
         reqheaders = self.get_submitted_headers('reqheader')
         respheaders = self.get_submitted_headers('respheader')
 
-        dynamic = True if response is False else False
+        dynamic = True if response is False and body is False and not respheaders else False
 
         collection = self.settings['db'].proxyservice['log_rules']
         entry = yield motor.Op(collection.find_one, {'_id': self.get_id(ident)})
@@ -911,7 +913,7 @@ class RulesAddHandler(BaseRequestHandler):
         delay = int(cleanarg(self.get_argument('delay', 0), 0))
         body = cleanarg(self.get_argument('body'), False)
 
-        dynamic = True if response is False else False
+        dynamic = True if response is False and body is False and not respheaders else False
         
         reqheaders = self.get_submitted_headers('reqheader')
         respheaders = self.get_submitted_headers('respheader')
