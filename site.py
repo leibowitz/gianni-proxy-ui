@@ -306,7 +306,10 @@ def nice_body(body, content):
         return body
     try:
         if 'application/x-www-form-urlencoded' in content:
-            args = collections.OrderedDict(sorted(urlparse.parse_qsl(body)))
+            parsedbody = urlparse.parse_qsl(body)
+            if body and not parsedbody:
+                return body
+            args = collections.OrderedDict(sorted(parsedbody))
             params = "\n".join([k + "=" + v for k, v in args.iteritems()])
             return highlight(params, IniLexer(), HtmlFormatter(cssclass='codehilite'))
         if 'json' in content:
