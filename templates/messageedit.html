@@ -33,7 +33,7 @@
 
     <div class="pure-control-group">
     <label for="body">Content</label>
-    <textarea rows="10" style="width:100%" data-editor="" name="body" placeholder="Text">{% if entry['message'] %}{{ entry['message'] }}{% end %}</textarea>
+    <textarea id="message" rows="10" style="width:100%" data-editor="" name="body" placeholder="Text">{% if entry['message'] %}{{ entry['message'] }}{% end %}</textarea>
     </div>
 
     </div>
@@ -94,4 +94,10 @@
 <script src="/static/jquery-ui.js"></script>
 <script src="/static/editor.js"></script>
 <script src="/static/rules.js"></script>
+<script src="/static/formatjson.js"></script>
+<script type="text/javascript">
+$(document).ready(function(evt){
+  formatJsonContent("iace-message");
+});
+</script>
 {% end %}
