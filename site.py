@@ -520,9 +520,15 @@ class ViewHandler(BaseRequestHandler):
                 #ctype = responseheaders['Content-Type']
                 #responsebody = nice_body(responsebody, ctype)
 
+        cmd = 'curl' 
+        cmd = cmd + ' -X ' + entry['request']['method']
+        for key, value in requestheaders.iteritems():
+            cmd = cmd + ' -H "' + key + ': ' + value + '" '
+
         if 'fileid' in entry['request'] and not self.is_binary(requestheaders):
             requestbody = yield get_gridfs_content(fs, entry['request']['fileid'])
             if requestbody:
+                cmd = cmd + ' -d "' + requestbody + '"'
                 ctype = get_content_type(requestheaders)
                 # default to x-www-form-urlencoded
                 ctype = ctype if ctype is not None else 'application/x-www-form-urlencoded'
@@ -535,6 +541,8 @@ class ViewHandler(BaseRequestHandler):
         #requestbody = nice_body(entry['request']['body'], requestheaders)
         #responsebody = nice_body(entry['response']['body'], responseheaders)
 
+        cmd = cmd + ' ' + entry['request']['url']
+
         if entry['request']['method'] == 'GET':
             collection = self.settings['db'].proxyservice['log_messages']
             messages = yield collection.find({"host": entry['request']['host']}).sort('_id').to_list(100)
@@ -545,6 +553,7 @@ class ViewHandler(BaseRequestHandler):
 
         self.render("one.html", 
                 item=entry, 
+                cmd=cmd,
                 messages=messages,
                 requestheaders=requestheaders, 
                 responseheaders=responseheaders,
