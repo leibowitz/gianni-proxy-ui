@@ -87,7 +87,7 @@
     
       <div class="pure-control-group">
         <label for="delay">Delay</label>
-        <input type="text" name="delay" size="10" placeholder="seconds" value="{% if entry and entry['delay'] %}{{ entry['delay'] }}{% end %}" /> in seconds
+        <input type="text" name="delay" size="10" placeholder="seconds" value="{% if entry and 'delay' in entry %}{{ entry['delay'] }}{% end %}" /> in seconds
       </div>
 
     </div>
