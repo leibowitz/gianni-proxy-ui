@@ -10,6 +10,7 @@
   {% if item is not None %}
     <a class="pure-button" href="/item/{{ item }}?{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}">Back to Request</a>
   {% end %}
+  <a class="pure-button" href="/rules/add?ruleid={{ entry['_id'] }}">Copy rule</a>
   <h1 class="content-subhead">Edit Rule</h1>
   <form class="pure-form" method="post">
     {% if host is not None %}
@@ -41,22 +42,22 @@
 
     <div class="pure-control-group">
     <label for="host">Host</label>
-    <input type="text" name="rhost" size="35" placeholder="google.com" value="{% if entry['host'] != False %}{{ entry['host'] }}{% end %}" />
+    <input type="text" name="rhost" size="35" placeholder="google.com" value="{% if entry['host'] %}{{ entry['host'] }}{% end %}" />
     </div>
 
     <div class="pure-control-group">
     <label for="path">Path</label>
-    <input type="text" name="path" size="35" placeholder="/path/to" value="{% if entry['path'] != False %}{{ entry['path'] }}{% end %}" />
+    <input type="text" name="path" size="35" placeholder="/path/to" value="{% if entry['path'] %}{{ entry['path'] }}{% end %}" />
     </div>
 
     <div class="pure-control-group">
     <label for="query">Query</label>
-    <input type="text" name="query" size="35" placeholder="query=1" value="{% if entry['query'] != False %}{{ entry['query'] }}{% end %}" />
+    <input type="text" name="query" size="35" placeholder="query=1" value="{% if entry['query'] %}{{ entry['query'] }}{% end %}" />
     </div>
 
     <div class="pure-control-group">
     <label for="method">Method</label>
-    <input type="text" name="method" size="10" placeholder="GET" value="{% if entry['method'] != False %}{{ entry['method'] }}{% end %}" />
+    <input type="text" name="method" size="10" placeholder="GET" value="{% if entry['method'] %}{{ entry['method'] }}{% end %}" />
     </div>
 
     </div>

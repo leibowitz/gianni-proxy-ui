@@ -863,12 +863,14 @@ class RulesAddHandler(BaseRequestHandler):
     @gen.engine
     def get(self):
         item = self.get_argument('item', None)
+        ruleid = self.get_argument('ruleid', None)
         origin = self.get_argument('origin', None)
         host = self.get_argument('host', None)
         body = None
         fmt = None
         reqheaders = {}
         respheaders = {}
+        entry = None
         if item:
             collection = self.settings['db'].proxyservice['log_logentry']
             entry = yield motor.Op(collection.find_one, {'_id': self.get_id(item)})
@@ -880,9 +882,17 @@ class RulesAddHandler(BaseRequestHandler):
                     reqheaders = self.nice_headers(entry['request']['headers'])
                     respheaders = self.nice_headers(entry['response']['headers'])
                     fmt = get_format(get_content_type(respheaders)) if respheaders else None
+                    status = entry['response']['status']
+                    entry = entry['request']
+                    entry['status'] = status
+        elif ruleid:
+            collection = self.settings['db'].proxyservice['log_rules']
+            entry = yield motor.Op(collection.find_one, {'_id': self.get_id(ruleid)})
+            respheaders = self.nice_headers(entry['respheaders'])
+            reqheaders = self.nice_headers(entry['reqheaders'])
+            body = entry['body']
+            fmt = get_format(get_content_type(respheaders)) if respheaders else None
 
-        else:
-            entry = None
         self.render("ruleadd.html", tryagain=False, item=item, origin=origin, host=host, entry=entry, body=body, fmt=fmt, reqheaders=reqheaders, respheaders=respheaders)
 
     @tornado.web.asynchronous

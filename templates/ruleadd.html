@@ -29,27 +29,27 @@
 
     <div class="pure-control-group">
     <label for="origin">Origin</label>
-    <input type="text" name="origin" size="35" placeholder="IP of client" value="{% if origin %}{{ origin }}{% end %}" />
+    <input type="text" name="origin" size="35" placeholder="IP of client" value="{% if origin %}{{ origin }}{% elif entry and entry['origin'] %}{{ entry['origin'] }}{% end %}" />
     </div>
 
     <div class="pure-control-group">
     <label for="host">Host</label>
-    <input type="text" name="rhost" size="35" {% if host %}value="{{ host }}"{% elif entry %}value="{{ entry['request']['host'] }}"{% end %} placeholder="google.com" />
+    <input type="text" name="rhost" size="35" {% if host %}value="{{ host }}"{% elif entry and entry['host'] %}value="{{ entry['host'] }}"{% end %} placeholder="google.com" />
     </div>
 
     <div class="pure-control-group">
     <label for="path">Path</label>
-    <input type="text" name="path" size="35" placeholder="/path/to" {% if entry %}value="{{ entry['request']['path'] }}"{% end %} />
+    <input type="text" name="path" size="35" placeholder="/path/to" {% if entry and entry['path'] %}value="{{ entry['path'] }}"{% end %} />
     </div>
 
     <div class="pure-control-group">
     <label for="query">Query</label>
-    <input type="text" name="query" size="35" placeholder="query=1" {% if entry %}value="{{ entry['request']['query'] }}"{% end %} />
+    <input type="text" name="query" size="35" placeholder="query=1" {% if entry and entry['query'] %}value="{{ entry['query'] }}"{% end %} />
     </div>
 
     <div class="pure-control-group">
     <label for="method">Method</label>
-    <input type="text" name="method" size="10" placeholder="GET" {% if entry %}value="{{ entry['request']['method'] }}"{% end %} />
+    <input type="text" name="method" size="10" placeholder="GET" {% if entry and entry['method'] %}value="{{ entry['method'] }}"{% end %} />
     </div>
 
     </div>
@@ -82,12 +82,12 @@
 
       <div class="pure-control-group">
         <label for="status">Status</label>
-        <input type="text" name="status" size="10" placeholder="200" {% if entry %}value="{{ entry['response']['status'] }}"{% end %} />
+        <input type="text" name="status" size="10" placeholder="200" {% if entry and entry['status'] %}value="{{ entry['status'] }}"{% end %} />
       </div>
     
       <div class="pure-control-group">
         <label for="delay">Delay</label>
-        <input type="text" name="delay" size="10" placeholder="seconds" value="" /> in seconds
+        <input type="text" name="delay" size="10" placeholder="seconds" value="{% if entry and entry['delay'] %}{{ entry['delay'] }}{% end %}" /> in seconds
       </div>
 
     </div>
