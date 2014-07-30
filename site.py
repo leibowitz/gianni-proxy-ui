@@ -1128,6 +1128,8 @@ def open_socket(name):
         print "Socket does not exist", filepath
         return None
 
+    sock.setblocking(0)
+
     # Connect the socket to the port where the server is listening
     print >>sys.stderr, 'connecting to %s' % filepath
     try:
