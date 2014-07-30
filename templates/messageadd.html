@@ -27,7 +27,7 @@
     <input type="text" name="host" size="35" {% if host %}value="{{ host }}"{% elif entry %}value="{{ entry['request']['host'] }}"{% end %} placeholder="google.com" />
     </div>
 
-    <textarea id="message" rows="10" style="width:100%" data-editor="" name="body" placeholder="body content">{% if body %}{{ body }}{% end %}</textarea>
+    <textarea id="message" rows="10" style="width:100%" data-editor="json" name="body" placeholder="body content">{% if body %}{{ body }}{% end %}</textarea>
       <div id="rules-group">
       {% set x = 0 %}
       {% for ruleid, enabled in rules.iteritems() %}
