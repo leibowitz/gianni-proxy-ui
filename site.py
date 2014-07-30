@@ -913,10 +913,10 @@ class RulesAddHandler(BaseRequestHandler):
         delay = int(cleanarg(self.get_argument('delay', 0), 0))
         body = cleanarg(self.get_argument('body'), False)
 
-        dynamic = True if response is False and body is False and not respheaders else False
         
         reqheaders = self.get_submitted_headers('reqheader')
         respheaders = self.get_submitted_headers('respheader')
+        dynamic = True if response is False and body is False and not respheaders else False
         fmt = get_format(get_content_type(respheaders)) if respheaders else None
 
         if not rhost and not path and not query and not status:
