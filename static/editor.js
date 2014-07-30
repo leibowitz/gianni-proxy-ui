@@ -22,14 +22,6 @@ $(function () {
         textarea.css('visibility', 'hidden').css('width', '0').css('height', '0');
 
         var editor = ace.edit(editDiv[0]);
-        editor.on('paste', function(s, ed){
-            setTimeout(function(){
-                try{
-                    ed.getSession().setValue(JSON.stringify(JSON.parse(s.text), null, '\t'));
-                } catch (e) {
-                }
-            }, 10);
-        });
 
         // https://github.com/ajaxorg/ace/tree/master/lib/ace/theme
         editor.setTheme('ace/theme/tomorrow');
