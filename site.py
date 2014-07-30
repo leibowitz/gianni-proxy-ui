@@ -511,7 +511,6 @@ class ViewHandler(BaseRequestHandler):
                     else:
                         responsebody = nice_body(responsebody, get_content_type(responseheaders))
             else:
-                print filepath
                 if 'text/plain' in get_content_type(responseheaders):
                     lines = open(filepath).readlines()
                     responsebody = get_body_non_empty_lines(lines, 'application/json')
