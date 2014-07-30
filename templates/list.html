@@ -122,10 +122,19 @@ var eOrigin = $('#origin');
 var origin = eOrigin.length != 0 ? eOrigin.val().trim() : undefined;
 var host = $('#host').val().trim();
 var sock;
-function scrollToBottom(){
-  $("html, body").animate({ scrollTop: $(document).height() });
+function scrollToBottom(duration){
+  if (duration == undefined) {
+    duration = 400;
+  }
+  $("html, body").animate({ scrollTop: $(document).height() }, duration);
 }
 
+function getScrollHeight()
+{
+  return Math.abs(window.innerHeight + $(window).scrollTop() - $(window).height());
+}
+
+var scrollTimeout;
 var retries = 0;
 
 function createSocket(origin)
@@ -137,9 +146,6 @@ function createSocket(origin)
       sock.send(JSON.stringify({"filterOrigin":origin}));
   };
   sock.onmessage = function(e) {
-      // Use a threshold to avoid difference of a few pixels causing problems
-      var threshold = 30;
-      var shouldScroll = Math.abs(window.innerHeight + $(window).scrollTop() - $(window).height()) < threshold;
       var msg = JSON.parse(e.data);
       if (origin && msg['request']['origin'] != origin) {
         // ignore this as we are not looking at this origin now
@@ -167,14 +173,22 @@ function createSocket(origin)
             "</a></td>" +
             "</tr>");
       var text = $('#filterText').val().trim();
+
       if (filterRow(row, text)) {
         setHidden(row, true).appendTo("table > tbody");
       } else {
-        setHidden(row, false).appendTo("table > tbody");
+        setHidden(row, false);
+
+        var sizeDiff = getScrollHeight();
+
+        row.appendTo("table > tbody");
         setStripedClass(row);
 
-        if (shouldScroll) {
-          scrollToBottom();
+        // Use a threshold to avoid difference of a few pixels causing problems
+        var threshold = 30;
+        var shouldScroll = sizeDiff < threshold;
+        if (shouldScroll && doNotScroll == null) {
+            scrollToBottom(0);
         }
       }
   };
@@ -281,7 +295,24 @@ $('#filterForm').on('submit', function(evt){
       }
     }
   });
-    scrollToBottom();
+
+scrollToBottom();
+var lastScrollTop = $(window).scrollTop();
+var doNotScroll = null;
+    
+$(window).scroll(function(evt){
+    var currentScroll = $(window).scrollTop();
+    if (currentScroll < lastScrollTop){
+        if (doNotScroll != null) {
+            clearTimeout(doNotScroll);
+        }
+        doNotScroll = setTimeout(function(){
+            doNotScroll = null;
+        }, 1000);
+    }
+    lastScrollTop = currentScroll;
+});
+
 })();
 </script>
 {% end %}
