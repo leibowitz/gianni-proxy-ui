@@ -2,6 +2,9 @@
 {% block title %}● Recording {% if origin %}{{ origin }}{% end %}{% end %}
 {% block stylesheets %}
 <style type="text/css">
+  .open-close {
+    cursor: pointer;
+  }
   .fixed {
     background-color: white;
     border: 2px solid;
@@ -59,6 +62,7 @@
 
 <table class="pure-table pure-table-horizontal">
   <thead>
+    <th></th>
     <th>
       Time
     </th>
@@ -79,7 +83,10 @@
   </thead>
   <tbody>
 {% for num, item in enumerate(items) %}
-<tr {% if num % 2 == 0 %}class="stripped"{% end %}>
+<tr {% if num % 2 == 0 %}class="stripped"{% end %} id="row-{{ num }}">
+    <td>
+        <span class="open-close closed" name="open">&gt;</span>
+    </td>
     <td>
       {{ item['date'].astimezone(tz).strftime('%H:%M:%S') }}
     </td>
@@ -100,6 +107,11 @@
       </a>
     </td>
   </tr>
+  <tr id="info-{{ num }}" class="hidden">
+      <td colspan="{% if not origin %}6{% else %}5{% end %}">
+      <div>{{ nice_headers(item['request']['headers']) }}</div>
+    </td>
+  </tr>
 {% end %}
   </tbody>
 </table>
@@ -114,6 +126,7 @@
 <script src="/static/moment-timezone-data.js"></script>
 <script src="/static/jquery.min.js"></script>
 <script src="/static/purl.js"></script>
+<script src="/static/select.js"></script>
 <script type="text/javascript">
 (function(){
 // The format that date will be displayed with
@@ -156,6 +169,7 @@ function createSocket(origin)
         return;
       }
       var row = $("<tr>" +
+            "<td>" + "<span class='open-close closed' name='open'>&gt;</span>" + "</td>" +
             "<td>" + moment(msg['date']['$date']).tz("{{ tz.zone }}").format(jsDateFormat) + "</td>" +
             {% if not origin %}
             '<td class="compact-right"><a href="/origin/' + msg['request']['origin'] + '">' + msg['request']['origin'] + "</a></td>" +
@@ -172,10 +186,19 @@ function createSocket(origin)
             ( msg['request']['path'].length > 50 ? msg['request']['path'].substr(0, 50) + '...' : msg['request']['path'] ) + 
             "</a></td>" +
             "</tr>");
+          var infoRow = $("<tr class='hidden'><td colspan='" + "{% if not origin %}6{% else %}5{% end %}" + "'>" +
+              "<div>" + 
+              JSON.stringify(msg['request']['headers']) + 
+              "</div>" +
+              "</td></tr>");
       var text = $('#filterText').val().trim();
+      var rows = $('table > tbody > tr[id^=row]');
+      row.attr('id', 'row-' + rows.length);
+      infoRow.attr('id', 'info-' + rows.length);
 
       if (filterRow(row, text)) {
         setHidden(row, true).appendTo("table > tbody");
+        infoRow.appendTo("table > tbody");
       } else {
         setHidden(row, false);
 
@@ -183,6 +206,7 @@ function createSocket(origin)
 
         row.appendTo("table > tbody");
         setStripedClass(row);
+        infoRow.appendTo("table > tbody");
 
         // Use a threshold to avoid difference of a few pixels causing problems
         var threshold = 30;
@@ -245,24 +269,25 @@ $('#filterText').on('keyup', function(evt){
     var text = $('#filterText').val().trim();
     if (text.length > 0) {
       var row;
-      $('table > tbody > tr').each(function(){
+      $('table > tbody > tr[id^=row]').each(function(){
         row = $(this);
         if (filterRow(row, text)) {
           setHidden(row, true);
+          setHidden(row.next(), true);
         } else {
           setHidden(row, false);
           setStripedClass(row);
         }
       });
     } else {
-      $('table > tbody > tr').removeAttr('class');
+      $('table > tbody > tr[id^=row]').removeAttr('class');
       refreshStrip();
     }
     // Scroll to bottom
     scrollToBottom();
 });
 function refreshStrip(){
-  $('table > tbody > tr').each(function(index, row){
+  $('table > tbody > tr[id^=row]').each(function(index, row){
       setStripedClass($(row));
       });
 }
@@ -311,6 +336,27 @@ $(window).scroll(function(evt){
         }, 1000);
     }
     lastScrollTop = currentScroll;
+});
+
+$(document).on('click', 'table > tbody > tr[id^=row] td span[name=open]', function(evt){
+    if (evt.target.nodeName == 'A') {
+        return;
+    }
+    var st = Kolich.Selector.getSelected();
+    if (st && st.toString().length != 0) {
+        return;
+    }
+    var $this = $(this);
+    var $tr = $this.closest('tr');
+    var $span = $tr.next();
+    if ($span.length != 0) {
+        $span.toggleClass('hidden');
+        if ($span.hasClass('hidden')) {
+            $this.text('>').removeClass('open').addClass('closed');
+        } else {
+            $this.text('X').removeClass('closed').addClass('open');
+        }
+    }
 });
 
 })();
