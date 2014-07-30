@@ -122,12 +122,20 @@ function createHijackSocket(uuid)
   };
   hisock.onclose = function() {
       console.log('close');
+      $('#form').hide();
       hisock = null;
   };
   chan.onopen = function() {
   }
   chan.onclose = function() {
     chan = null;
+      $('#form').hide();
+  }
+  chan.onmessage = function(e) {
+      if (e.data == "error") {
+          // couldn't open the socket - probably it's dead
+          $('#form').hide();
+      }
   }
   
   $('#form').on('submit', function(evt){

@@ -285,7 +285,11 @@ class HijackConnection(BaseSockJSConnection):
             print >>sys.stderr, 'sending "%s"' % msg
             self.sock.sendall(msg)
         except Exception as e:
+            print >>sys.stderr, 'error "%s"' % e
+            self.close()
             pass
+        if not self.sock:
+            self.send("error")
         
     def on_close(self):
         self.sock.close()
