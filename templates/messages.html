@@ -22,6 +22,9 @@
 <table class="pure-table pure-table-horizontal pure-table-striped">
   <thead>
     <th>
+      Name
+    </th>
+    <th>
       Host
     </th>
     <th>
@@ -30,6 +33,9 @@
   <tbody>
 {% for row in items %}
   <tr>
+    <td>
+        {% if 'name' in row %}{{ row['name'] }}{% else %}{{ row['_id'] }}{% end %}
+    </td>
     <td>
       <a href="/message/{{ row['_id'] }}?{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}{% if item is not None %}&amp;item={{ item }}{% end %}">
       {{ row['host'] }}
