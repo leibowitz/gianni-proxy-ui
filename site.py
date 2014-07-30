@@ -756,7 +756,7 @@ class RulesHandler(BaseRequestHandler):
 
         #collection = self.settings['db']['log_logentry'].open_sync()
         collection = self.settings['db'].proxyservice['log_rules']
-        cursor = collection.find(query)
+        cursor = collection.find(query).sort([('origin', 1), ('host', 1), ('path', 1)])
         res = cursor.to_list(100)
         entries = yield res
         #cursor.count(callback=get_numbers)
