@@ -30,6 +30,8 @@ from multiplex import MultiplexConnection
 import re
 
 def find_agent(useragent):
+    if not useragent:
+        return None
     ismatch = re.search("\((?P<agent>[^\)]+)\)", useragent)
     if ismatch:
         parts = ismatch.groupdict()['agent'].split('; ')
@@ -40,7 +42,7 @@ def find_agent(useragent):
     return useragent
 
 def cleanarg(arg, default=None):
-    if arg is None:
+    if not arg:
         return default
     arg = arg.strip()
     if arg == '':
