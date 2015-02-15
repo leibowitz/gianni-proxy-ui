@@ -16,6 +16,8 @@
         <li><a class="pure-button" href="/rewrites/add?item={{ item['_id'] }}{% if origin is not None %}&origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&host={{ host }}{% end %}">Host Rewrite</a></li>
     </ul>
 </div>
+
+<div class="url">
 <h2 class="content-subhead">Request</h2>
 {{ item['request']['method'] }}
 {{ item['response']['status'] }}
@@ -24,11 +26,14 @@
 {% if requestquery %}
 {{ requestquery }}
 {% end %}
+</div>
 
-<table class="pure-table pure-table-horizontal pure-table-bordered">
+<button id="curl">Curl command</button>
+
+<table class="pure-table pure-table-horizontal pure-table-bordered headers">
 {% for key, value in requestheaders.iteritems() %}
   <tr>
-    <td>
+    <td class="key">
   {{ key }}
     </td>
     <td>
@@ -43,9 +48,8 @@
 </div>
 {% end %}
 
-<button id="curl">Curl command</button>
 <div id="curl-cmd" class="hidden">
-<pre>
+<pre class="curl">
 {{ cmd }}
 </pre>
 </div>
@@ -63,10 +67,10 @@
   <button id="send">Send</button>
 </form>
 {% end %}
-<table class="pure-table pure-table-horizontal pure-table-bordered">
+<table class="pure-table pure-table-horizontal pure-table-bordered headers">
 {% for key, value in responseheaders.iteritems() %}
   <tr>
-    <td>
+    <td class="key">
   {{ key }}
     </td>
     <td>
