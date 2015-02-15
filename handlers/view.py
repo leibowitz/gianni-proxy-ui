@@ -131,7 +131,12 @@ class ViewHandler(BaseRequestHandler):
 
                     ctype = None
 
-                cmd = cmd + ' -d ' + util.QuoteForPOSIX(requestbody)
+                bodyparam = util.QuoteForPOSIX(requestbody)
+                try:
+                    cmd = cmd + ' -d ' + bodyparam
+                except Exception as e:
+                    print e
+
                 requestbody = util.nice_body(requestbody, ctype)
         #requestbody = util.nice_body(entry['request']['body'], requestheaders)
         #responsebody = util.nice_body(entry['response']['body'], responseheaders)
