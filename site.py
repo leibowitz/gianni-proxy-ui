@@ -29,6 +29,8 @@ from pygments.formatters import HtmlFormatter
 import tempfile
 from multiplex import MultiplexConnection
 import re
+import StringIO
+import gzip
 
 def QuoteForPOSIX(string):
     '''quote a string so it can be used as an argument in a  posix shell
@@ -48,6 +50,11 @@ def QuoteForPOSIX(string):
     '''
 
     return "\\'".join("'" + p + "'" for p in string.split("'"))
+
+def ungzip(s):
+    data = StringIO.StringIO(s)
+    gzipper = gzip.GzipFile(fileobj=data)
+    return gzipper.read()
 
 def find_agent(useragent):
     if not useragent:
@@ -87,6 +94,9 @@ def get_uuid(entry):
 
 def get_content_type(headers):
     return get_header(headers, 'Content-Type')
+
+def get_content_encoding(headers):
+    return get_header(headers, 'Content-Encoding')
 
 def get_header(headers, key, default=None):
     return headers[key] if key in headers else default
@@ -556,6 +566,11 @@ class ViewHandler(BaseRequestHandler):
                 # default to x-www-form-urlencoded
                 ctype = ctype if ctype is not None else 'application/x-www-form-urlencoded'
                 #if self.is_text_content(requestheaders)
+
+                if get_content_encoding(requestheaders) == 'gzip':
+                    requestbody = ungzip(requestbody)
+
+                    ctype = None
 
                 cmd = cmd + ' -d ' + QuoteForPOSIX(requestbody)
                 requestbody = nice_body(requestbody, ctype)
