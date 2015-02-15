@@ -306,13 +306,15 @@ def get_body_non_empty_lines(lines, ctype = 'application/json'):
     return '\n'.join(map(lambda line: nice_body(line, ctype), filter(None, map(lambda line: line.strip(), lines)))) if len(lines) != 0 else []
 
 def nice_body(body, content):
+    if not body:
+        return None
     if content is None:
-        return body
+        return tornado.escape.xhtml_escape(body)
     try:
         if 'application/x-www-form-urlencoded' in content:
             parsedbody = urlparse.parse_qsl(body)
             if body and not parsedbody:
-                return body
+                return tornado.escape.xhtml_escape(body)
             args = collections.OrderedDict(sorted(parsedbody))
             params = "\n".join([k + "=" + v for k, v in args.iteritems()])
             return highlight(params, IniLexer(), HtmlFormatter(cssclass='codehilite'))
@@ -321,10 +323,9 @@ def nice_body(body, content):
 
         ctype, chars = parse_media_type(content, with_parameters=False)
         lex = get_lexer_for_mimetype('/'.join(filter(None, ctype)))
-        print lex
         return highlight(body, lex, HtmlFormatter(cssclass='codehilite'))
     except Exception as e:
-        return body
+        return tornado.escape.xhtml_escape(body)
     #if headers != None and 'Content-Type' in headers and headers['Content-Type'].split(';')[0] == 'application/json':
     #    return highlight(body, JsonLexer(), HtmlFormatter())
     #    #return json.dumps(json.loads(body), indent=4)
