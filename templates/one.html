@@ -42,6 +42,14 @@
 {{ requestbody }}
 </div>
 {% end %}
+
+<button id="curl">Curl command</button>
+<div id="curl-cmd" class="hidden">
+<pre>
+{{ cmd }}
+</pre>
+</div>
+
 <h2 class="content-subhead">Response</h2>
 {% if not finished %}
 <button id="format">FORMAT</button>
@@ -181,4 +189,9 @@ $('#format').on('click', function(evt){
 });
 </script>
 {% end %}
+<script type="text/javascript">
+$('#curl').on('click', function(evt){
+    $('#curl-cmd').toggleClass('hidden');
+});
+</script>
 {% end %}
