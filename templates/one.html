@@ -37,7 +37,11 @@
   {{ key }}
     </td>
     <td>
-  {{ value }}
+  {% if key == 'Cookie' %}
+    {% raw value %}
+  {% else %}
+    {{ value }}
+  {% end %}
     </td>
   </tr>
 {% end %}

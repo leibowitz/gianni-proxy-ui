@@ -115,6 +115,8 @@ class ViewHandler(BaseRequestHandler):
         cmd = cmd + ' -X ' + entry['request']['method']
         for key, value in requestheaders.iteritems():
             cmd = cmd + ' -H ' + util.QuoteForPOSIX(key + ': ' + value)
+            if key == 'Cookie':
+                requestheaders[key] = util.nice_body(value, 'application/x-www-form-urlencoded')
 
         if 'fileid' in entry['request'] and not self.is_binary(requestheaders):
             requestbody = yield util.get_gridfs_content(fs, entry['request']['fileid'])
