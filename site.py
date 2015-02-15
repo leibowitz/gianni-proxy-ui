@@ -30,6 +30,25 @@ import tempfile
 from multiplex import MultiplexConnection
 import re
 
+def QuoteForPOSIX(string):
+    '''quote a string so it can be used as an argument in a  posix shell
+
+       According to: http://www.unix.org/single_unix_specification/
+          2.2.1 Escape Character (Backslash)
+
+          A backslash that is not quoted shall preserve the literal value
+          of the following character, with the exception of a <newline>.
+
+          2.2.2 Single-Quotes
+
+          Enclosing characters in single-quotes ( '' ) shall preserve
+          the literal value of each character within the single-quotes.
+          A single-quote cannot occur within single-quotes.
+
+    '''
+
+    return "\\'".join("'" + p + "'" for p in string.split("'"))
+
 def find_agent(useragent):
     if not useragent:
         return None
@@ -528,16 +547,17 @@ class ViewHandler(BaseRequestHandler):
         cmd = 'curl' 
         cmd = cmd + ' -X ' + entry['request']['method']
         for key, value in requestheaders.iteritems():
-            cmd = cmd + ' -H "' + key + ': ' + value + '" '
+            cmd = cmd + ' -H ' + QuoteForPOSIX(key + ': ' + value)
 
         if 'fileid' in entry['request'] and not self.is_binary(requestheaders):
             requestbody = yield get_gridfs_content(fs, entry['request']['fileid'])
             if requestbody:
-                cmd = cmd + ' -d "' + requestbody + '"'
                 ctype = get_content_type(requestheaders)
                 # default to x-www-form-urlencoded
                 ctype = ctype if ctype is not None else 'application/x-www-form-urlencoded'
                 #if self.is_text_content(requestheaders)
+
+                cmd = cmd + ' -d ' + QuoteForPOSIX(requestbody)
                 requestbody = nice_body(requestbody, ctype)
             else:
                 print 'nobody'
@@ -546,7 +566,7 @@ class ViewHandler(BaseRequestHandler):
         #requestbody = nice_body(entry['request']['body'], requestheaders)
         #responsebody = nice_body(entry['response']['body'], responseheaders)
 
-        cmd = cmd + ' ' + entry['request']['url']
+        cmd = cmd + ' ' + QuoteForPOSIX(entry['request']['url'])
 
         if entry['request']['method'] == 'GET':
             collection = self.settings['db'].proxyservice['log_messages']
