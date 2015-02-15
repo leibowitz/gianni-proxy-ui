@@ -1,123 +1,25 @@
-import collections
 from tornado.ioloop import IOLoop, PeriodicCallback
 from tornado.options import OptionParser
 import requests
 import tornado.web
 from tornado import gen
 from datetime import datetime, timedelta
-import socket
-import uuid
 import motor
-import mimes
-import httpheader
 import json
 import urlparse
 import urllib
 import pytz
 import pymongo
-import gridfs
 import os
 import sys
-import time
 from sockjs.tornado import SockJSRouter, SockJSConnection
-import sockjs
-from sockjs.tornado.periodic import Callback
 from bson import json_util, objectid
-from pygments.util import ClassNotFound
-from pygments import highlight
-from pygments.lexers import JsonLexer, TextLexer, IniLexer, get_lexer_for_mimetype
-from pygments.formatters import HtmlFormatter
 import tempfile
 from multiplex import MultiplexConnection
 import re
-import StringIO
-import gzip
-import magic
 
-def QuoteForPOSIX(string):
-    '''quote a string so it can be used as an argument in a  posix shell
+from shared import util
 
-       According to: http://www.unix.org/single_unix_specification/
-          2.2.1 Escape Character (Backslash)
-
-          A backslash that is not quoted shall preserve the literal value
-          of the following character, with the exception of a <newline>.
-
-          2.2.2 Single-Quotes
-
-          Enclosing characters in single-quotes ( '' ) shall preserve
-          the literal value of each character within the single-quotes.
-          A single-quote cannot occur within single-quotes.
-
-    '''
-
-    return "\\'".join("'" + p + "'" for p in string.split("'"))
-
-def ungzip(s):
-    data = StringIO.StringIO(s)
-    gzipper = gzip.GzipFile(fileobj=data)
-    return gzipper.read()
-
-def find_agent(useragent):
-    if not useragent:
-        return None
-    ismatch = re.search("\((?P<agent>[^\)]+)\)", useragent)
-    if ismatch:
-        parts = ismatch.groupdict()['agent'].split('; ')
-        if len(parts) == 1:
-            return parts[0]
-        elif len(parts) > 1:
-            return parts[1]
-    return useragent
-
-def cleanarg(arg, default=None):
-    if not arg:
-        return default
-    arg = arg.strip()
-    if arg == '':
-        return default
-    elif arg == '*':
-        return True
-    return arg
-    
-@gen.coroutine
-def get_gridfs_content(fs, ident):
-    data = None
-    try:
-        gridout = yield fs.get(ident)
-        if gridout:
-            data = yield gridout.read()
-    except Exception as e:
-        print e
-    raise gen.Return(data)
-
-def get_uuid(entry):
-    return str(uuid.UUID(bytes=entry['uuid'])) if 'uuid' in entry else None
-
-def get_content_type(headers):
-    return get_header(headers, 'Content-Type')
-
-def get_content_encoding(headers):
-    return get_header(headers, 'Content-Encoding')
-
-def get_header(headers, key, default=None):
-    return headers[key] if key in headers else default
-
-
-# http://www.iana.org/assignments/media-types/media-types.xhtml
-# http://en.wikipedia.org/wiki/Internet_media_type#Type_text
-def get_format(content):
-    if content is None:
-        return None
-    mtype = mimes.MIMEType.from_string(content)
-    if mtype.format:
-        return mtype.format
-    elif mtype.type == u"text":
-        return mtype.subtype
-    elif mtype.type == "application" and mtype.subtype in ["json", "xml"]:
-        return mtype.subtype
-
-    return None
 
 class BaseRequestHandler(tornado.web.RequestHandler):
     def get_id(self, ident):
@@ -217,7 +119,7 @@ class EchoConnection(BaseSockJSConnection):
                     #print 'sending to listener ', listener
                     # uuid is a binary field, change it to string
                     # before sending it via websocket
-                    result['uuid'] = get_uuid(result)
+                    result['uuid'] = util.get_uuid(result)
                     result['request']['headers'] = EchoConnection.s_nice_headers(result['request']['headers'])
 
                     msg = json.dumps(result, separators=(',', ':'), default=json_util.default)
@@ -282,7 +184,7 @@ class BodyConnection(BaseSockJSConnection):
             return
 
         try:
-            data = nice_body(data, 'application/json')
+            data = util.nice_body(data, 'application/json')
             self.send(data)
             #json.dumps(json.loads(data), indent=4)
         except Exception as e:
@@ -303,7 +205,7 @@ class HijackConnection(BaseSockJSConnection):
     def on_open(self, info):
         self.info = info
         uuid = self.session.name
-        self.sock = open_socket(uuid)
+        self.sock = util.open_socket(uuid)
         pass
         
     def on_message(self, msg):
@@ -326,49 +228,6 @@ class HijackConnection(BaseSockJSConnection):
     def on_close(self):
         self.sock.close()
         print "done"
-
-
-def get_numbers(ret, error):
-    pass
-
-def array_headers(headers):
-    return {k: [v] for k, v in headers.iteritems()}
-
-def get_body_non_empty_lines(lines, ctype = 'application/json'):
-    return '\n'.join(map(lambda line: nice_body(line, ctype), filter(None, map(lambda line: line.strip(), lines)))) if len(lines) != 0 else []
-
-def nice_body(body, content):
-    if not body:
-        return None
-    if content is not None:
-        if 'application/x-www-form-urlencoded' in content:
-            parsedbody = urlparse.parse_qsl(body)
-            if body and not parsedbody:
-                return tornado.escape.xhtml_escape(body)
-            args = collections.OrderedDict(sorted(parsedbody))
-            params = "\n".join([k + "=" + v for k, v in args.iteritems()])
-            return highlight(params, IniLexer(), HtmlFormatter(cssclass='codehilite'))
-        if 'json' in content:
-            return highlight(json.dumps(json.loads(body), indent=4), JsonLexer(), HtmlFormatter(cssclass='codehilite'))
-
-        mimetype, chars = httpheader.parse_media_type(content, with_parameters=False)
-        ctype = '/'.join(filter(None, mimetype))
-    else:
-        ctype = magic.from_buffer(body, mime=True)
-    try:
-        lex = get_lexer_for_mimetype(ctype)
-    except ClassNotFound as e:
-        return body
-    return highlight(body, lex, HtmlFormatter(cssclass='codehilite'))
-    #except Exception as e:
-    #    raise e
-    #    print e
-    #    return tornado.escape.xhtml_escape(body)
-    #if headers != None and 'Content-Type' in headers and headers['Content-Type'].split(';')[0] == 'application/json':
-    #    return highlight(body, JsonLexer(), HtmlFormatter())
-    #    #return json.dumps(json.loads(body), indent=4)
-    #return body
-
 
 class RequestHandler(BaseRequestHandler):
     @tornado.web.asynchronous
@@ -434,7 +293,7 @@ class MainHandler(BaseRequestHandler):
         entries = {}
         for host in hosts:
             request = yield collection.find_one({'request.origin':host}, {"request.headers":1})
-            entries[host] = find_agent(get_header(self.nice_headers(request['request']['headers']), 'User-Agent'))
+            entries[host] = util.find_agent(util.get_header(self.nice_headers(request['request']['headers']), 'User-Agent'))
 
         # if proxyhost was set when starting, use it
         # otherwise determine host/ip by looking at the Host request header
@@ -460,7 +319,6 @@ class OriginHandler(BaseRequestHandler):
         cursor = collection.find(query).sort([("$natural", pymongo.DESCENDING)])
         res = cursor.to_list(200)
         entries = yield res
-        #cursor.count(callback=get_numbers)
         self.render("list.html", items=reversed(entries), tz=TZ, host=None, origin=origin)
 
 class ViewHandler(BaseRequestHandler):
@@ -523,14 +381,14 @@ class ViewHandler(BaseRequestHandler):
         if not entry:
             raise tornado.web.HTTPError(404)
 
-        requestquery = nice_body(entry['request']['query'], 'application/x-www-form-urlencoded')
+        requestquery = util.nice_body(entry['request']['query'], 'application/x-www-form-urlencoded')
         #print entry['request']['headers']
         requestheaders = self.nice_headers(entry['request']['headers'])
         responseheaders = self.nice_headers(entry['response']['headers'])
         requestbody = None
         responsebody = None
 
-        socketuuid = get_uuid(entry)
+        socketuuid = util.get_uuid(entry)
 
         # consider the response finished
         finished = True
@@ -543,53 +401,53 @@ class ViewHandler(BaseRequestHandler):
             filepath = os.path.join(tempfile.gettempdir(), "proxy-service", str(respfileid))
             #print filepath
             if not os.path.exists(filepath):
-                responsebody = yield get_gridfs_content(fs, respfileid)
+                responsebody = yield util.get_gridfs_content(fs, respfileid)
                 if responsebody:
-                    if 'text/plain' in get_content_type(responseheaders):
-                        responsebody = get_body_non_empty_lines(responsebody.strip().split("\n"), 'application/json')
+                    if 'text/plain' in util.get_content_type(responseheaders):
+                        responsebody = util.get_body_non_empty_lines(responsebody.strip().split("\n"), 'application/json')
                     else:
-                        responsebody = nice_body(responsebody, get_content_type(responseheaders))
+                        responsebody = util.nice_body(responsebody, util.get_content_type(responseheaders))
             else:
-                if 'text/plain' in get_content_type(responseheaders):
+                if 'text/plain' in util.get_content_type(responseheaders):
                     lines = open(filepath).readlines()
-                    responsebody = get_body_non_empty_lines(lines, 'application/json')
+                    responsebody = util.get_body_non_empty_lines(lines, 'application/json')
                 else:
                     content = open(filepath).read()
-                    responsebody = nice_body(content, get_content_type(responseheaders))
+                    responsebody = util.nice_body(content, util.get_content_type(responseheaders))
                 # request seems to be still open
                 finished = False
                 #responsebody = open(filepath).read()
                 #ctype = responseheaders['Content-Type']
-                #responsebody = nice_body(responsebody, ctype)
+                #responsebody = util.nice_body(responsebody, ctype)
 
         cmd = 'curl' 
         cmd = cmd + ' -X ' + entry['request']['method']
         for key, value in requestheaders.iteritems():
-            cmd = cmd + ' -H ' + QuoteForPOSIX(key + ': ' + value)
+            cmd = cmd + ' -H ' + util.QuoteForPOSIX(key + ': ' + value)
 
         if 'fileid' in entry['request'] and not self.is_binary(requestheaders):
-            requestbody = yield get_gridfs_content(fs, entry['request']['fileid'])
+            requestbody = yield util.get_gridfs_content(fs, entry['request']['fileid'])
             if requestbody:
-                ctype = get_content_type(requestheaders)
+                ctype = util.get_content_type(requestheaders)
                 # default to x-www-form-urlencoded
                 ctype = ctype if ctype is not None else 'application/x-www-form-urlencoded'
                 #if self.is_text_content(requestheaders)
 
-                if get_content_encoding(requestheaders) == 'gzip':
-                    requestbody = ungzip(requestbody)
+                if util.get_content_encoding(requestheaders) == 'gzip':
+                    requestbody = util.ungzip(requestbody)
 
                     ctype = None
 
-                cmd = cmd + ' -d ' + QuoteForPOSIX(requestbody)
-                requestbody = nice_body(requestbody, ctype)
+                cmd = cmd + ' -d ' + util.QuoteForPOSIX(requestbody)
+                requestbody = util.nice_body(requestbody, ctype)
             else:
                 print 'nobody'
         else:
             print 'not reading body because maybe binary'
-        #requestbody = nice_body(entry['request']['body'], requestheaders)
-        #responsebody = nice_body(entry['response']['body'], responseheaders)
+        #requestbody = util.nice_body(entry['request']['body'], requestheaders)
+        #responsebody = util.nice_body(entry['response']['body'], responseheaders)
 
-        cmd = cmd + ' ' + QuoteForPOSIX(entry['request']['url'])
+        cmd = cmd + ' ' + util.QuoteForPOSIX(entry['request']['url'])
 
         if entry['request']['method'] == 'GET':
             collection = self.settings['db'].proxyservice['log_messages']
@@ -621,7 +479,6 @@ class HostHandler(BaseRequestHandler):
         cursor = collection.find({"request.host": host}).sort([("$natural", pymongo.DESCENDING)])
         res = cursor.to_list(200)
         entries = yield res
-        #cursor.count(callback=get_numbers)
         self.render("list.html", items=reversed(entries), tz=TZ, host=host, origin=None)
 
 class OriginHostHandler(BaseRequestHandler):
@@ -632,7 +489,6 @@ class OriginHostHandler(BaseRequestHandler):
         cursor = collection.find({"request.host": host, "request.origin": origin}).sort([("$natural", pymongo.DESCENDING)])
         res = cursor.to_list(200)
         entries = yield res
-        #cursor.count(callback=get_numbers)
         self.render("list.html", items=reversed(entries), tz=TZ, host=host, origin=origin)
 
 class MessagesHandler(BaseRequestHandler):
@@ -712,10 +568,10 @@ class MessagesAddHandler(MessagesRulesHandler):
     @gen.coroutine
     def post(self):
         item = self.get_argument('item', None)
-        origin = cleanarg(self.get_argument('origin', False), False)
+        origin = util.cleanarg(self.get_argument('origin', False), False)
         host = self.get_argument('host', None)
         name = self.get_argument('name', None)
-        body = cleanarg(self.get_argument('body'), False)
+        body = util.cleanarg(self.get_argument('body'), False)
         rules = self.get_rules()
 
         if not body or not host:
@@ -762,10 +618,10 @@ class MessagesEditHandler(MessagesRulesHandler):
     @gen.engine
     def post(self, ident):
         item = self.get_argument('item', None)
-        origin = cleanarg(self.get_argument('origin', False), False)
+        origin = util.cleanarg(self.get_argument('origin', False), False)
         host = self.get_argument('host', None)
         name = self.get_argument('name', None)
-        body = cleanarg(self.get_argument('body'), False)
+        body = util.cleanarg(self.get_argument('body'), False)
         rules = self.get_rules()
 
         if not body or not host:
@@ -819,7 +675,6 @@ class RulesHandler(BaseRequestHandler):
         cursor = collection.find(query).sort([('origin', 1), ('host', 1), ('path', 1)])
         res = cursor.to_list(100)
         entries = yield res
-        #cursor.count(callback=get_numbers)
         self.render("rules.html", items=entries, item=item, origin=origin, host=host)
 
     def post(self):
@@ -851,8 +706,7 @@ class RulesEditHandler(BaseRequestHandler):
         host = self.get_argument('host', None)
         reqheaders = entry['reqheaders'] if entry and 'reqheaders' in entry else {}
         respheaders = entry['respheaders'] if entry and 'respheaders' in entry else {}
-        fmt = get_format(get_content_type(self.nice_headers(respheaders))) if respheaders else None
-        #print array_headers(respheaders)
+        fmt = util.get_format(util.get_content_type(self.nice_headers(respheaders))) if respheaders else None
         respheaders = self.nice_headers(respheaders) if respheaders else respheaders
         reqheaders = self.nice_headers(reqheaders) if reqheaders else reqheaders
         self.render("ruleedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=False, body=None, fmt=fmt, reqheaders=reqheaders, respheaders=respheaders)
@@ -861,19 +715,19 @@ class RulesEditHandler(BaseRequestHandler):
     @gen.engine
     def post(self, ident):
         item = self.get_argument('item', None)
-        origin = cleanarg(self.get_argument('origin', False), False)
+        origin = util.cleanarg(self.get_argument('origin', False), False)
         host = self.get_argument('host', None)
         active = self.get_argument('active', False)
         active = active if active is False else True
 
-        rhost = cleanarg(self.get_argument('rhost'), False)
-        path = cleanarg(self.get_argument('path'), False)
-        query = cleanarg(self.get_argument('query'), False)
-        status = cleanarg(self.get_argument('status'), False)
-        method = cleanarg(self.get_argument('method'), False)
-        response = cleanarg(self.get_argument('response'), False)
-        delay = int(cleanarg(self.get_argument('delay', 0), 0))
-        body = cleanarg(self.get_argument('body'), False)
+        rhost = util.cleanarg(self.get_argument('rhost'), False)
+        path = util.cleanarg(self.get_argument('path'), False)
+        query = util.cleanarg(self.get_argument('query'), False)
+        status = util.cleanarg(self.get_argument('status'), False)
+        method = util.cleanarg(self.get_argument('method'), False)
+        response = util.cleanarg(self.get_argument('response'), False)
+        delay = int(util.cleanarg(self.get_argument('delay', 0), 0))
+        body = util.cleanarg(self.get_argument('body'), False)
         reqheaders = self.get_submitted_headers('reqheader')
         respheaders = self.get_submitted_headers('respheader')
 
@@ -881,7 +735,7 @@ class RulesEditHandler(BaseRequestHandler):
 
         collection = self.settings['db'].proxyservice['log_rules']
         entry = yield motor.Op(collection.find_one, {'_id': self.get_id(ident)})
-        fmt = get_format(get_content_type(respheaders)) if respheaders else None
+        fmt = util.get_format(util.get_content_type(respheaders)) if respheaders else None
 
         if not rhost and not path and not query and not status:
             respheaders = self.nice_headers(respheaders)
@@ -904,7 +758,7 @@ class RulesEditHandler(BaseRequestHandler):
             'delay': delay,
             'response': response,
             'reqheaders': reqheaders,
-            'respheaders': array_headers(respheaders),
+            'respheaders': util.array_headers(respheaders),
             'body': body
         })
 
@@ -938,12 +792,12 @@ class RulesAddHandler(BaseRequestHandler):
             entry = yield motor.Op(collection.find_one, {'_id': self.get_id(item)})
             if entry:
                 fs = motor.MotorGridFS(self.settings['db'].proxyservice)
-                body = yield get_gridfs_content(fs, entry['response']['fileid'])
+                body = yield util.get_gridfs_content(fs, entry['response']['fileid'])
                 
                 if entry:
                     reqheaders = self.nice_headers(entry['request']['headers'])
                     respheaders = self.nice_headers(entry['response']['headers'])
-                    fmt = get_format(get_content_type(respheaders)) if respheaders else None
+                    fmt = util.get_format(util.get_content_type(respheaders)) if respheaders else None
                     status = entry['response']['status']
                     entry = entry['request']
                     entry['status'] = status
@@ -953,7 +807,7 @@ class RulesAddHandler(BaseRequestHandler):
             respheaders = self.nice_headers(entry['respheaders'])
             reqheaders = self.nice_headers(entry['reqheaders'])
             body = entry['body']
-            fmt = get_format(get_content_type(respheaders)) if respheaders else None
+            fmt = util.get_format(util.get_content_type(respheaders)) if respheaders else None
 
         self.render("ruleadd.html", tryagain=False, item=item, origin=origin, host=host, entry=entry, body=body, fmt=fmt, reqheaders=reqheaders, respheaders=respheaders)
 
@@ -961,23 +815,23 @@ class RulesAddHandler(BaseRequestHandler):
     @gen.coroutine
     def post(self):
         item = self.get_argument('item', None)
-        origin = cleanarg(self.get_argument('origin', False), False)
+        origin = util.cleanarg(self.get_argument('origin', False), False)
         host = self.get_argument('host', None)
 
-        rhost = cleanarg(self.get_argument('rhost'), False)
-        path = cleanarg(self.get_argument('path'), False)
-        query = cleanarg(self.get_argument('query'), False)
-        status = cleanarg(self.get_argument('status'), False)
-        method = cleanarg(self.get_argument('method'), False)
-        response = cleanarg(self.get_argument('response'), False)
-        delay = int(cleanarg(self.get_argument('delay', 0), 0))
-        body = cleanarg(self.get_argument('body'), False)
+        rhost = util.cleanarg(self.get_argument('rhost'), False)
+        path = util.cleanarg(self.get_argument('path'), False)
+        query = util.cleanarg(self.get_argument('query'), False)
+        status = util.cleanarg(self.get_argument('status'), False)
+        method = util.cleanarg(self.get_argument('method'), False)
+        response = util.cleanarg(self.get_argument('response'), False)
+        delay = int(util.cleanarg(self.get_argument('delay', 0), 0))
+        body = util.cleanarg(self.get_argument('body'), False)
 
         
         reqheaders = self.get_submitted_headers('reqheader')
         respheaders = self.get_submitted_headers('respheader')
         dynamic = True if response is False and body is False and not respheaders else False
-        fmt = get_format(get_content_type(respheaders)) if respheaders else None
+        fmt = util.get_format(util.get_content_type(respheaders)) if respheaders else None
 
         if not rhost and not path and not query and not status:
             response = False
@@ -1001,7 +855,7 @@ class RulesAddHandler(BaseRequestHandler):
             'delay': delay,
             'response': response,
             'reqheaders': reqheaders,
-            'respheaders': array_headers(respheaders),
+            'respheaders': util.array_headers(respheaders),
             'body': body
         })
 
@@ -1130,11 +984,11 @@ class RewritesEditHandler(BaseRequestHandler):
         origin = self.get_argument('origin', False)
         host = self.get_argument('host', None)
 
-        ohost = cleanarg(self.get_argument('ohost'), False)
-        dhost = cleanarg(self.get_argument('dhost'), False)
+        ohost = util.cleanarg(self.get_argument('ohost'), False)
+        dhost = util.cleanarg(self.get_argument('dhost'), False)
         
-        protocol = cleanarg(self.get_argument('protocol'), False)
-        dprotocol = cleanarg(self.get_argument('dprotocol'), False)
+        protocol = util.cleanarg(self.get_argument('protocol'), False)
+        dprotocol = util.cleanarg(self.get_argument('dprotocol'), False)
 
         active = self.get_argument('active', False)
         active = active if active is False else True
@@ -1166,27 +1020,6 @@ class RewritesEditHandler(BaseRequestHandler):
             params['item'] = item
         self.redirect('/rewrites?' + urllib.urlencode(params))
 
-
-
-def open_socket(name):
-    sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-
-    filepath = os.path.join(tempfile.gettempdir(), "proxy-sockets", name)
-    if not os.path.exists(filepath):
-        print "Socket does not exist", filepath
-        return None
-
-    sock.setblocking(0)
-
-    # Connect the socket to the port where the server is listening
-    print >>sys.stderr, 'connecting to %s' % filepath
-    try:
-        sock.connect(filepath)
-    except socket.error, msg:
-        print >>sys.stderr, msg
-        return None
-
-    return sock
 
 
 if __name__ == "__main__":
