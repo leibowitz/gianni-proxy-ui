@@ -39,7 +39,7 @@
 </table>
 {% if requestbody %}
 <div>
-{{ requestbody }}
+{% raw requestbody %}
 </div>
 {% end %}
 
@@ -80,8 +80,7 @@
 <!--<div>
 <pre lang="json"></pre>
 </div>-->
-{% autoescape None %}
-{{ responsebody }}
+{% raw responsebody %}
 {% end %}
 </div>
 </div>

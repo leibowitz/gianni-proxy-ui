@@ -23,6 +23,7 @@ from sockjs.tornado import SockJSRouter, SockJSConnection
 import sockjs
 from sockjs.tornado.periodic import Callback
 from bson import json_util, objectid
+from pygments.util import ClassNotFound
 from pygments import highlight
 from pygments.lexers import JsonLexer, TextLexer, IniLexer, get_lexer_for_mimetype
 from pygments.formatters import HtmlFormatter
@@ -31,6 +32,7 @@ from multiplex import MultiplexConnection
 import re
 import StringIO
 import gzip
+import magic
 
 def QuoteForPOSIX(string):
     '''quote a string so it can be used as an argument in a  posix shell
@@ -338,9 +340,7 @@ def get_body_non_empty_lines(lines, ctype = 'application/json'):
 def nice_body(body, content):
     if not body:
         return None
-    if content is None:
-        return tornado.escape.xhtml_escape(body)
-    try:
+    if content is not None:
         if 'application/x-www-form-urlencoded' in content:
             parsedbody = urlparse.parse_qsl(body)
             if body and not parsedbody:
@@ -351,11 +351,19 @@ def nice_body(body, content):
         if 'json' in content:
             return highlight(json.dumps(json.loads(body), indent=4), JsonLexer(), HtmlFormatter(cssclass='codehilite'))
 
-        ctype, chars = parse_media_type(content, with_parameters=False)
-        lex = get_lexer_for_mimetype('/'.join(filter(None, ctype)))
-        return highlight(body, lex, HtmlFormatter(cssclass='codehilite'))
-    except Exception as e:
-        return tornado.escape.xhtml_escape(body)
+        mimetype, chars = httpheader.parse_media_type(content, with_parameters=False)
+        ctype = '/'.join(filter(None, mimetype))
+    else:
+        ctype = magic.from_buffer(body, mime=True)
+    try:
+        lex = get_lexer_for_mimetype(ctype)
+    except ClassNotFound as e:
+        return body
+    return highlight(body, lex, HtmlFormatter(cssclass='codehilite'))
+    #except Exception as e:
+    #    raise e
+    #    print e
+    #    return tornado.escape.xhtml_escape(body)
     #if headers != None and 'Content-Type' in headers and headers['Content-Type'].split(';')[0] == 'application/json':
     #    return highlight(body, JsonLexer(), HtmlFormatter())
     #    #return json.dumps(json.loads(body), indent=4)
