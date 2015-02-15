@@ -8,7 +8,7 @@
   <div class="pure-g">
    <div class="pure-u-1">
 
-<div class="pure-menu pure-menu-open pure-menu-horizontal">
+<div class="pure-menu pure-menu-open pure-menu-horizontal top-menu">
     <ul>
         <li><a class="pure-button" href="{% if host is not None %}/origin/{{ origin }}/host/{{ host }}{% else %}{% if origin %}/origin/{{ origin }}{% else %}/{% end %}{% end %}">&lt; Back to list</a></li>
         <!--<li class="pure-menu-selected"><a href="/item/{{ item['_id'] }}">{{ item['_id'] }}</a></li>-->
@@ -18,17 +18,23 @@
 </div>
 
 <div class="url">
-<h2 class="content-subhead">Request</h2>
-{{ item['request']['method'] }}
 {{ item['response']['status'] }}
+{{ item['request']['method'] }}
 {% if 'scheme' in item['request'] %}{{ item['request']['scheme'] }}://{% end %}<a href="{% if origin %}/origin/{{ origin }}{% end %}/host/{{ item['request']['host'] }}">{{ item['request']['host'] }}</a>{{ item['request']['path'] }}
+</div>
+<button id="curl">Curl command</button>
+
+<div id="curl-cmd" class="hidden">
+<pre class="curl">
+{{ cmd }}
+</pre>
+</div>
+
+<h2 class="content-subhead">Request</h2>
 
 {% if requestquery %}
 {% raw requestquery %}
 {% end %}
-</div>
-
-<button id="curl">Curl command</button>
 
 <table class="pure-table pure-table-horizontal pure-table-bordered headers">
 {% for key, value in requestheaders.iteritems() %}
@@ -51,12 +57,6 @@
 {% raw requestbody %}
 </div>
 {% end %}
-
-<div id="curl-cmd" class="hidden">
-<pre class="curl">
-{{ cmd }}
-</pre>
-</div>
 
 <h2 class="content-subhead">Response</h2>
 {% if not finished %}
