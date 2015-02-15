@@ -24,7 +24,7 @@
 {% if 'scheme' in item['request'] %}{{ item['request']['scheme'] }}://{% end %}<a href="{% if origin %}/origin/{{ origin }}{% end %}/host/{{ item['request']['host'] }}">{{ item['request']['host'] }}</a>{{ item['request']['path'] }}
 
 {% if requestquery %}
-{{ requestquery }}
+{% raw requestquery %}
 {% end %}
 </div>
 
