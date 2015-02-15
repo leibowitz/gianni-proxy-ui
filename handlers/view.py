@@ -15,7 +15,10 @@ class ViewHandler(BaseRequestHandler):
         #print headers
         if 'Content-Type' not in headers:
             return False
-        return 'text' in headers['Content-Type'] or 'json' in headers['Content-Type'] or 'application/x-www-form-urlencoded' in headers['Content-Type']
+        return 'text' in headers['Content-Type'] \
+               or 'json' in headers['Content-Type'] \
+               or 'application/x-www-form-urlencoded' in headers['Content-Type'] \
+               or 'application/javascript' in headers['Content-Type'] 
     
     def is_binary(self, headers):
         #assume not binary if missing headers
