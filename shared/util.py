@@ -95,12 +95,12 @@ def array_headers(headers):
 def get_body_non_empty_lines(lines, ctype = 'application/json'):
     return '\n'.join(map(lambda line: nice_body(line, ctype), filter(None, map(lambda line: line.strip(), lines)))) if len(lines) != 0 else []
 
-def nice_body(body, content):
+def nice_body(body, content=None):
     if not body:
         return None
     if content is not None:
         if 'application/x-www-form-urlencoded' in content:
-            parsedbody = urlparse.parse_qsl(body)
+            parsedbody = urlparse.parse_qsl(body, keep_blank_values=True)
             if body and not parsedbody:
                 return tornado.escape.xhtml_escape(body)
             args = collections.OrderedDict(sorted(parsedbody))
