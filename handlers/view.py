@@ -95,13 +95,13 @@ class ViewHandler(BaseRequestHandler):
                 responsebody = yield util.get_gridfs_content(fs, respfileid)
                 if responsebody:
                     if 'text/plain' in util.get_content_type(responseheaders):
-                        responsebody = util.get_body_non_empty_lines(responsebody.strip().split("\n"), 'application/json')
+                        responsebody = util.get_body_non_empty_lines(responsebody.strip().split("\n"))
                     else:
                         responsebody = util.nice_body(responsebody, util.get_content_type(responseheaders))
             else:
                 if 'text/plain' in util.get_content_type(responseheaders):
                     lines = open(filepath).readlines()
-                    responsebody = util.get_body_non_empty_lines(lines, 'application/json')
+                    responsebody = util.get_body_non_empty_lines(lines)
                 else:
                     content = open(filepath).read()
                     responsebody = util.nice_body(content, util.get_content_type(responseheaders))

@@ -93,7 +93,7 @@ def get_format(content):
 def array_headers(headers):
     return {k: [v] for k, v in headers.iteritems()}
 
-def get_body_non_empty_lines(lines, ctype = 'application/json'):
+def get_body_non_empty_lines(lines, ctype = None):
     return '\n'.join(map(lambda line: nice_body(line, ctype), filter(None, map(lambda line: line.strip(), lines)))) if len(lines) != 0 else []
 
 def nice_body(body, content=None):
@@ -108,7 +108,10 @@ def nice_body(body, content=None):
             params = "\n".join([k + "=" + v for k, v in args.iteritems()])
             return highlight(params, IniLexer(), HtmlFormatter(cssclass='codehilite'))
         if 'json' in content:
-            return highlight(json.dumps(json.loads(body), indent=4), JsonLexer(), HtmlFormatter(cssclass='codehilite'))
+            try:
+                return highlight(json.dumps(json.loads(body), indent=4), JsonLexer(), HtmlFormatter(cssclass='codehilite'))
+            except ValueError as e:
+                pass
 
         mimetype, chars = httpheader.parse_media_type(content, with_parameters=False)
         ctype = '/'.join(filter(None, mimetype))
