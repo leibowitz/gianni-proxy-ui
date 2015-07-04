@@ -1,4 +1,5 @@
 import collections
+import tempfile
 import json
 import uuid
 import gzip
