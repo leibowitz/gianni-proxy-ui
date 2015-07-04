@@ -96,31 +96,42 @@ def array_headers(headers):
 def get_body_non_empty_lines(lines, ctype = None):
     return '\n'.join(map(lambda line: nice_body(line, ctype), filter(None, map(lambda line: line.strip(), lines)))) if len(lines) != 0 else []
 
+def get_body_content_type(body, content):
+    if content is not None:
+        mimetype, chars = httpheader.parse_media_type(content, with_parameters=False)
+        ctype = '/'.join(filter(None, mimetype))
+    else:
+        ctype = magic.from_buffer(body, mime=True)
+    return ctype
+
 def nice_body(body, content=None):
     if not body:
         return None
+    content = get_body_content_type(body, content)
     if content is not None:
-        if 'application/x-www-form-urlencoded' in content:
+        if 'x-www-form-urlencoded' in content:
+            lex = IniLexer()
+        elif 'json' in content:
+            lex = JsonLexer()
+        else:
+            try:
+                lex = get_lexer_for_mimetype(content)
+            except ClassNotFound as e:
+                return body
+
+        if isinstance(lex, IniLexer):
             parsedbody = urlparse.parse_qsl(body, keep_blank_values=True)
             if body and not parsedbody:
                 return tornado.escape.xhtml_escape(body)
             args = collections.OrderedDict(sorted(parsedbody))
             params = "\n".join([k + "=" + v for k, v in args.iteritems()])
             return highlight(params, IniLexer(), HtmlFormatter(cssclass='codehilite'))
-        if 'json' in content:
+        elif isinstance(lex, JsonLexer):
             try:
                 return highlight(json.dumps(json.loads(body), indent=4), JsonLexer(), HtmlFormatter(cssclass='codehilite'))
             except ValueError as e:
                 pass
 
-        mimetype, chars = httpheader.parse_media_type(content, with_parameters=False)
-        ctype = '/'.join(filter(None, mimetype))
-    else:
-        ctype = magic.from_buffer(body, mime=True)
-    try:
-        lex = get_lexer_for_mimetype(ctype)
-    except ClassNotFound as e:
-        return body
     return highlight(body, lex, HtmlFormatter(cssclass='codehilite'))
     #except Exception as e:
     #    raise e
