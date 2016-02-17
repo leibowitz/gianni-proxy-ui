@@ -47,12 +47,18 @@ def find_agent(useragent):
     if not useragent:
         return None
     ismatch = re.search("\((?P<agent>[^\)]+)\)", useragent)
-    if ismatch:
-        parts = ismatch.groupdict()['agent'].split('; ')
-        if len(parts) == 1:
-            return parts[0]
-        elif len(parts) > 1:
-            return parts[1]
+    if not ismatch:
+        return useragent
+    parts = ismatch.groupdict()['agent'].split('; ')
+    if len(parts) == 0:
+        return useragent
+    print parts
+    if len(parts) == 1:
+        return parts[0]
+    elif len(parts) > 3:
+        return ';'.join(parts[3:])
+    elif len(parts) > 1:
+        return ';'.join(parts)
     return useragent
 
 def cleanarg(arg, default=None):
