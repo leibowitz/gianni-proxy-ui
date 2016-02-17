@@ -6,9 +6,28 @@
 <div class="pure-g">
 <div class="pure-u">
 
+    <a class="pure-button" href="/rules">Rules</a>
+    <a class="pure-button" href="/rewrites">Host Rewrites</a>
 <div>
 You will need to install the certificate on the device before using the proxy.
-To install the certificate, simply navigate to <a href="/static/ca.crt">http://{{ host }}/static/ca.crt</a> from the device browser.
+To install the certificate, simply navigate to <a href="/static/ca.crt">http://{{ host }}/static/ca.crt</a> from the device browser or go to <a href="/">http://{{ host }}</a> and click Install certificate.
+
+<br />
+<a class="pure-button" href="/static/ca.crt">Install certificate</a>
+<br />
+
+If you want to install the root certificate, download this one <a href="/static/e3c54992.0">http://{{ host }}/static/e3c54992.0</a> from your computer and push it to the device using this command: <br />
+<pre>
+wget -q http://{{ host }}/static/e3c54992.0 -O /tmp/e3c54992.0 && adb remount && adb push /tmp/e3c54992.0 /etc/security/cacerts
+</pre>
+<pre>
+curl -s http://{{ host }}/static/e3c54992.0 -o /tmp/e3c54992.0 && adb remount && adb push /tmp/e3c54992.0 /etc/security/cacerts
+</pre>
+Or 
+<pre>
+adb shell
+mount -o remount,rw /system
+</pre>
 
 <br/>
 Then change the WIFI settings on the device to point
@@ -25,7 +44,6 @@ Port: {{ port }}
     Your IP is <strong>{{ yourip }}</strong>
     <br />
     
-    Alternatively, watch <a href="/all">all clients traffic</a>
     
 </div>
 
@@ -54,6 +72,9 @@ Port: {{ port }}
   </tbody>
 </table>
 
+    Alternatively, watch all traffic by clicking the button below 
+    <br />
+    <a class="pure-button" href="/all">Watch all traffic</a>
 
 </div>
 </div>
