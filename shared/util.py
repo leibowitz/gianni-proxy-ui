@@ -19,7 +19,7 @@ from pygments.util import ClassNotFound
 from pygments.lexers import JsonLexer, IniLexer, get_lexer_for_mimetype
 from pygments.formatters import HtmlFormatter
 
-def QuoteForPOSIX(string):
+def QuoteForPOSIX(s):
     '''quote a string so it can be used as an argument in a  posix shell
 
        According to: http://www.unix.org/single_unix_specification/
@@ -35,8 +35,7 @@ def QuoteForPOSIX(string):
           A single-quote cannot occur within single-quotes.
 
     '''
-
-    return "\\'".join("'" + p + "'" for p in string.split("'"))
+    return "\\'".join("'" + p + "'" for p in s.split("'"))
 
 def ungzip(s):
     data = StringIO.StringIO(s)
