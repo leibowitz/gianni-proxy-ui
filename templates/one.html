@@ -198,7 +198,9 @@ $('#format').on('click', function(evt){
 {% end %}
 <script type="text/javascript">
 $('#curl').on('click', function(evt){
-    $('#curl-cmd').toggleClass('hidden');
+    var $el = $('#curl-cmd');
+    if ($el.toggleClass('hidden').is(":not(.hidden)")) {
+    }
 });
 </script>
 {% end %}
