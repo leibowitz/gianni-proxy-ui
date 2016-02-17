@@ -9,6 +9,7 @@ import sys
 import socket
 import StringIO
 import urlparse
+import urllib
 import mimes
 import magic
 import httpheader
@@ -142,6 +143,10 @@ def nice_body(body, content=None):
     #    return highlight(body, JsonLexer(), HtmlFormatter())
     #    #return json.dumps(json.loads(body), indent=4)
     #return body
+
+def raw_image_html(body, mime):
+    encoded = urllib.quote(body.encode("base64"))
+    return u'<img src="data:%s;base64,%s" />' % (mime, encoded)
 
 def open_socket(name):
     sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
