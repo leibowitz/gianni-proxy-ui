@@ -50,7 +50,9 @@
   <input type="text" id="filterText" placeholder="Filter by {% if not host %}host or {% end %}path" size="50" />
   <input type="hidden" id="host" value="{% if host %}{{ host }}{% end %}" />
   <input type="hidden" id="origin" value="{% if origin %}{{ origin }}{% end %}" />
+  {% if not host %}
   <button class="pure-button pure-button-primary">Apply host filter</button>
+  {% end %}
 </form>
 </div>
 
