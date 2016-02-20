@@ -99,9 +99,8 @@
       {{ item['request']['method'] }}
     </td>
     <td class="compact-left">
-        <a target="_blank" href="/item/{{ item['_id'] }}{% if origin %}?origin={{ url_escape(origin) }}{% end %}" title="{{ item['request']['path'] }}">
-            {% if 'scheme' in item['request'] %}{{ item['request']['scheme'] }}://{% end %}{{ item['request']['host'] }}{% if len(item['request']['path']) > 50 %}{{ item['request']['path'][:50] }}...{% else %}{{ item['request']['path'] }}{% end %}
-      </a>
+        
+      {% if 'scheme' in item['request'] %}{{ item['request']['scheme'] }}://{% end %}<a href="{% if not host %}{% if origin %}/origin/{{ origin }}{% end %}/host/{{ item['request']['host'] }}{% else %}/item/{{ item['_id'] }}{% if origin or host %}?{% end %}{% if origin %}origin={{ url_escape(origin) }}{% if host %}&amp;{% end %}{% end %}{% if host %}host={{ url_escape(host) }}{% end %}{% end %}">{{ item['request']['host'] }}</a><a target="_blank" href="/item/{{ item['_id'] }}{% if origin or host %}?{% end %}{% if origin %}origin={{ url_escape(origin) }}{% if host %}&amp;{% end %}{% end %}{% if host %}host={{ url_escape(host) }}{% end %}" title="{{ item['request']['path'] }}">{% if len(item['request']['path']) > 50 %}{{ item['request']['path'][:50] }}...{% else %}{{ item['request']['path'] }}{% end %}</a>
     </td>
   </tr>
 {% end %}
@@ -159,6 +158,8 @@ function createSocket(origin)
         // ignore this as we are not looking at this origin now
         return;
       }
+      var item_link = "<a target='_blank' href='/item/" + msg['_id']['$oid'] + "?" + (origin.length != 0 ? "origin="+ encodeURIComponent(origin) + (host ? "&" : "") : "") + (host ? "host=" + encodeURIComponent(host) : "") + "' title='"+ msg['request']['path'] + "'>";
+      var host_link = host ? item_link : "<a href='" + (origin.length != 0 ? "/origin/" + origin : "" ) + "/host/" + msg['request']['host'] + "'>";
       var row = $("<tr>" +
             "<td>" + moment(msg['date']['$date']).tz("{{ tz.zone }}").format(jsDateFormat) + "</td>" +
             {% if not origin %}
@@ -166,13 +167,12 @@ function createSocket(origin)
             {% end %}
             '<td class="compact">' + msg['response']['status'] + "</td>" +
             '<td class="compact">' + msg['request']['method'] + "</td>" +
-            '<td class="compact-left">' + "<a target='_blank' href='/item/" + msg['_id']['$oid'] + "?" + (origin.length != 0 ? "origin="+ encodeURIComponent(origin) : "")+"' title='"+
+            '<td class="compact-left">' + 
             msg['request']['scheme'] + '://' +
+            host_link + 
             msg['request']['host'] + 
-            msg['request']['path'] + 
-            "'>" + 
-            msg['request']['scheme'] + '://' +
-            msg['request']['host'] + 
+            "</a>" + 
+            item_link + 
             ( msg['request']['path'].length > 50 ? msg['request']['path'].substr(0, 50) + '...' : msg['request']['path'] ) + 
             "</a></td>" +
             "</tr>");
