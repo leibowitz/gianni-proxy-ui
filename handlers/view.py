@@ -11,42 +11,6 @@ from shared import util
 
 class ViewHandler(BaseRequestHandler):
 
-    def has_text_content(self, headers):
-        #print headers
-        if 'Content-Type' not in headers:
-            return False
-        return self.is_text_content(headers['Content-Type'])
-
-    def is_text_content(self, mime):
-        if not mime:
-            return False
-        return 'text' in mime \
-               or 'json' in mime \
-               or 'x-www-form-urlencoded' in mime \
-               or 'javascript' in mime
-    
-    def has_binary_content(self, headers):
-        #assume not binary if missing headers
-        if 'Content-Type' not in headers:
-            return False
-
-        if self.is_text_content(headers['Content-Type']):
-            return False
-
-        if self.is_binary_content(headers['Content-Type']):
-            return True
-
-        return True
-        # assume binary in all other cases
-    
-    def is_binary_content(self, mime):
-        if not mime:
-            return False
-        if 'binary' in mime or 'image' in mime or 'pdf' in mime:
-            return True
-
-        return False
-
 
     @tornado.web.asynchronous
     @gen.coroutine
