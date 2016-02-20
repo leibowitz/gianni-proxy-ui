@@ -14,6 +14,7 @@
         <!--<li class="pure-menu-selected"><a href="/item/{{ item['_id'] }}">{{ item['_id'] }}</a></li>-->
         <li><a class="pure-button" href="/rules/add?item={{ item['_id'] }}{% if origin is not None %}&origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&host={{ host }}{% end %}">Save Response</a></li>
         <li><a class="pure-button" href="/rewrites/add?item={{ item['_id'] }}{% if origin is not None %}&origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&host={{ host }}{% end %}">Host Rewrite</a></li>
+        <li><a class="pure-button" href="/request?item={{ item['_id'] }}">Resend request</a></li>
     </ul>
 </div>
 

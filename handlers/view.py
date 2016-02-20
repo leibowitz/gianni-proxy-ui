@@ -5,6 +5,7 @@ from bson import objectid
 from tornado import gen
 import tornado.web
 import motor
+import requests
 
 from base import BaseRequestHandler
 from shared import util
@@ -69,7 +70,7 @@ class ViewHandler(BaseRequestHandler):
             filepath = os.path.join(tempfile.gettempdir(), "proxy-service", str(respfileid))
             #print filepath
             
-            response_mime_type = util.get_content_type(responseheaders)
+            response_mime_type = util.get_content_type(requests.structures.CaseInsensitiveDict(responseheaders))
             if not os.path.exists(filepath):
                 body = yield util.get_gridfs_content(fs, respfileid)
                 if body:
