@@ -86,9 +86,11 @@
       {{ item['date'].astimezone(tz).strftime('%H:%M:%S') }}
     </td>
     {% if not origin %}
-    <td class="compact-right">
+      <td class="compact-right">
+        {% if 'origin' in item['request'] %}
         <a href="/origin/{{ item['request']['origin'] }}">{{ item['request']['origin'] }}</a>
-    </td>
+        {% end %}
+      </td>
     {% end %}
     <td class="compact">
       {{ item['response']['status'] }} 
