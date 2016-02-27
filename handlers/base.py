@@ -29,8 +29,8 @@ class BaseRequestHandler(RequestHandler):
             if len(row[0].strip()) != 0:
                 headers[ row[0] ] = row[1]
 
-            row = self.get_arguments(fieldname+'[' + str(x) + '][]', [])
             x += 1
+            row = self.get_arguments(fieldname+'[' + str(x) + '][]', [])
 
         return headers
 
