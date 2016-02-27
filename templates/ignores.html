@@ -18,6 +18,9 @@
       Host
     </th>
     <th>
+      Paths
+    </th>
+    <th>
     </th>
   </thead>
   <tbody>
@@ -34,6 +37,13 @@
       <a href="/ignores/{{ row['_id'] }}">
       {{ row['host'] }}
       </a>
+    </td>
+    <td>
+      {% if 'paths' in row %}
+      {{ len(row['paths']) }}
+      {% else %}
+      *
+      {% end %}
     </td>
     <td>
       <form method="post" name="deleteForm">
