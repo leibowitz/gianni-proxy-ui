@@ -45,7 +45,7 @@
         <div class="pure-control-group">
             <input type="text" value="{{ ruleid }}" name="rules_ids[{{ x }}]" />
             <input type="checkbox" name="rules_states[{{ x }}]" {% if enabled %}checked="checked"{% end %} />
-            <button name="delete">X</button>
+            <button class="btn" name="delete"><i class="fa fa-times"></i></button>
 <!--
     <label><input type="checkbox" name="rule-{{ ruleid }}" {% if enabled %}checked="checked"{% end %} /> </label><input type="text" value="{{ ruleid }}" />
 <label class="switch-light switch-candy" onclick="">
@@ -68,14 +68,16 @@
       <div class="pure-control-group">
             <input type="text" name="rules_ids[{{ x }}]" />
             <input type="checkbox" name="rules_states[{{ x }}]" />
-        {% if x != 0 %}<button name="delete">X</button>{% end %}
+        {% if x != 0 %}
+            <button class="btn" name="delete"><i class="fa fa-times"></i></button>
+        {% end %}
       </div>
     </div>
 
       <div class="hidden pure-control-group" id="rules-template">
         <input type="text" value="" name="rules_ids[]" />
         <input type="checkbox" name="rules_states[]" />
-        <button name="delete">X</button>
+            <button class="btn" name="delete"><i class="fa fa-times"></i></button>
       </div>
 
     <button type="submit" class="pure-button pure-button-primary">Update</button>
