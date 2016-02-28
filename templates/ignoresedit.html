@@ -2,11 +2,7 @@
 {% block title %}Edit an excluded host{% end %}
 {% block content %}
 
-  <div id="layout">
-
     <div id="main">
-<div class="content">
-    <a class="pure-button" href="/ignores">Hosts list</a>
   <h1 class="content-subhead">Edit Host</h1>
   <form class="pure-form" method="post">
     <input type="hidden" name="id" value="{{ entry['_id'] }}" />
@@ -58,8 +54,6 @@
         <input type="text" value="" />
         <button class="btn" name="delete"><i class="fa fa-times"></i></button>
       </div>
-</div>
-</div>
 </div>
 
 <script src="/static/jquery.min.js"></script>
