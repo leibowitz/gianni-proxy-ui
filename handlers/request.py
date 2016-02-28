@@ -19,7 +19,7 @@ class RequestHandler(BaseRequestHandler):
             collection = self.settings['db'].proxyservice['log_logentry']
             entry = yield motor.Op(collection.find_one, {'_id': self.get_id(itemid)})
             if entry and entry['request']:
-                headers = self.nice_headers(entry['request']['headers'])
+                headers = entry['request']['headers']
                 url = entry['request']['url'] if 'url' in entry['request'] else (entry['request']['scheme'] if 'scheme' in entry['request'] else '') + entry['request']['host'] + entry['request']['path']
                 method = entry['request']['method']
 
@@ -34,7 +34,7 @@ class RequestHandler(BaseRequestHandler):
         method = self.get_argument('method', 'GET')
         if not url:
             self.send_error(500)
-        headers = self.nice_headers(headers)
+
         target = urlparse(url)
         params = {}
 

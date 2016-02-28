@@ -27,13 +27,15 @@
     <h3>Request Headers</h3>
       <div id="header-group">
       {% set x = 0 %}
-      {% for name, value in headers.iteritems() %}
+      {% for name, values in headers.iteritems() %}
+        {% for value in values %}
         <div class="pure-control-group">
           <input type="text" name="header[{{ x }}][]" value="{{ name }}" />
           <input type="text" name="header[{{ x }}][]" value="{{ value }}" />
             <button class="btn" name="delete"><i class="fa fa-times"></i></button>
         </div>
         {% set x = x + 1 %}
+        {% end %}
 
       {% end %}
 
