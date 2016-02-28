@@ -53,7 +53,7 @@
       {% if row['method'] %}
       {{ row['method'] }}
       {% else %}
-      *
+      <i class="fa fa-asterisk"></i>
       {% end %}
     </td>
     <td>
@@ -65,14 +65,22 @@
       {% if row['path'] %}
       {{ row['path'] }}
       {% else %}
-      *
+      <i class="fa fa-asterisk"></i>
       {% end %}
     </td>
     <td>
+      {% if row['status'] %}
       {{ row['status'] }}
+      {% else %}
+      <i class="mdi mdi-asterisk"></i>
+      {% end %}
     </td>
     <td>
+      {% if row['query'] %}
       {{ row['query'] }}
+      {% else %}
+      <i class="mdi mdi-asterisk"></i>
+      {% end %}
     </td>
     <td>
       {{ row['dynamic'] }}
