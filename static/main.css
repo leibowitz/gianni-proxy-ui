@@ -10,13 +10,26 @@
   margin-bottom: 20px;
 }
 
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,100,300,500,700,900);
+body{
+  font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
 body {
+  font-size: .875rem;
+  color: rgba(0,0,0,.87);
   padding: 10px;
   margin-left: 20px;
+  background-color: #f0f0f0;
+}
+
+.b-t {
+  border-top: 9px solid rgba(120,130,140,.13);
 }
 
 table {
   font-size: 18px;
+  width: 100%;
 }
 
 table.headers {
@@ -29,6 +42,23 @@ table.headers td.key {
   font-weight: bold;
   text-align: right;
   vertical-align: top;
+}
+
+td, th {
+  padding: 10px 16px;
+  border-color: rgba(120,130,140,.045);
+  border-top: 1px solid #eceeef;
+  line-height: 1.5;
+}
+
+tbody>tr:nth-child(odd) {
+  background-color: rgba(0,0,0,.025);
+}
+
+th {
+  border-bottom: 2px solid #eceeef;
+  vertical-align: bottom;
+  text-align: left;
 }
 
 pre.curl {
@@ -46,4 +76,89 @@ div.url {
 
 #curl {
   float: right;
+
+}
+
+.box {
+  background-color: #fff;
+  box-shadow: 0 0 1px rgba(0,0,0,.15);
+}
+
+.padding {
+  padding: 1.5rem;
+}
+
+.app-header {
+  z-index: 1020;
+  position: fixed;
+  top:0;
+  background-color: #fff;
+  left: 0;
+  right: 0;
+  box-shadow: 0 2px 2px rgba(0,0,0,.03),0 1px 0 rgba(0,0,0,.03);
+}
+
+.app-body {
+  padding-top: 3.5rem;
+  padding-bottom: 3.125rem;
+}
+
+.box-header {
+  padding: 1rem;
+}
+
+h3 {
+  font-size: 16px;
+}
+
+.btn:hover {
+  box-shadow: inset 0 -10rem 0 rgba(158,158,158,.1);
+}
+
+.btn {
+  background-color: #fff;
+  padding: .35rem .45rem;
+  font-size: .875rem;
+  border: 0 solid rgba(0, 0, 0, 0);
+  border-radius: .25rem;
+  box-shadow: inset 0 0 1px rgba(0,0,0,.3);
+}
+
+.nav {
+  list-style: none;
+  text-align: center;
+  float: left;
+}
+
+.nav-item {
+  float: left;
+}
+
+.nav-item+.nav-item {
+  padding-left: 1rem;
+}
+
+.nav-link {
+  line-height: 4rem;
+  white-space: nowrap;
+}
+
+.nav-link:hover {
+  color: #0cc2aa!important;
+}
+
+.nav-text {
+  display: inline-block;
+  font-weight: 500;
+  line-height: 1;
+}
+
+.nav-text span {
+  margin-top: .25rem;
+  display: block;
+  font-size: .75rem;
+}
+
+.text-muted {
+  opacity: .6;
 }

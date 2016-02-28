@@ -27,6 +27,9 @@ if __name__ == "__main__":
         (r"/rewrites", RewritesHandler),
         (r"/rewrites/add", RewritesAddHandler),
         (r"/rewrite/(?P<ident>[^\/]+)", RewritesEditHandler),
+        (r'/static/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'static')}),
+        (r'/css/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'css')}),
+        (r'/fonts/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'fonts')}),
     ]
         
     ListenerRouter = SockJSRouter(ListenerConnection, '/listener')
