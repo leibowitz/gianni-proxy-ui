@@ -4,12 +4,11 @@
 <link href="/static/default.css" media="all" rel="stylesheet" type="text/css" />
 {% end %}
 {% block content %}
-  <div class="layout">
 
-<div class="url">
 {{ item['response']['status'] }}
 {{ item['request']['method'] }}
 {% if 'scheme' in item['request'] %}{{ item['request']['scheme'] }}://{% end %}<a href="{% if origin %}/origin/{{ origin }}{% end %}/host/{{ item['request']['host'] }}">{{ item['request']['host'] }}</a>{{ item['request']['path'] }}
+<div class="url">
 </div>
 <button id="curl">Curl command</button>
 
@@ -19,11 +18,10 @@
 </pre>
 </div>
 
-<h2 class="content-subhead">Request</h2>
-
-{% if requestquery %}
-{% raw requestquery %}
-{% end %}
+  <div class="box">
+  <div class="box-header">
+<h2>Request</h2>
+  </div>
 
 <table class="headers">
 {% for key, value in requestheaders.iteritems() %}
@@ -41,13 +39,24 @@
   </tr>
 {% end %}
 </table>
+  </div>
+
+{% if requestquery %}
+<div class="box b-t">
+{% raw requestquery %}
+</div>
+{% end %}
+
 {% if requestbody %}
-<div>
+<div class="box b-t">
 {% raw requestbody %}
 </div>
 {% end %}
 
-<h2 class="content-subhead">Response</h2>
+  <div class="box b-t">
+  <div class="box-header">
+<h2>Response</h2>
+  </div>
 {% if not finished %}
 <button id="format">FORMAT</button>
 <br/>
@@ -72,7 +81,7 @@
   </tr>
 {% end %}
 </table>
-<div id="response">
+<div id="response" class="b-t">
 {% if responsebody %}
 <!--<div>
 <pre lang="json"></pre>
@@ -80,7 +89,7 @@
 {% raw responsebody %}
 {% end %}
 </div>
-</div>
+  </div>
 <script src="/static/jquery.min.js"></script>
 {% if not finished %}
 <script src="/static/sockjs-0.3.min.js"></script>

@@ -1,5 +1,20 @@
+@import url(https://fonts.googleapis.com/css?family=Roboto:400,100,300,500,700,900);
+body{
+  font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+html {
+  background-color: #e0e0e0;
+}
+
+
 .hidden{
   display: none;
+}
+
+.container {
+  box-shadow: 0 1px 1px rgba(0,0,0,.1);
+  margin: 0 auto;
 }
 
 #curl-cmd {
@@ -18,8 +33,6 @@ body{
 body {
   font-size: .875rem;
   color: rgba(0,0,0,.87);
-  padding: 10px;
-  margin-left: 20px;
   background-color: #f0f0f0;
 }
 
@@ -38,14 +51,13 @@ table.headers {
 }
 
 table.headers td.key {
-  min-width: 200px;
-  font-weight: bold;
+  width: 200px;
   text-align: right;
   vertical-align: top;
 }
 
 td, th {
-  padding: 10px 16px;
+  padding: 7px 16px;
   border-color: rgba(120,130,140,.045);
   border-top: 1px solid #eceeef;
   line-height: 1.5;
@@ -66,8 +78,15 @@ pre.curl {
   font-size: 16px;
 }
 
+pre {
+  margin: 0;
+}
+
 #response pre {
   font-size: 15px;
+}
+pre {
+  padding: 1em;
 }
 
 div.url {
@@ -89,12 +108,13 @@ div.url {
 }
 
 .app-header {
+  left: 0;
+  right: 0;
+  opacity: 0.9;
   z-index: 1020;
   position: fixed;
   top:0;
   background-color: #fff;
-  left: 0;
-  right: 0;
   box-shadow: 0 2px 2px rgba(0,0,0,.03),0 1px 0 rgba(0,0,0,.03);
 }
 
@@ -107,8 +127,28 @@ div.url {
   padding: 1rem;
 }
 
+.text-md {
+	font-size: 1.125rem;
+}
+
+.h1, .h2, .h3, .h4, .h5, .h6, h1, h2, h3, h4, h5, h6 {
+	line-height: 1.1;
+	margin-bottom: .5rem;
+	color: rgba(0,0,0,.87);
+	font-weight: 500;
+}
+
+h2 {
+  font-size: 18px;
+  margin: 0;
+}
+
 h3 {
   font-size: 16px;
+}
+
+h4 {
+  font-size: 14px;
 }
 
 .btn:hover {
@@ -122,6 +162,12 @@ h3 {
   border: 0 solid rgba(0, 0, 0, 0);
   border-radius: .25rem;
   box-shadow: inset 0 0 1px rgba(0,0,0,.3);
+}
+
+.navbar::after {
+  display: table;
+  clear: both;
+  content: "";
 }
 
 .nav {
@@ -161,4 +207,14 @@ h3 {
 
 .text-muted {
   opacity: .6;
+}
+
+.pure-form input[type=text], .pure-form input[type=password], .pure-form input[type=email], .pure-form input[type=url], .pure-form input[type=date], .pure-form input[type=month], .pure-form input[type=time], .pure-form input[type=datetime], .pure-form input[type=datetime-local], .pure-form input[type=week], .pure-form input[type=number], .pure-form input[type=search], .pure-form input[type=tel], .pure-form input[type=color], .pure-form select, .pure-form textarea {
+  border-color: rgba(120,130,140,.2);
+  border-radius: 0px;
+  box-shadow: none;
+}
+
+.pure-form input[type=text]:focus, .pure-form input[type=password]:focus, .pure-form input[type=email]:focus, .pure-form input[type=url]:focus, .pure-form input[type=date]:focus, .pure-form input[type=month]:focus, .pure-form input[type=time]:focus, .pure-form input[type=datetime]:focus, .pure-form input[type=datetime-local]:focus, .pure-form input[type=week]:focus, .pure-form input[type=number]:focus, .pure-form input[type=search]:focus, .pure-form input[type=tel]:focus, .pure-form input[type=color]:focus, .pure-form select:focus, .pure-form textarea:focus {
+	border-color: rgba(120,130,140,.3);
 }
