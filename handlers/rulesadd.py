@@ -28,6 +28,8 @@ class RulesAddHandler(BaseRequestHandler):
                 body = yield util.get_gridfs_content(fs, entry['response']['fileid'])
                 
                 if entry:
+                    reqheaders = entry['request']['headers'] if 'request' in entry and 'headers' in entry['request'] else reqheaders
+                    respheaders = entry['response']['headers'] if 'response' in entry and 'headers' in entry['response'] else respheaders
                     fmt = util.get_format(util.get_content_type(self.nice_headers(respheaders))) if respheaders else None
                     status = entry['response']['status']
                     entry = entry['request']
@@ -37,6 +39,8 @@ class RulesAddHandler(BaseRequestHandler):
             entry = yield motor.Op(collection.find_one, {'_id': self.get_id(ruleid)})
             body = entry['body']
             fmt = util.get_format(util.get_content_type(self.nice_headers(respheaders))) if respheaders else None
+            reqheaders = entry['reqheaders'] if 'reqheaders' in entry else reqheaders
+            respheaders = entry['respheaders'] if 'respheaders' in entry else respheaders
 
         self.render("ruleadd.html", tryagain=False, item=item, origin=origin, host=host, entry=entry, body=body, fmt=fmt, reqheaders=reqheaders, respheaders=respheaders)
 
@@ -84,7 +88,7 @@ class RulesAddHandler(BaseRequestHandler):
             'delay': delay,
             'response': response,
             'reqheaders': reqheaders,
-            'respheaders': util.array_headers(respheaders),
+            'respheaders': respheaders,
             'body': body
         })
 
