@@ -24,11 +24,11 @@ class RequestHandler(BaseRequestHandler):
             fs = motor.MotorGridFS(self.settings['db'].proxyservice)
             entry = yield motor.Op(collection.find_one, {'_id': self.get_id(itemid)})
             if entry and entry['request']:
-                headers = self.nice_headers(entry['request']['headers'])
+                headers = entry['request']['headers']
                 url = entry['request']['url'] if 'url' in entry['request'] else (entry['request']['scheme'] if 'scheme' in entry['request'] else '') + entry['request']['host'] + entry['request']['path']
                 method = entry['request']['method']
                 requestquery = entry['request']['query']
-                requestheaders = self.nice_headers(entry['request']['headers'])
+                requestheaders = self.nice_headers(headers)
                 body = None
                 if 'fileid' in entry['request'] and not self.has_binary_content(requestheaders):
                     body = yield util.get_gridfs_content(fs, entry['request']['fileid'])
@@ -47,14 +47,14 @@ class RequestHandler(BaseRequestHandler):
         method = self.get_argument('method', 'GET')
         if not url:
             self.send_error(500)
-        requestheaders = self.nice_headers(headers)
+
         target = urlparse(url)
         params = {}
 
         proxyhost = self.settings['proxyhost'] or self.request.host.split(':')[0]
         proxyport = self.settings['proxyport']
         host = proxyhost + ':' + str(proxyport)
-        resp = requests.request(method, url, params=params, data=body, headers=requestheaders)#, proxies={'http':host, 'https':host})
+        resp = requests.request(method, url, params=params, data=body, headers=headers)#, proxies={'http':host, 'https':host})
         #print resp.text, resp.status_code, resp.url, resp.headers
         #print body, requestheaders, method, url
 
@@ -65,33 +65,33 @@ class RequestHandler(BaseRequestHandler):
                 'query': target.query,
                 'scheme': target.scheme,
                 'host': target.netloc,
-                'headers': self.dict_headers(headers),
+                'headers': headers,
                 'origin': '127.0.0.1',
                 'url': url,
                 'method': method,
             },
             'response': {
                 'status': resp.status_code,
-                'headers': self.dict_headers(resp.headers),
+                'headers': resp.headers,
             },
             'uuid': suid,
             'date': datetime.datetime.utcnow(),
             }
 
 	print type(resp.headers)
-	ctype = util.get_content_type(requestheaders)
+	ctype = util.get_content_type(self.nice_headers(headers))
 	reqCtype = util.get_body_content_type(body, ctype)
 
-	ctype = util.get_content_type(resp.headers)
+	ctype = util.get_content_type(self.nice_headers(resp.headers))
 	resCtype = util.get_body_content_type(resp.text, ctype)
 
         reqid = bson.objectid.ObjectId()
         resid = bson.objectid.ObjectId()
 
-	reqEnc = util.get_content_encoding(headers)
+	reqEnc = util.get_content_encoding(self.nice_headers(headers))
 	resEnc = resp.encoding
 	if not resEnc:
-	    resEnc = util.get_content_encoding(resp.headers)
+	    resEnc = util.get_content_encoding(self.nice_headers(resp.headers))
 
 	print reqid, body, reqCtype
 	print resid, resp.text, resCtype
