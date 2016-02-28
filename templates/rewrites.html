@@ -61,9 +61,15 @@
 
 <script src="/static/jquery.min.js"></script>
 <script type="text/javascript">
-    $('form[name=deleteForm]').on('submit', function(evt){
-      if (!confirm("Are you sure you want to delete this rule?")) {
-        return false;
+    $('form[name=deleteForm] button[name=delete]').on('click', function(evt){
+      var t = evt.currentTarget;
+      evt.preventDefault();
+      if (confirm("Are you sure you want to delete this rule?")) {
+        var id = t.parentNode.querySelector('input[name=ident]').value;
+        $.post("/rewrites", {ident: id, action: "delete"}, function(data, status) {
+          var row = t.parentNode.parentNode.parentNode;
+          row.parentNode.removeChild(row);
+        });
       }
     });
     $('form[name=activateForm] input[type=checkbox]').on('click', function(evt){
