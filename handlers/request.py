@@ -23,7 +23,7 @@ class RequestHandler(BaseRequestHandler):
                 url = entry['request']['url'] if 'url' in entry['request'] else (entry['request']['scheme'] if 'scheme' in entry['request'] else '') + entry['request']['host'] + entry['request']['path']
                 method = entry['request']['method']
 
-        self.render("request.html", headers=headers, method=method, body=body, url=url)
+        self.render("request.html", headers=headers, method=method, body=body, url=url, tryagain=False)
 
     @tornado.web.asynchronous
     @gen.coroutine
@@ -33,7 +33,7 @@ class RequestHandler(BaseRequestHandler):
         url = self.get_argument('url', None)
         method = self.get_argument('method', 'GET')
         if not url:
-            self.send_error(500)
+            self.render("request.html", headers=headers, method=method, body=body, url=url, tryagain=True)
 
         target = urlparse(url)
         params = {}
