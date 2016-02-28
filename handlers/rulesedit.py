@@ -22,8 +22,6 @@ class RulesEditHandler(BaseRequestHandler):
         reqheaders = entry['reqheaders'] if entry and 'reqheaders' in entry else {}
         respheaders = entry['respheaders'] if entry and 'respheaders' in entry else {}
         fmt = util.get_format(util.get_content_type(self.nice_headers(respheaders))) if respheaders else None
-        respheaders = self.nice_headers(respheaders) if respheaders else respheaders
-        reqheaders = self.nice_headers(reqheaders) if reqheaders else reqheaders
         self.render("ruleedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=False, body=None, fmt=fmt, reqheaders=reqheaders, respheaders=respheaders)
     
     @tornado.web.asynchronous
@@ -50,15 +48,11 @@ class RulesEditHandler(BaseRequestHandler):
 
         collection = self.settings['db'].proxyservice['log_rules']
         entry = yield motor.Op(collection.find_one, {'_id': self.get_id(ident)})
-        fmt = util.get_format(util.get_content_type(respheaders)) if respheaders else None
+        fmt = util.get_format(util.get_content_type(self.nice_headers(respheaders))) if respheaders else None
 
         if not rhost and not path and not query and not status:
-            respheaders = self.nice_headers(respheaders)
-            reqheaders = self.nice_headers(reqheaders)
             self.render("ruleedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=True, body=body, fmt=fmt, reqheaders=reqheaders, respheaders=respheaders)
             return
-
-        reqheaders = reqheaders if reqheaders else False
 
         collection = self.settings['db'].proxyservice['log_rules']
         collection.update({'_id': self.get_id(ident)}, {
@@ -73,7 +67,7 @@ class RulesEditHandler(BaseRequestHandler):
             'delay': delay,
             'response': response,
             'reqheaders': reqheaders,
-            'respheaders': util.array_headers(respheaders),
+            'respheaders': respheaders,
             'body': body
         })
 

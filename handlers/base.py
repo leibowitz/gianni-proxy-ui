@@ -1,5 +1,6 @@
 from tornado.web import RequestHandler
 from bson import objectid
+from collections import defaultdict
 import pytz
 
 class BaseRequestHandler(RequestHandler):
@@ -16,7 +17,7 @@ class BaseRequestHandler(RequestHandler):
 
     def get_submitted_headers(self, fieldname):
 
-        headers = {}
+        headers = defaultdict(list)
         x = 0
 
         row = self.get_arguments(fieldname+'[' + str(x) + '][]', [])
@@ -24,7 +25,7 @@ class BaseRequestHandler(RequestHandler):
         while len(row) > 1:
 
             if len(row[0].strip()) != 0:
-                headers[ row[0] ] = row[1]
+                headers[ row[0] ].append(row[1])
 
             x += 1
             row = self.get_arguments(fieldname+'[' + str(x) + '][]', [])

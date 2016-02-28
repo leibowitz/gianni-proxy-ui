@@ -42,13 +42,15 @@
     <h3>Request Headers</h3>
       <div id="reqheader-group">
       {% set x = 0 %}
-      {% for name, value in reqheaders.iteritems() %}
+      {% for name, values in reqheaders.iteritems() %}
+        {% for value in values %}
         <div class="pure-control-group">
           <input type="text" name="reqheader[{{ x }}][]" value="{{ name }}" />
           <input type="text" name="reqheader[{{ x }}][]" value="{{ value }}" />
             <button class="btn" name="delete"><i class="fa fa-times"></i></button>
         </div>
         {% set x = x + 1 %}
+        {% end %}
 
       {% end %}
 
@@ -87,13 +89,15 @@
     <h3>Response Headers</h3>
       <div id="respheader-group">
       {% set x = 0 %}
-      {% for name, value in respheaders.iteritems() %}
+      {% for name, values in respheaders.iteritems() %}
+        {% for value in values %}
         <div class="pure-control-group">
           <input type="text" name="respheader[{{ x }}][]" value="{{ name }}" />
           <input type="text" name="respheader[{{ x }}][]" value="{{ value }}" />
             <button class="btn" name="delete"><i class="fa fa-times"></i></button>
         </div>
         {% set x = x + 1 %}
+        {% end %}
 
       {% end %}
 
