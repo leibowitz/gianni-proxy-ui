@@ -115,10 +115,6 @@ class RequestHandler(BaseRequestHandler):
         print "Inserting"
         #print data
         collection = self.settings['db'].proxyservice['log_logentry']
-        collection.insert(data, callback=self.inserted)
+        itemid = yield collection.insert(data)
+        self.redirect('item/'+str(itemid))
 
-    def inserted(self, result, error):
-        #print result, error
-        #self.redirect('/origin/'+proxyhost+'/host/'+target.netloc)
-        #self.write('done')
-	pass
