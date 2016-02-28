@@ -5,11 +5,12 @@
 {% end %}
 {% block content %}
 
-{{ item['response']['status'] }}
-{{ item['request']['method'] }}
-{% if 'scheme' in item['request'] %}{{ item['request']['scheme'] }}://{% end %}<a href="{% if origin %}/origin/{{ origin }}{% end %}/host/{{ item['request']['host'] }}">{{ item['request']['host'] }}</a>{{ item['request']['path'] }}
 <div class="url">
+<span class="status-{{ (item['response']['status']/100)*100 }}">{{ item['response']['status'] }}</span>
+<span class="method-{{ item['request']['method'] }}">{{ item['request']['method'] }}</span>
+{% if 'scheme' in item['request'] %}{{ item['request']['scheme'] }}://{% end %}<a href="{% if origin %}/origin/{{ origin }}{% end %}/host/{{ item['request']['host'] }}">{{ item['request']['host'] }}</a>{{ item['request']['path'] }}
 </div>
+
 <button id="curl">Curl command</button>
 
 <div id="curl-cmd" class="hidden">
