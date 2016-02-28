@@ -55,7 +55,7 @@ class RequestHandler(BaseRequestHandler):
         proxyhost = self.settings['proxyhost'] or self.request.host.split(':')[0]
         proxyport = self.settings['proxyport']
         host = proxyhost + ':' + str(proxyport)
-        resp = requests.request(method, url, params=params, data=body, headers=headers)#, proxies={'http':host, 'https':host})
+        resp = requests.request(method, url, params=params, data=body, headers=self.nice_headers(headers))#, proxies={'http':host, 'https':host})
         #print resp.text, resp.status_code, resp.url, resp.headers
         #print body, requestheaders, method, url
 
@@ -73,7 +73,7 @@ class RequestHandler(BaseRequestHandler):
             },
             'response': {
                 'status': resp.status_code,
-                'headers': resp.headers,
+                'headers': self.dict_headers(resp.headers),
             },
             'uuid': suid,
             'date': datetime.datetime.utcnow(),
