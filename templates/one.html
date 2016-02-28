@@ -5,19 +5,23 @@
 {% end %}
 {% block content %}
 
-<div class="url">
+  <div class="box">
+<button id="curl" class="pure-button" data-clipboard-action="copy" data-clipboard-target="#cmd">Copy as CURL</button>
+    <div class="box-header">
+<h2 class="url">
 <span class="status-{{ (item['response']['status']/100)*100 }}">{{ item['response']['status'] }}</span>
 <span class="method-{{ item['request']['method'] }}">{{ item['request']['method'] }}</span>
+<span class="url">
 {% if 'scheme' in item['request'] %}{{ item['request']['scheme'] }}://{% end %}<a href="{% if origin %}/origin/{{ origin }}{% end %}/host/{{ item['request']['host'] }}">{{ item['request']['host'] }}</a>{{ item['request']['path'] }}
-</div>
+</span>
+</h2>
 
-<button id="curl" class="pure-button" data-clipboard-action="copy" data-clipboard-target="#cmd">Copy as CURL</button>
+    </div>
 <div id="curl-cmd" class="hidden">
 <pre class="curl" id="cmd">{% raw cmd %}</pre>
 </div>
 
-  <div class="box">
-  <div class="box-header">
+  <div class="box-header b-t">
 <h2>Request</h2>
   </div>
 
