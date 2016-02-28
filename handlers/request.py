@@ -36,7 +36,7 @@ class RequestHandler(BaseRequestHandler):
                         if util.get_content_encoding(requestheaders) == 'gzip':
                             body = util.ungzip(body)
 
-        self.render("request.html", headers=headers, method=method, body=body, url=url)
+        self.render("request.html", headers=headers, method=method, body=body, url=url, tryagain=False)
 
     @tornado.web.asynchronous
     @gen.coroutine
@@ -46,7 +46,7 @@ class RequestHandler(BaseRequestHandler):
         url = self.get_argument('url', None)
         method = self.get_argument('method', 'GET')
         if not url:
-            self.send_error(500)
+            self.render("request.html", headers=headers, method=method, body=body, url=url, tryagain=True)
 
         target = urlparse(url)
         params = {}
