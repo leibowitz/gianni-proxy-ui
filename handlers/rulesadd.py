@@ -38,9 +38,9 @@ class RulesAddHandler(BaseRequestHandler):
             collection = self.settings['db'].proxyservice['log_rules']
             entry = yield motor.Op(collection.find_one, {'_id': self.get_id(ruleid)})
             body = entry['body']
-            fmt = util.get_format(util.get_content_type(self.nice_headers(respheaders))) if respheaders else None
             reqheaders = entry['reqheaders'] if 'reqheaders' in entry else reqheaders
             respheaders = entry['respheaders'] if 'respheaders' in entry else respheaders
+            fmt = util.get_format(util.get_content_type(self.nice_headers(respheaders))) if respheaders else None
 
         self.render("ruleadd.html", tryagain=False, item=item, origin=origin, host=host, entry=entry, body=body, fmt=fmt, reqheaders=reqheaders, respheaders=respheaders)
 
