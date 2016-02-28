@@ -15,11 +15,9 @@
     {% end %}
 
     <a class="pure-button" href="/messages/add?{% if item is not None %}&amp;item={{ item }}{% end %}{% if origin is not None %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}">Add Message</a>
-<div class="pure-g">
-<div class="pure-u">
 
 {% if len(items) != 0 %}
-<table class="pure-table pure-table-horizontal pure-table-striped">
+<table>
   <thead>
     <th>
       Name
@@ -54,8 +52,6 @@
 </table>
 {% end %}
 
-</div>
-</div>
 </div>
 
 <script src="/static/jquery.min.js"></script>
