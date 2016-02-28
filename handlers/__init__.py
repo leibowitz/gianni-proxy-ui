@@ -4,6 +4,7 @@ from hijack import HijackConnection
 from body import BodyConnection
 from request import RequestHandler
 from home import HomeHandler
+from sessions import SessionsHandler
 from origin import OriginHandler
 from view import ViewHandler
 from host import HostHandler

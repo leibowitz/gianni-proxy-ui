@@ -1,0 +1,32 @@
+{% extends "default.html" %}
+{% block title %}Sessions{% end %}
+{% block content %}
+        <div class="box">
+  <div class="layout">
+<table>
+  <thead>
+    <th>
+      Client IP
+    </th>
+    <th>
+      User-agent
+    </th>
+  </thead>
+  <tbody>
+{% for item, agent in items.iteritems() %}
+  <tr>
+    <td>
+        <a href="/origin/{{ item }}">{{ item }}</a>
+    </td>
+    <td>
+        {% if agent %}{{ agent }}{% end %}
+    </td>
+  </tr>
+{% end %}
+  </tbody>
+</table>
+
+</div>
+        </div>
+
+{% end %}

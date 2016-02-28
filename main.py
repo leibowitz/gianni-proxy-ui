@@ -12,6 +12,7 @@ from handlers import *
 if __name__ == "__main__":
     handlers = [
         (r"/", HomeHandler),
+        (r"/sessions", SessionsHandler),
         (r"/origin/(?P<origin>[^\/]+)", OriginHandler),
         (r"/all", OriginHandler),
         (r"/origin/(?P<origin>[^\/]+)/host/(?P<host>[^\/]+)", OriginHostHandler),
