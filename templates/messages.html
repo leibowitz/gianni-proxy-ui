@@ -2,6 +2,7 @@
 {% block title %}List of messages{% end %}
 {% block content %}
 
+        <div class="box">
   <div class="layout">
 
     <a class="pure-button" href="/messages/add?{% if item is not None %}&amp;item={{ item }}{% end %}{% if origin is not None %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}">Add Message</a>
@@ -43,6 +44,7 @@
 {% end %}
 
 </div>
+        </div>
 
 <script src="/static/jquery.min.js"></script>
 <script type="text/javascript">
