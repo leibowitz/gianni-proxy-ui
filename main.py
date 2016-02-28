@@ -27,6 +27,9 @@ if __name__ == "__main__":
         (r"/rewrites", RewritesHandler),
         (r"/rewrites/add", RewritesAddHandler),
         (r"/rewrite/(?P<ident>[^\/]+)", RewritesEditHandler),
+        (r"/ignores", IgnoresHandler),
+        (r"/ignores/add", IgnoresAddHandler),
+        (r"/ignores/(?P<ident>[^\/]+)", IgnoresEditHandler),
     ]
         
     ListenerRouter = SockJSRouter(ListenerConnection, '/listener')

@@ -13,6 +13,9 @@ class BaseRequestHandler(RequestHandler):
             self.send_error(500)
             return None
         return oid
+    
+    def get_submitted_array(self, fieldname):
+        return filter(None, self.get_arguments(fieldname+'[]', []))
 
     def get_submitted_headers(self, fieldname):
 
@@ -26,8 +29,8 @@ class BaseRequestHandler(RequestHandler):
             if len(row[0].strip()) != 0:
                 headers[ row[0] ] = row[1]
 
-            row = self.get_arguments(fieldname+'[' + str(x) + '][]', [])
             x += 1
+            row = self.get_arguments(fieldname+'[' + str(x) + '][]', [])
 
         return headers
 
