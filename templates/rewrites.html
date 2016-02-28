@@ -36,10 +36,10 @@
 {% for row in items %}
   <tr>
     <td>
-      <form method="post">
+      <form name="activateForm" method="post">
         <input type="hidden" name="ident" value="{{ row['_id'] }}" />
         <input type="hidden" name="action" value="{% if row['active'] %}disable{% else %}enable{% end %}" />
-        <button>{% if row['active'] %}Turn OFF{% else %}Turn ON{% end %}</button>
+        <input type="checkbox" class="uiswitch" {% if row['active'] %}checked="checked"{% end %} />
       </form>
     </td>
     <td>
@@ -75,6 +75,12 @@
       if (!confirm("Are you sure you want to delete this rule?")) {
         return false;
       }
+    });
+    $('form[name=activateForm] input[type=checkbox]').on('click', function(evt){
+      var id = evt.target.parentNode.querySelector('input[name=ident]').value;
+      var action = evt.target.checked ? "enable" : "disable";
+      $.post("/rewrites", {ident: id, action: action});
+      
     });
 </script>
 {% end %}

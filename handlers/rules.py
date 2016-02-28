@@ -42,5 +42,8 @@ class RulesHandler(BaseRequestHandler):
         elif action == "disable":
             collection.update({'_id': self.get_id(ident)}, {'$set': {"active": False}})
 
+        if 'X-Requested-With' in self.request.headers and self.request.headers['X-Requested-With'] == "XMLHttpRequest":
+            return
+
         self.show_list()
 
