@@ -18,6 +18,9 @@ from rulesadd import RulesAddHandler
 from rewrites import RewritesHandler
 from rewritesadd import RewritesAddHandler
 from rewritesedit import RewritesEditHandler
+from ignores import IgnoresHandler
+from ignoresedit import IgnoresEditHandler
+from ignoresadd import IgnoresAddHandler
 
 #__all__ = [
 #"base", 
