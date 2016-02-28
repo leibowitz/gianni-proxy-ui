@@ -11,11 +11,10 @@
 {% if 'scheme' in item['request'] %}{{ item['request']['scheme'] }}://{% end %}<a href="{% if origin %}/origin/{{ origin }}{% end %}/host/{{ item['request']['host'] }}">{{ item['request']['host'] }}</a>{{ item['request']['path'] }}
 </div>
 
-<button id="curl">Curl command</button>
-
+<button id="curl" data-clipboard-action="copy" data-clipboard-target="#cmd">Show CURL command</button>
 <div id="curl-cmd" class="hidden">
-<pre class="curl">
-{{ cmd }}
+<pre class="curl" id="cmd">
+{% raw cmd %}
 </pre>
 </div>
 
@@ -199,5 +198,6 @@ $('#curl').on('click', function(evt){
     if ($el.toggleClass('hidden').is(":not(.hidden)")) {
     }
 });
+new Clipboard('#curl');
 </script>
 {% end %}
