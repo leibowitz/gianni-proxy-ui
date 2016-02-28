@@ -88,10 +88,11 @@
         {% end %}
       </td>
     {% end %}
-    <td class="compact">
+    <td class="compact status-{{ (item['response']['status']/100)*100 }}">
+      <i class="fa fa-circle"></i>
       {{ item['response']['status'] }} 
     </td>
-    <td class="compact">
+    <td class="compact method-{{ item['request']['method'] }}">
       {{ item['request']['method'] }}
     </td>
     <td class="compact-left">

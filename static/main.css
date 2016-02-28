@@ -3,6 +3,39 @@ body{
   font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+.status-200 {
+	color: #4caf50;
+}
+
+.status-300 {
+	color: #00bcd4;
+}
+
+.status-400 {
+	color: #c62828;
+}
+
+.status-500 {
+	color: #f44336;
+}
+
+
+.method-get {
+	color: #3B8BBA;
+}
+
+.method-post {
+	color: #8e44ad;
+}
+
+.method-delete {
+	color: #c0392b;
+}
+
+.method-put {
+	color: #e67e22;
+}
+
 html {
   background-color: #e0e0e0;
 }
