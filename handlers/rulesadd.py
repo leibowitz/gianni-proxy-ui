@@ -28,19 +28,15 @@ class RulesAddHandler(BaseRequestHandler):
                 body = yield util.get_gridfs_content(fs, entry['response']['fileid'])
                 
                 if entry:
-                    reqheaders = self.nice_headers(entry['request']['headers'])
-                    respheaders = self.nice_headers(entry['response']['headers'])
-                    fmt = util.get_format(util.get_content_type(respheaders)) if respheaders else None
+                    fmt = util.get_format(util.get_content_type(self.nice_headers(respheaders))) if respheaders else None
                     status = entry['response']['status']
                     entry = entry['request']
                     entry['status'] = status
         elif ruleid:
             collection = self.settings['db'].proxyservice['log_rules']
             entry = yield motor.Op(collection.find_one, {'_id': self.get_id(ruleid)})
-            respheaders = self.nice_headers(entry['respheaders'])
-            reqheaders = self.nice_headers(entry['reqheaders'])
             body = entry['body']
-            fmt = util.get_format(util.get_content_type(respheaders)) if respheaders else None
+            fmt = util.get_format(util.get_content_type(self.nice_headers(respheaders))) if respheaders else None
 
         self.render("ruleadd.html", tryagain=False, item=item, origin=origin, host=host, entry=entry, body=body, fmt=fmt, reqheaders=reqheaders, respheaders=respheaders)
 
@@ -64,7 +60,7 @@ class RulesAddHandler(BaseRequestHandler):
         reqheaders = self.get_submitted_headers('reqheader')
         respheaders = self.get_submitted_headers('respheader')
         dynamic = True if response is False and body is False and not respheaders else False
-        fmt = util.get_format(util.get_content_type(respheaders)) if respheaders else None
+        fmt = util.get_format(util.get_content_type(self.nice_headers(respheaders))) if respheaders else None
 
         if not rhost and not path and not query and not status:
             response = False
