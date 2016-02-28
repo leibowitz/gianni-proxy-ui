@@ -6,10 +6,6 @@
 
     <div id="main">
 <div class="content">
-    <a class="pure-button" href="/rules?{% if item is not None %}&amp;item={{ item }}{% end %}{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}">Rules list</a>
-  {% if item is not None %}
-    <a class="pure-button" href="/item/{{ item }}?{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}">Back to Request</a>
-  {% end %}
   <h1 class="content-subhead">Add Rule</h1>
   <form class="pure-form" method="post">
     {% if host is not None %}

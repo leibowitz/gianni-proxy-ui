@@ -3,16 +3,6 @@
 {% block content %}
   <div class="layout">
 
-    {% if origin %}
-    <a class="pure-button" href="/origin/{{ origin }}{% if host is not None %}/host/{{ host }}{% end %}">Back to Session</a>
-    <a class="pure-button" href="/rewrites">Show all rewrites</a>
-    {% else %}
-    <a class="pure-button" href="/">Back to Home</a>
-    {% end %}
-    {% if item is not None %}
-    <a class="pure-button" href="/item/{{ item }}?{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}">Back to Request</a>
-    {% end %}
-
     <a class="pure-button" href="/rewrites/add?{% if item is not None %}&amp;item={{ item }}{% end %}{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}">Add Rewrite</a>
 
 {% if len(items) != 0 %}

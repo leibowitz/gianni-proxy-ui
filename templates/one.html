@@ -6,15 +6,6 @@
 {% block content %}
   <div class="layout">
 
-<div class="pure-menu pure-menu-open pure-menu-horizontal top-menu">
-    <ul>
-        <li><a class="pure-button" href="{% if host is not None %}/origin/{{ origin }}/host/{{ host }}{% else %}{% if origin %}/origin/{{ origin }}{% else %}/{% end %}{% end %}">&lt; Back to list</a></li>
-        <!--<li class="pure-menu-selected"><a href="/item/{{ item['_id'] }}">{{ item['_id'] }}</a></li>-->
-        <li><a class="pure-button" href="/rules/add?item={{ item['_id'] }}{% if origin is not None %}&origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&host={{ host }}{% end %}">Save Response</a></li>
-        <li><a class="pure-button" href="/rewrites/add?item={{ item['_id'] }}{% if origin is not None %}&origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&host={{ host }}{% end %}">Host Rewrite</a></li>
-    </ul>
-</div>
-
 <div class="url">
 {{ item['response']['status'] }}
 {{ item['request']['method'] }}
