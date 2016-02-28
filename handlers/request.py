@@ -47,6 +47,7 @@ class RequestHandler(BaseRequestHandler):
         method = self.get_argument('method', 'GET')
         if not url:
             self.render("request.html", headers=headers, method=method, body=body, url=url, tryagain=True)
+            return
 
         target = urlparse(url)
         params = {}
