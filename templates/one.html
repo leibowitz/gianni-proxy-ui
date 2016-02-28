@@ -11,7 +11,7 @@
 {% if 'scheme' in item['request'] %}{{ item['request']['scheme'] }}://{% end %}<a href="{% if origin %}/origin/{{ origin }}{% end %}/host/{{ item['request']['host'] }}">{{ item['request']['host'] }}</a>{{ item['request']['path'] }}
 </div>
 
-<button id="curl" data-clipboard-action="copy" data-clipboard-target="#cmd">Copy as CURL</button>
+<button id="curl" class="pure-button" data-clipboard-action="copy" data-clipboard-target="#cmd">Copy as CURL</button>
 <div id="curl-cmd" class="hidden">
 <pre class="curl" id="cmd">{% raw cmd %}</pre>
 </div>
