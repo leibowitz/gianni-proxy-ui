@@ -11,7 +11,7 @@
 
     <div class="pure-control-group">
     <label for="method">Method</label>
-    <input type="text" name="method" size="5" placeholder="GET" value="{% if method %}{{ method }}{% end %}" />
+    <input type="text" name="method" size="5" placeholder="GET" value="{% if method %}{{ method }}{% else %}GET{% end %}" />
     </div>
     
     <div class="pure-control-group">
