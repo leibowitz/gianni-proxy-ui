@@ -83,7 +83,9 @@
       {% end %}
     </td>
     <td>
-      {{ row['dynamic'] }}
+      {% if row['dynamic'] %}
+      <i class="mdi mdi-check"></i>
+      {% end %}
     </td>
     {% if not origin %}
     <td>
