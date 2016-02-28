@@ -48,7 +48,11 @@
       </form>
     </td>
     <td>
+      {% if row['method'] %}
       {{ row['method'] }}
+      {% else %}
+      *
+      {% end %}
     </td>
     <td>
       <a href="/rule/{{ row['_id'] }}?{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}{% if item is not None %}&amp;item={{ item }}{% end %}">
@@ -56,7 +60,11 @@
       </a>
     </td>
     <td>
+      {% if row['path'] %}
       {{ row['path'] }}
+      {% else %}
+      *
+      {% end %}
     </td>
     <td>
       {{ row['status'] }}
