@@ -6,7 +6,7 @@
 {% block content %}
 
   <div class="box">
-<button id="curl" class="pure-button" data-clipboard-action="copy" data-clipboard-target="#cmd">Copy as CURL</button>
+<button id="curl" class="pure-button" data-clipboard-action="copy" data-clipboard-target="#curl-cmd">Copy as CURL</button>
     <div class="box-header">
 <h2 class="url">
 <span class="status-{{ (item['response']['status']/100)*100 }}">{{ item['response']['status'] }}</span>
@@ -18,7 +18,7 @@
 
     </div>
 <div id="curl-cmd" class="hidden">
-<pre class="curl" id="cmd">{% raw cmd %}</pre>
+{% raw cmd %}
 </div>
 
   <div class="box-header b-t">
