@@ -9,10 +9,10 @@
     padding: 5px;
   }
   tr.stripped{ /*:nth-child(odd){*/
-    background-color: #eee;
+    background-color: rgba(0,0,0,.025);
   }
   .top-space{
-      padding-top: {% if not host %}7em{% else %}9em{% end %};
+      padding-top: {% if not host %}9em{% else %}11em{% end %};
   }
   .pure-table th.compact,
   .pure-table td.compact
@@ -36,7 +36,7 @@
 {% block content %}
         <div class="box">
   <div class="layout">
-    <div class="fixed">
+    <div class="">
 <div>
 <button class="pure-button" id="onPlayPause">Stop Recording</button>
 <button class="pure-button" id="onClear">Clear list</button>
@@ -53,49 +53,58 @@
 </form>
 </div>
 
-<div class="top-space">
-
-<table class="b-t">
+<div class="table">
+<table class="b-t fixed-header">
   <thead>
-    <th>
+    <th class="fixed-width-time">
+      <div>
       Time
+      </div>
     </th>
     {% if not origin %}
-    <th class="compact-right">
+    <th class="fixed-width-origin">
+      <div>
       Origin
+      </div>
     </th>
     {% end %}
-    <th class="compact">
+    <th class="fixed-width-status">
+      <div>
       St. 
+      </div>
     </th>
-    <th class="compact">
+    <th class="fixed-width-method">
+      <div>
       Met.
+      </div>
     </th>
-    <th class="compact-left">
+    <th class="fixed-width-url">
+      <div>
       Url
+      </div>
     </th>
   </thead>
   <tbody>
 {% for num, item in enumerate(items) %}
 <tr {% if num % 2 == 0 %}class="stripped"{% end %}>
-    <td>
+    <td class="fixed-width-time">
       {{ item['date'].astimezone(tz).strftime('%H:%M:%S') }}
     </td>
     {% if not origin %}
-      <td class="compact-right">
+      <td class="fixed-width-origin">
         {% if 'origin' in item['request'] %}
         <a href="/origin/{{ item['request']['origin'] }}">{{ item['request']['origin'] }}</a>
         {% end %}
       </td>
     {% end %}
-    <td class="compact status-{{ (item['response']['status']/100)*100 }}">
+    <td class="fixed-width-status status-{{ (item['response']['status']/100)*100 }}">
       <i class="fa fa-circle"></i>
       {{ item['response']['status'] }} 
     </td>
-    <td class="compact method-{{ item['request']['method'] }}">
+    <td class="fixed-width-method method-{{ item['request']['method'] }}">
       {{ item['request']['method'] }}
     </td>
-    <td class="compact-left">
+    <td class="fixed-width-url">
         
       {% if 'scheme' in item['request'] %}{{ item['request']['scheme'] }}://{% end %}<a href="{% if not host %}{% if origin %}/origin/{{ origin }}{% end %}/host/{{ item['request']['host'] }}{% else %}/item/{{ item['_id'] }}{% if origin or host %}?{% end %}{% if origin %}origin={{ url_escape(origin) }}{% if host %}&amp;{% end %}{% end %}{% if host %}host={{ url_escape(host) }}{% end %}{% end %}">{{ item['request']['host'] }}</a><a target="_blank" href="/item/{{ item['_id'] }}{% if origin or host %}?{% end %}{% if origin %}origin={{ url_escape(origin) }}{% if host %}&amp;{% end %}{% end %}{% if host %}host={{ url_escape(host) }}{% end %}" title="{{ item['request']['path'] }}">{% if len(item['request']['path']) > 50 %}{{ item['request']['path'][:50] }}...{% else %}{{ item['request']['path'] }}{% end %}</a>
     </td>
@@ -103,9 +112,9 @@
 {% end %}
   </tbody>
 </table>
+</div>
+</div>
 
-</div>
-</div>
         </div>
 
 <script src="/static/sockjs-0.3.min.js"></script>
@@ -126,12 +135,12 @@ function scrollToBottom(duration){
   if (duration == undefined) {
     duration = 400;
   }
-  $("html, body").animate({ scrollTop: $(document).height() }, duration);
+  $('table.fixed-header tbody').animate({scrollTop: $('table.fixed-header tbody')[0].scrollHeight-$('table.fixed-header tbody').height()}, duration);
 }
 
 function getScrollHeight()
 {
-  return Math.abs(window.innerHeight + $(window).scrollTop() - $(window).height());
+  return Math.abs($('table.fixed-header tbody')[0].scrollHeight-$('table.fixed-header tbody').scrollTop()-$('table.fixed-header tbody').height());
 }
 
 var scrollTimeout;
@@ -260,7 +269,7 @@ $('#filterText').on('keyup', function(evt){
       refreshStrip();
     }
     // Scroll to bottom
-    scrollToBottom();
+    scrollToBottom(0);
 });
 function refreshStrip(){
   $('table > tbody > tr').each(function(index, row){
@@ -271,7 +280,9 @@ function setStripedClass(row)
 {
   var index = row.prevAll(':not(.hidden)').length;
   if (index % 2 == 0) {
-    row.addClass('stripped');
+    if (!row.hasClass('stripped')) {
+      row.addClass('stripped');
+    }
   } else {
     row.removeClass('stripped');
   }
@@ -298,11 +309,11 @@ $('#filterForm').on('submit', function(evt){
   });
 
 scrollToBottom();
-var lastScrollTop = $(window).scrollTop();
+var lastScrollTop = $('table.fixed-header tbody').scrollTop();
 var doNotScroll = null;
     
-$(window).scroll(function(evt){
-    var currentScroll = $(window).scrollTop();
+$('table.fixed-header tbody').scroll(function(evt){
+    var currentScroll = $('table.fixed-header tbody').scrollTop();
     if (currentScroll < lastScrollTop){
         if (doNotScroll != null) {
             clearTimeout(doNotScroll);
