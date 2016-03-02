@@ -36,7 +36,7 @@
 {% block content %}
         <div class="box">
   <div class="layout">
-    <div class="">
+    <div id="filterBox">
 <div>
 <button class="pure-button" id="onPlayPause">Stop Recording</button>
 <button class="pure-button" id="onClear">Clear list</button>
@@ -326,5 +326,10 @@ $('table.fixed-header tbody').scroll(function(evt){
 });
 
 })();
+
+// Make the tbody height as big as possible
+$(document).ready(function(){
+    $('table.fixed-header tbody').height($(window).height()-(200+$('#filterBox').height()));
+});
 </script>
 {% end %}
