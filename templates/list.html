@@ -171,7 +171,7 @@ function createSocket(origin)
             {% if not origin %}
             '<td class="compact-right"><a href="/origin/' + msg['request']['origin'] + '">' + msg['request']['origin'] + "</a></td>" +
             {% end %}
-            '<td class="compact status-' + ((msg['response']['status']/100)*100) + '"><i class="fa fa-circle"></i> ' + msg['response']['status'] + "</td>" +
+            '<td class="compact status-' + (parseInt(msg['response']['status']/100)*100) + '"><i class="fa fa-circle"></i> ' + msg['response']['status'] + "</td>" +
             '<td class="compact method-' + msg['request']['method'] + '">' + msg['request']['method'] + "</td>" +
             '<td class="compact-left">' + 
             msg['request']['scheme'] + '://' +
