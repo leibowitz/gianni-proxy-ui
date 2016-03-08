@@ -6,6 +6,8 @@
 {% block content %}
 
   <div class="box">
+    <a class="pure-button" href="/rules/add?item={{ item['_id'] }}">Save</a>
+    <a class="pure-button" href="/request?item={{ item['_id'] }}">Resend</a>
 <button id="curl" class="pure-button" data-clipboard-action="copy" data-clipboard-target="#curl-cmd">Copy as CURL</button>
     <div class="box-header">
 <h2 class="url">
