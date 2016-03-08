@@ -86,8 +86,11 @@
 {% end %}
 </table>
 <div id="response" class="b-t">
-<button id="btn-rsp" class="pure-button" data-clipboard-action="copy" data-clipboard-target="#response">Copy</button>
 {% if responsebody %}
+<button id="btn-rsp" class="pure-button" data-clipboard-action="copy" data-clipboard-target="#response">Copy</button>
+<script type="text/javascript">
+new Clipboard('#btn-rsp');
+</script>
 <!--<div>
 <pre lang="json"></pre>
 </div>-->
@@ -204,6 +207,5 @@ $('#curl').on('click', function(evt){
     }
 });
 new Clipboard('#curl');
-new Clipboard('#btn-rsp');
 </script>
 {% end %}
