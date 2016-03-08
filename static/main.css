@@ -59,6 +59,10 @@ table.fixed-header th {
   line-height: normal;
 }*/
 
+.protocol {
+  height: 2em;
+}
+
 .status-200 {
 	color: #4caf50;
 }
