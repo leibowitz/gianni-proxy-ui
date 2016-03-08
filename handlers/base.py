@@ -16,14 +16,14 @@ class BaseRequestHandler(RequestHandler):
         return oid
     
     def get_submitted_array(self, fieldname):
-        return filter(None, self.get_arguments(fieldname+'[]', []))
+        return filter(None, self.get_arguments(fieldname+'[]'))
 
     def get_submitted_headers(self, fieldname):
 
         headers = defaultdict(list)
         x = 0
 
-        row = self.get_arguments(fieldname+'[' + str(x) + '][]', [])
+        row = self.get_arguments(fieldname+'[' + str(x) + '][]')
 
         while len(row) > 1:
 
@@ -31,7 +31,7 @@ class BaseRequestHandler(RequestHandler):
                 headers[ row[0] ].append(row[1])
 
             x += 1
-            row = self.get_arguments(fieldname+'[' + str(x) + '][]', [])
+            row = self.get_arguments(fieldname+'[' + str(x) + '][]')
 
         return headers
 
