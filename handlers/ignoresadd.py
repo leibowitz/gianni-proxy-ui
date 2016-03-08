@@ -14,16 +14,23 @@ class IgnoresAddHandler(BaseRequestHandler):
         host = self.get_argument('host', None)
         paths = self.get_submitted_array('paths')
 
-        self.render("ignoresadd.html", tryagain=False, host=host, paths=paths)
+        entry = None
+        item = self.get_argument('item', None)
+        if item:
+            collection = self.settings['db'].proxyservice['log_logentry']
+            entry = yield motor.Op(collection.find_one, {'_id': self.get_id(item)})
+
+        self.render("ignoresadd.html", tryagain=False, host=host, paths=paths, entry=entry)
 
     @tornado.web.asynchronous
     @gen.coroutine
     def post(self):
         host = self.get_argument('host', None)
         paths = self.get_submitted_array('paths')
+        entry = None
         
         if not host:
-            self.render("ignoresadd.html", tryagain=True, host=host, paths=paths)
+            self.render("ignoresadd.html", tryagain=True, host=host, paths=paths, entry=entry)
             return
 
         collection = self.settings['db'].proxyservice['log_ignores']
