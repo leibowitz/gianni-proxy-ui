@@ -180,9 +180,8 @@ div.url {
   word-break: break-all;
 }
 
-#curl {
+#curl, #btn-rsp {
   float: right;
-
 }
 
 .box {
