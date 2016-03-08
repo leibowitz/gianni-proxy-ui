@@ -331,5 +331,8 @@ $('table.fixed-header tbody').scroll(function(evt){
 $(document).ready(function(){
     $('table.fixed-header tbody').height($(window).height()-(200+$('#filterBox').height()));
 });
+$( window ).resize(function() {
+    $('table.fixed-header tbody').height($(window).height()-(200+$('#filterBox').height()));
+});
 </script>
 {% end %}
