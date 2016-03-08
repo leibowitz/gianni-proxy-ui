@@ -41,6 +41,7 @@ table.fixed-header th {
 
 .fixed-width-status {
   width: 5em;
+  white-space: nowrap;
 }
 
 .fixed-width-method {
