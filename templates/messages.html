@@ -16,7 +16,7 @@
     <th>
       Host
     </th>
-    <th>
+    <th class="delete">
     </th>
   </thead>
   <tbody>
@@ -30,7 +30,7 @@
       {{ row['host'] }}
       </a>
     </td>
-    <td>
+    <td class="delete">
       <form method="post" name="deleteForm">
         <input type="hidden" name="ident" value="{{ row['_id'] }}" />
         <input type="hidden" name="action" value="delete" />

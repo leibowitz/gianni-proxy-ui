@@ -151,6 +151,14 @@ td, th {
   line-height: 1.5;
 }
 
+th.active, td.active {
+	width: 5em;
+}
+
+th.delete, td.delete {
+	width: 2em;
+}
+
 /*tbody>tr:nth-child(odd) {
   background-color: rgba(0,0,0,.025);
 }*/

@@ -10,7 +10,7 @@
 {% if len(items) != 0 %}
 <table>
   <thead>
-    <th>
+    <th class="active">
       Active
     </th>
     <th>
@@ -36,7 +36,7 @@
       Origin
     </th>
     {% end %}
-    <th>
+    <th class="delete">
     </th>
   </thead>
   <tbody>
@@ -90,7 +90,7 @@
         {% if row['origin'] %}<a href="/rules?origin={{ row['origin'] }}">{{ row['origin'] }}</a>{% end %}
     </td>
     {% end %}
-    <td>
+    <td class="delete">
       <form method="post" name="deleteForm">
         <input type="hidden" name="ident" value="{{ row['_id'] }}" />
         <input type="hidden" name="action" value="delete" />

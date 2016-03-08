@@ -10,7 +10,7 @@
 {% if len(items) != 0 %}
 <table>
   <thead>
-    <th>
+    <th class="active">
       Active
     </th>
     <th>
@@ -19,7 +19,7 @@
     <th>
       Paths
     </th>
-    <th>
+    <th class="delete">
     </th>
   </thead>
   <tbody>
@@ -44,7 +44,7 @@
       <i class="fa fa-asterisk"></i>
       {% end %}
     </td>
-    <td>
+    <td class="delete">
       <form method="post" name="deleteForm">
         <input type="hidden" name="ident" value="{{ row['_id'] }}" />
         <input type="hidden" name="action" value="delete" />
