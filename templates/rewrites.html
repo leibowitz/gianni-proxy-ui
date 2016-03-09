@@ -36,8 +36,8 @@
     <td>
       <a href="/rewrite/{{ row['_id'] }}?{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}{% if item is not None %}&amp;item={{ item }}{% end %}">
       {% if row['protocol'] %}{{ row['protocol'] }}://{% end %}{% if row['host'] %}{{ row['host'] }}{% end %}
-      <br />
-      => {% if row['dprotocol'] %}{{ row['dprotocol'] }}://{% end %}{% if row['dhost'] %}{{ row['dhost'] }}{% elif row['host'] %}{{ row['host'] }}{% end %}
+      <br /><i class="fa fa-arrow-right"></i> 
+      {% if row['dprotocol'] %}{{ row['dprotocol'] }}://{% end %}{% if row['dhost'] %}{{ row['dhost'] }}{% elif row['host'] %}{{ row['host'] }}{% end %}
       </a>
     </td>
     {% if not origin %}
