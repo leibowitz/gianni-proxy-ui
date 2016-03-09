@@ -1,10 +1,12 @@
 {% extends "default.html" %}
 {% block title %}List of rules{% end %}
 {% block content %}
+<div class="top-button">
+    <a class="pure-button pure-button-primary" href="/rules/add">Add Rule</a>
+</div>
         <div class="box">
 
   <div class="layout">
-    <a class="pure-button" href="/rules/add">Add Rule</a>
 
 
 {% if len(items) != 0 %}
