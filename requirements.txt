@@ -9,7 +9,6 @@ httpheader
 pygments
 pytz
 uuid
-tempfile
 bson
 gridfs
 urllib
