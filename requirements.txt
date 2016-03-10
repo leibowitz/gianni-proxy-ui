@@ -1,4 +1,4 @@
-pymongo
+pymongo==2.8.0
 motor
 requests
 sockjs-tornado
@@ -9,4 +9,3 @@ httpheader
 pygments
 pytz
 uuid
-bson
