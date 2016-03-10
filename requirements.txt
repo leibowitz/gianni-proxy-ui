@@ -4,7 +4,7 @@ requests
 sockjs-tornado
 tornado
 mimes
-magic
+python-magic
 httpheader
 pygments
 pytz
