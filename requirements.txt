@@ -1,7 +1,7 @@
 pymongo
 motor
 requests
-sockjs.tornado
+sockjs-tornado
 tornado
 mimes
 magic
