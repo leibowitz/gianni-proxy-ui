@@ -62,15 +62,15 @@
 <h2>Response</h2>
   </div>
 {% if not finished %}
-<button id="format">FORMAT</button>
+<button id="format" class="pure-button">FORMAT</button>
 <br/>
 {% for msg in messages %}
-<button id="msg-{{ msg['_id'] }}">{% if 'name' in msg %}{{ msg['name'] }}{% else %}{{ msg['_id'] }}{% end %}</button>
+<button class="pure-button" id="msg-{{ msg['_id'] }}">{% if 'name' in msg %}{{ msg['name'] }}{% else %}{{ msg['_id'] }}{% end %}</button>
 {% end %}
 <form method="post" id="form">
   <input type="hidden" name="id" value="" />
   <textarea id="message" rows="10" style="width:100%" data-editor="json" name="body" placeholder="body content"></textarea>
-  <button id="send">Send</button>
+  <button id="send" class="pure-button pure-button-primary">Send</button>
 </form>
 {% end %}
 <table class="headers">
