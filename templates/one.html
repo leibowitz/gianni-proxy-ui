@@ -58,21 +58,31 @@
 {% end %}
 
   <div class="box b-t">
-  <div class="box-header">
-<h2>Response</h2>
-  </div>
 {% if not finished %}
+<div class="link-messages"><a class="pure-button" href="/messages?host={{ item['request']['host'] }}">Manage messages</a></div>
+  <div class="box-header">
+<h2>Messages</h2>
+
+  </div>
+
 <button id="format" class="pure-button">FORMAT</button>
-<br/>
 {% for msg in messages %}
 <button class="pure-button" id="msg-{{ msg['_id'] }}">{% if 'name' in msg %}{{ msg['name'] }}{% else %}{{ msg['_id'] }}{% end %}</button>
 {% end %}
-<form method="post" id="form">
+<form method="post" class="bottom-padding-form" id="form">
   <input type="hidden" name="id" value="" />
-  <textarea id="message" rows="10" style="width:100%" data-editor="json" name="body" placeholder="body content"></textarea>
-  <button id="send" class="pure-button pure-button-primary">Send</button>
+  <textarea id="message" rows="20" style="width:100%" data-editor="json" name="body" placeholder="body content"></textarea>
+  <div class="right">
+  <button id="btn-send" class="pure-button pure-button-primary">Send</button>
+  </div>
+
 </form>
+  </div>
+  <div class="box b-t">
 {% end %}
+  <div class="box-header">
+<h2>Response</h2>
+  </div>
 <table class="headers">
 {% for key, value in responseheaders.iteritems() %}
   <tr>

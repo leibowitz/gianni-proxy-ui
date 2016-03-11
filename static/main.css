@@ -197,6 +197,19 @@ div.url {
   float: right;
 }
 
+div.right {
+	text-align: right;
+	margin: 5px;
+}
+
+.link-messages {
+	float: right;
+}
+
+.bottom-padding-form {
+	padding-bottom: 1em;
+}
+
 .box {
   background-color: #fff;
   box-shadow: 0 0 1px rgba(0,0,0,.15);
