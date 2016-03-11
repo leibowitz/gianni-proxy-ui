@@ -1,6 +1,9 @@
 {% extends "default.html" %}
 {% block title %}MockProxy - Homepage{% end %}
 {% block content %}
+<div class="top-button">
+<a class="pure-button pure-button-primary" href="/static/ca.crt">Install certificate</a>
+</div>
         <div class="box">
   <div class="layout">
 <div>
@@ -8,7 +11,6 @@ You will need to install the certificate on the device before using the proxy.
 To install the certificate, simply navigate to <a href="/static/ca.crt">http://{{ host }}/static/ca.crt</a> from the device browser or go to <a href="/">http://{{ host }}</a> and click Install certificate.
 
 <br />
-<a class="pure-button" href="/static/ca.crt">Install certificate</a>
 <br />
 
 If you want to install the root certificate, download this one <a href="/static/e3c54992.0">http://{{ host }}/static/e3c54992.0</a> from your computer and push it to the device using this command: <br />
