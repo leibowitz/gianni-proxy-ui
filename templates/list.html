@@ -34,13 +34,13 @@
 </style>
 {% end %}
 {% block content %}
+<div class="top-button">
+<button class="pure-button pure-button-primary" id="onPlayPause">Stop Recording</button>
+<button class="pure-button" id="onClear">Clear all</button>
+</div>
         <div class="box">
   <div class="layout">
     <div id="filterBox">
-<div>
-<button class="pure-button" id="onPlayPause">Stop Recording</button>
-<button class="pure-button" id="onClear">Clear list</button>
-</div>
 
 <form id="filterForm" class="pure-form">
   <div>{% if host %}Host filter: {{ host }}<a class="pure-button" href="{% if origin %}/origin/{{ origin }}{% else %}/all{% end %}">X</a>{% end %}</div>

@@ -193,7 +193,7 @@ div.url {
   word-break: break-all;
 }
 
-#curl, #btn-rsp {
+#curl, #btn-rsp, #onClear {
   float: right;
 }
 
