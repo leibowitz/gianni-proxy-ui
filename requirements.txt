@@ -1,0 +1,11 @@
+pymongo==2.8.0
+motor
+requests
+sockjs-tornado
+tornado
+mimes
+python-magic
+httpheader
+pygments
+pytz
+uuid
