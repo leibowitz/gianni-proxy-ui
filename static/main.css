@@ -69,7 +69,7 @@ table.fixed-header th {
 }
 
 .fixed-width-url {
-  width: 50em;
+  min-width: 40em;
 }
 
 
