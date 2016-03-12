@@ -9,7 +9,6 @@
 
   <div class="layout">
 
-{% if len(items) != 0 %}
 <table>
   <thead>
     <th class="active">
@@ -25,7 +24,7 @@
     </th>
   </thead>
   <tbody>
-{% for row in items %}
+{% for k, row in items.iteritems() %}
   <tr>
     <td>
       <form name="activateForm" method="post">
@@ -50,14 +49,15 @@
       <form method="post" name="deleteForm">
         <input type="hidden" name="ident" value="{{ row['origin'] }}" />
         <input type="hidden" name="action" value="delete" />
+        {% if 'agent' not in row %}
           <button class="btn" name="delete"><i class="fa fa-times"></i></button>
+        {% end %}
       </form>
     </td>
   </tr>
 {% end %}
   </tbody>
 </table>
-{% end %}
 
   </div>
 </div>
