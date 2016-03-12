@@ -1,9 +1,9 @@
 {% extends "default.html" %}
-{% block title %}Edit a Host Rewrite{% end %}
+{% block title %}Edit a Host Redirect{% end %}
 {% block content %}
     <div id="main" class="box">
       <div class="box-header">
-        <h2>Edit Rewrite</h2>
+        <h2>Edit Redirect</h2>
       </div>
   <form class="pure-form" method="post">
       <div class="box-body top-bar">
@@ -39,7 +39,7 @@
       <input type="text" name="ohost" size="50" placeholder="google.com" value="{% if entry['host'] %}{{ entry['host'] }}{% end %}" />
     </div>
 
-    <h2>Rewrite To</h2>
+    <h2>Redirect To</h2>
     <div class="pure-control-group">
         <label for="dprotocol">Protocol</label>
         <select name="dprotocol" class="large-select">

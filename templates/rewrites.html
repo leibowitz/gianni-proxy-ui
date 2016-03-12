@@ -2,7 +2,7 @@
 {% block title %}List of host rewrites{% end %}
 {% block content %}
 <div class="top-button">
-    <a class="pure-button pure-button-primary" href="/rewrites/add?{% if item is not None %}&amp;item={{ item }}{% end %}{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}">Add Rewrite</a>
+    <a class="pure-button pure-button-primary" href="/rewrites/add?{% if item is not None %}&amp;item={{ item }}{% end %}{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}">Add Redirect</a>
 </div>
         <div class="box">
   <div class="layout">
@@ -15,7 +15,7 @@
       Active
     </th>
     <th>
-      Host Rewrite
+      Host Redirect
     </th>
     {% if not origin %}
     <th>
