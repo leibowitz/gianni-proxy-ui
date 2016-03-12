@@ -12,6 +12,9 @@
 {% if len(items) != 0 %}
 <table>
   <thead>
+    <th class="active">
+      Record
+    </th>
     <th class="fixed-width-origin">
       IP
     </th>
@@ -24,6 +27,13 @@
   <tbody>
 {% for row in items %}
   <tr>
+    <td>
+      <form name="activateForm" method="post">
+        <input type="hidden" name="ident" value="{{ row['origin'] }}" />
+        <input type="hidden" name="action" value="{% if not 'filterAll' in row or not row['filterAll'] %}disable{% else %}enable{% end %}" />
+        <input type="checkbox" class="uiswitch" {% if not 'filterAll' in row or not row['filterAll'] %}checked="checked"{% end %} />
+      </form>
+    </td>
     <td>
       <a href="/origin/{{ row['origin'] }}">
       {{ row['origin'] }}
@@ -62,6 +72,12 @@
           row.parentNode.removeChild(row);
         });
       }
+    });
+    $('form[name=activateForm] input[type=checkbox]').on('click', function(evt){
+      var id = evt.target.parentNode.querySelector('input[name=ident]').value;
+      var action = evt.target.checked ? "enable" : "disable";
+      $.post("/origins", {ident: id, action: action});
+      
     });
 </script>
 {% end %}

@@ -11,6 +11,11 @@
     <div class="pure-form-stacked">
         
     <div class="pure-control-group">
+    <label for="active">Record</label>
+    <input type="checkbox" name="active" {% if not 'filterAll' in entry or not entry['filterAll'] %}checked="checked"{% end %} />
+    </div>
+      
+    <div class="pure-control-group">
     <label for="origin">IP</label>
     <input type="text" name="origin" size="35" placeholder="1.2.3.4" value="{% if entry is not None and entry['origin'] %}{{ entry['origin'] }}{% elif origin %}{{ origin }}{% end %}" />
     </div>

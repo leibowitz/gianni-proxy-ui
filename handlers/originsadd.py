@@ -40,6 +40,7 @@ class OriginsAddHandler(BaseRequestHandler):
         data = {
             'name': name,
             'origin': origin,
+            'filterAll': False
         }
         
         yield motor.Op(collection.insert, data)

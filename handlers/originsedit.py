@@ -24,6 +24,7 @@ class OriginsEditHandler(BaseRequestHandler):
     def post(self, ident):
         name = self.get_argument('name', None)
         origin = self.get_argument('origin', None)
+        active = self.get_argument('active', False)
 
         collection = self.settings['db'].proxyservice['origins']
         entry = yield motor.Op(collection.find_one, {'origin': ident})
@@ -33,6 +34,7 @@ class OriginsEditHandler(BaseRequestHandler):
             return
 
         data = {
+            'filterAll': not active,
             'origin': origin,
             'name': name,
         }
