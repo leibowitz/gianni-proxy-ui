@@ -38,23 +38,18 @@
 <button class="pure-button button-success" id="onPlayPause"><i id="record-icon" class="mdi mdi-play"></i> <span id="record-text">Stop Recording</span></button>
 <button class="pure-button" id="onClear">Clear all</button>
 </div>
-        <div class="box">
-  <div class="layout">
-    <div id="filterBox">
 
 <form id="filterForm" class="pure-form">
   <div>{% if host %}Host filter: {{ host }}<a class="pure-button" href="{% if origin %}/origin/{{ origin }}{% else %}/all{% end %}">X</a>{% end %}</div>
-  <input type="text" id="filterText" placeholder="Filter by {% if not host %}host or {% end %}path" size="50" />
+  <input type="text" id="filterText" placeholder="Search" style="width:100%;" />
   <input type="hidden" id="host" value="{% if host %}{{ host }}{% end %}" />
   <input type="hidden" id="origin" value="{% if origin %}{{ origin }}{% end %}" />
-  {% if not host %}
-  <button class="pure-button pure-button-primary">Apply host filter</button>
-  {% end %}
 </form>
-</div>
 
+        <div class="box b-t">
+  <div class="layout">
 <div class="table">
-<table class="b-t fixed-header">
+<table class="fixed-header">
   <thead>
     <th class="fixed-width-time">
       <div>
