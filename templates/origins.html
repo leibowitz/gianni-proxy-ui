@@ -1,0 +1,67 @@
+{% extends "default.html" %}
+{% block title %}List of devices{% end %}
+{% block content %}
+<div class="top-button">
+    <a class="pure-button pure-button-primary" href="/origins/add">Add Device</a>
+</div>
+
+<div class="box">
+
+  <div class="layout">
+
+{% if len(items) != 0 %}
+<table>
+  <thead>
+    <th class="fixed-width-origin">
+      IP
+    </th>
+    <th>
+      Name
+    </th>
+    <th class="delete">
+    </th>
+  </thead>
+  <tbody>
+{% for row in items %}
+  <tr>
+    <td>
+      <a href="/origin/{{ row['origin'] }}">
+      {{ row['origin'] }}
+      </a>
+    </td>
+    <td>
+      <a href="/origins/{{ row['origin'] }}">
+      {{ row['name'] }}
+      </a>
+    </td>
+    <td class="delete">
+      <form method="post" name="deleteForm">
+        <input type="hidden" name="ident" value="{{ row['origin'] }}" />
+        <input type="hidden" name="action" value="delete" />
+          <button class="btn" name="delete"><i class="fa fa-times"></i></button>
+      </form>
+    </td>
+  </tr>
+{% end %}
+  </tbody>
+</table>
+{% end %}
+
+  </div>
+</div>
+
+<script src="/static/jquery.min.js"></script>
+<script type="text/javascript">
+    $('form[name=deleteForm] button[name=delete]').on('click', function(evt){
+      var t = evt.currentTarget;
+      evt.preventDefault();
+      if (confirm("Are you sure you want to delete this device?")) {
+        var id = t.parentNode.querySelector('input[name=ident]').value;
+        $.post("/origins", {ident: id, action: "delete"}, function(data, status) {
+          var row = t.parentNode.parentNode.parentNode;
+          row.parentNode.removeChild(row);
+        });
+      }
+    });
+</script>
+{% end %}

@@ -22,6 +22,9 @@ from rewritesedit import RewritesEditHandler
 from ignores import IgnoresHandler
 from ignoresedit import IgnoresEditHandler
 from ignoresadd import IgnoresAddHandler
+from origins import OriginsHandler
+from originsedit import OriginsEditHandler
+from originsadd import OriginsAddHandler
 
 #__all__ = [
 #"base", 

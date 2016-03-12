@@ -31,6 +31,9 @@ if __name__ == "__main__":
         (r"/ignores", IgnoresHandler),
         (r"/ignores/add", IgnoresAddHandler),
         (r"/ignores/(?P<ident>[^\/]+)", IgnoresEditHandler),
+        (r"/origins", OriginsHandler),
+        (r"/origins/add", OriginsAddHandler),
+        (r"/origins/(?P<ident>[^\/]+)", OriginsEditHandler),
         (r'/static/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'static')}),
         (r'/css/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'css')}),
         (r'/fonts/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'fonts')}),
@@ -58,6 +61,8 @@ if __name__ == "__main__":
     options.parse_command_line()
 
     db = motor.MotorClient('mongodb://'+options.mongourl, tz_aware=True)
+    
+    db.proxyservice['origins'].create_index("origin", background=True)
 
     ui_methods={'nice_headers': BaseRequestHandler.nice_headers}
     settings = dict(

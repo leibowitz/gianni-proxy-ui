@@ -1,0 +1,40 @@
+{% extends "default.html" %}
+{% block title %}Add a new device{% end %}
+{% block content %}
+
+
+    <div id="main" class="box">
+      <div class="box-header">
+        <h2>Add Device</h2>
+      </div>
+  <form class="pure-form" method="post">
+      <div class="box-body top-bar">
+
+    <div class="pure-form-stacked">
+
+    <div class="pure-control-group">
+    <label for="origin">IP</label>
+    <input type="text" name="origin" size="35" {% if origin %}value="{{ origin }}"{% elif entry is not None %}value="{{ entry['request']['origin'] }}"{% end %} placeholder="1.2.3.4" />
+    </div>
+
+    <div class="pure-control-group">
+    <label for="name">Name</label>
+    <input type="text" name="name" size="35" {% if name %}value="{{ name }}"{% end %} placeholder="Black iPhone 6" />
+    </div>
+
+    </div>
+
+</div>
+      <div class="box-body top-bar">
+    <button type="submit" class="pure-button pure-button-primary">Save</button>
+  </form>
+  {% if tryagain %}
+    Try again
+  {% end %}
+
+      </div>
+</div>
+
+<script src="/static/jquery.min.js"></script>
+<script src="/static/jquery-ui.js"></script>
+{% end %}
