@@ -16,9 +16,9 @@ from messagesedit import MessagesEditHandler
 from rules import RulesHandler
 from rulesedit import RulesEditHandler
 from rulesadd import RulesAddHandler
-from rewrites import RewritesHandler
-from rewritesadd import RewritesAddHandler
-from rewritesedit import RewritesEditHandler
+from redirects import RedirectsHandler
+from redirectsadd import RedirectsAddHandler
+from redirectsedit import RedirectsEditHandler
 from ignores import IgnoresHandler
 from ignoresedit import IgnoresEditHandler
 from ignoresadd import IgnoresAddHandler
@@ -44,8 +44,8 @@ from originsadd import OriginsAddHandler
 #"rules",
 #"rulesedit",
 #"rulesadd",
-#"rewrites",
-#"rewritesadd",
-#"rewritesedit"
+#"redirects",
+#"redirectsadd",
+#"redirectsedit"
 #]
 

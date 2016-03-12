@@ -6,7 +6,7 @@ import motor
 from base import BaseRequestHandler
 from shared import util
 
-class RewritesEditHandler(BaseRequestHandler):
+class RedirectsEditHandler(BaseRequestHandler):
 
     @tornado.web.asynchronous
     @gen.engine
@@ -19,7 +19,7 @@ class RewritesEditHandler(BaseRequestHandler):
         item = self.get_argument('item', None)
         origin = entry['origin'] or None if 'origin' in entry else self.get_argument('origin', None)
         host = self.get_argument('host', None)
-        self.render("rewriteedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=False, ohost=entry['host'], dhost=entry['dhost'], protocol=entry['protocol'], dprotocol=entry['dprotocol'])
+        self.render("redirectedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=False, ohost=entry['host'], dhost=entry['dhost'], protocol=entry['protocol'], dprotocol=entry['dprotocol'])
     
     @tornado.web.asynchronous
     @gen.engine
@@ -41,7 +41,7 @@ class RewritesEditHandler(BaseRequestHandler):
         entry = yield motor.Op(collection.find_one, {'_id': self.get_id(ident)})
 
         if not dhost and not dprotocol or not ohost and not protocol:
-            self.render("rewriteedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=True, ohost=ohost, dhost=dhost, protocol=protocol, dprotocol=dprotocol)
+            self.render("redirectedit.html", entry=entry, item=item, origin=origin, host=host, tryagain=True, ohost=ohost, dhost=dhost, protocol=protocol, dprotocol=dprotocol)
             return
 
         collection = self.settings['db'].proxyservice['log_hostrewrite']
@@ -62,6 +62,6 @@ class RewritesEditHandler(BaseRequestHandler):
         #    params['host'] = host
         if item:
             params['item'] = item
-        self.redirect('/rewrites?' + urllib.urlencode(params))
+        self.redirect('/redirects?' + urllib.urlencode(params))
 
 

@@ -5,7 +5,7 @@ import motor
 
 from base import BaseRequestHandler
 
-class RewritesAddHandler(BaseRequestHandler):
+class RedirectsAddHandler(BaseRequestHandler):
 
 
     @tornado.web.asynchronous
@@ -19,7 +19,7 @@ class RewritesAddHandler(BaseRequestHandler):
             collection = self.settings['db'].proxyservice['log_logentry']
             entry = yield motor.Op(collection.find_one, {'_id': self.get_id(item)})
 
-        self.render("rewriteadd.html", tryagain=False, origin=origin, host=host, item=item, entry=entry, ohost=None, dhost=None, protocol=None, dprotocol=None)
+        self.render("redirectadd.html", tryagain=False, origin=origin, host=host, item=item, entry=entry, ohost=None, dhost=None, protocol=None, dprotocol=None)
     
     @tornado.web.asynchronous
     @gen.coroutine
@@ -36,7 +36,7 @@ class RewritesAddHandler(BaseRequestHandler):
 
         entry = None
         if not dhost and not dprotocol or not ohost and not protocol:
-            self.render("rewriteadd.html", tryagain=True, item=item, origin=origin, host=host, ohost=ohost, dhost=dhost, protocol=protocol, dprotocol=dprotocol, entry=entry)
+            self.render("redirectadd.html", tryagain=True, item=item, origin=origin, host=host, ohost=ohost, dhost=dhost, protocol=protocol, dprotocol=dprotocol, entry=entry)
             return
 
         collection = self.settings['db'].proxyservice['log_hostrewrite']
@@ -57,4 +57,4 @@ class RewritesAddHandler(BaseRequestHandler):
         #    params['host'] = host
         if item:
             params['item'] = item
-        self.redirect('/rewrites?' + urllib.urlencode(params))
+        self.redirect('/redirects?' + urllib.urlencode(params))

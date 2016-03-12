@@ -3,7 +3,7 @@ import tornado.web
 
 from base import BaseRequestHandler
 
-class RewritesHandler(BaseRequestHandler):
+class RedirectsHandler(BaseRequestHandler):
     def get(self):
         self.show_list()
 
@@ -28,7 +28,7 @@ class RewritesHandler(BaseRequestHandler):
         cursor = collection.find(query)
         res = cursor.to_list(100)
         entries = yield res
-        self.render("rewrites.html", items=entries, item=item, origin=origin, host=host)
+        self.render("redirects.html", items=entries, item=item, origin=origin, host=host)
 
     def post(self):
         collection = self.settings['db'].proxyservice['log_hostrewrite']

@@ -1,8 +1,8 @@
 {% extends "default.html" %}
-{% block title %}List of host rewrites{% end %}
+{% block title %}List of host redirects{% end %}
 {% block content %}
 <div class="top-button">
-    <a class="pure-button pure-button-primary" href="/rewrites/add?{% if item is not None %}&amp;item={{ item }}{% end %}{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}">Add Redirect</a>
+    <a class="pure-button pure-button-primary" href="/redirects/add?{% if item is not None %}&amp;item={{ item }}{% end %}{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}">Add Redirect</a>
 </div>
         <div class="box">
   <div class="layout">
@@ -36,7 +36,7 @@
       </form>
     </td>
     <td>
-      <a href="/rewrite/{{ row['_id'] }}?{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}{% if item is not None %}&amp;item={{ item }}{% end %}">
+      <a href="/redirect/{{ row['_id'] }}?{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}{% if item is not None %}&amp;item={{ item }}{% end %}">
       {% if row['protocol'] %}{{ row['protocol'] }}://{% end %}{% if row['host'] %}{{ row['host'] }}{% end %}
       <br /><i class="fa fa-arrow-right"></i> 
       {% if row['dprotocol'] %}{{ row['dprotocol'] }}://{% end %}{% if row['dhost'] %}{{ row['dhost'] }}{% elif row['host'] %}{{ row['host'] }}{% end %}
@@ -44,7 +44,7 @@
     </td>
     {% if not origin %}
     <td>
-        {% if 'origin' in row and row['origin'] %}<a href="/rewrites?origin={{ row['origin'] }}">{{ row['origin'] }}</a>{% end %}
+        {% if 'origin' in row and row['origin'] %}<a href="/redirects?origin={{ row['origin'] }}">{{ row['origin'] }}</a>{% end %}
     </td>
     {% end %}
     <td class="delete">
@@ -68,9 +68,9 @@
     $('form[name=deleteForm] button[name=delete]').on('click', function(evt){
       var t = evt.currentTarget;
       evt.preventDefault();
-      if (confirm("Are you sure you want to delete this rule?")) {
+      if (confirm("Are you sure you want to delete this redirect?")) {
         var id = t.parentNode.querySelector('input[name=ident]').value;
-        $.post("/rewrites", {ident: id, action: "delete"}, function(data, status) {
+        $.post("/redirects", {ident: id, action: "delete"}, function(data, status) {
           var row = t.parentNode.parentNode.parentNode;
           row.parentNode.removeChild(row);
         });
@@ -79,7 +79,7 @@
     $('form[name=activateForm] input[type=checkbox]').on('click', function(evt){
       var id = evt.target.parentNode.querySelector('input[name=ident]').value;
       var action = evt.target.checked ? "enable" : "disable";
-      $.post("/rewrites", {ident: id, action: action});
+      $.post("/redirects", {ident: id, action: action});
       
     });
 </script>
