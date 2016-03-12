@@ -40,7 +40,4 @@ class SessionsHandler(BaseRequestHandler):
 
         self.render("sessions.html", 
                 items=entries, 
-                host=self.request.host, 
-                port=proxyport, 
-                ip=proxyip, 
-                yourip=self.request.remote_ip)
+                host=self.request.host)
