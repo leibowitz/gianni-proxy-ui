@@ -216,10 +216,14 @@ createSocket(origin);
 
 function setStatus(status) {
   if (!status) {
-    $('#onPlayPause').text('Start Recording').toggleClass("recording");
+    $('#onPlayPause').toggleClass("recording");
+    $('#record-text').text('Start Recording');
+    $('#record-icon').removeClass("mdi-stop").addClass("mdi-start");
     document.title = 'MockProxy{% if origin %} - {{ origin }}{% end %} (not listening)';
   } else {
-    $('#onPlayPause').text('Stop Recording').toggleClass("recording");
+    $('#onPlayPause').toggleClass("recording");
+    $('#record-text').text('Stop Recording');
+    $('#record-icon').removeClass("mdi-start").addClass("mdi-stop");
     document.title = '● Recording {% if origin %}{{ origin }}{% end %}';
   }
 }
