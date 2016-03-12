@@ -29,7 +29,7 @@ class OriginsEditHandler(BaseRequestHandler):
         collection = self.settings['db'].proxyservice['origins']
         entry = yield motor.Op(collection.find_one, {'origin': ident})
 
-        if not name or not origin:
+        if not origin:
             self.render("originsedit.html", entry=entry, name=name, origin=origin, tryagain=True)
             return
 

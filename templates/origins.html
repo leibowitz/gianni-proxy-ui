@@ -41,7 +41,9 @@
     </td>
     <td>
       <a href="/origins/{{ row['origin'] }}">
+        {% if 'name' in row %}
       {{ row['name'] }}
+      {% end %}
       </a>
     </td>
     <td class="delete">

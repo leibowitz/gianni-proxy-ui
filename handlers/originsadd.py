@@ -27,11 +27,10 @@ class OriginsAddHandler(BaseRequestHandler):
     def post(self):
         name = self.get_argument('name', None)
         origin = self.get_argument('origin', None)
-        print name, origin
 
         entry = None
         
-        if not name or not origin:
+        if not origin:
             self.render("originsadd.html", tryagain=True, name=name, origin=origin, entry=entry)
             return
 

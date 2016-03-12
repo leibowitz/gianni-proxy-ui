@@ -22,7 +22,7 @@
 
     <div class="pure-control-group">
     <label for="name">Name</label>
-    <input type="text" name="name" size="35" placeholder="Black iPhone 6" value="{% if entry is not None and entry['name'] %}{{ entry['name'] }}{% end %}" />
+    <input type="text" name="name" size="35" placeholder="Black iPhone 6" value="{% if entry is not None and 'name' in entry and entry['name'] %}{{ entry['name'] }}{% end %}" />
     </div>
     </div>
     
