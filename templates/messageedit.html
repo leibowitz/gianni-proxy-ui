@@ -5,18 +5,15 @@
 {% block title %}Edit an existing message{% end %}
 {% block content %}
 
-        <div class="box">
-  <div id="layout">
-
-    <div id="main">
-<div class="content">
-  <h1 class="content-subhead">Edit Message</h1>
+        <div id="main" class="box">
+<div class="box-header">
+  <h2>Edit Message</h2>
+</div>
   <form class="pure-form" method="post">
+    <div class="box-body top-bar">
     <input type="hidden" name="id" value="{{ entry['_id'] }}" />
 
-    <h2>Message</h2>
-
-    <div class="pure-form-aligned">
+    <div class="pure-form-stacked">
 
     <div class="pure-control-group">
     <label for="name">Name</label>
@@ -35,7 +32,7 @@
 
     </div>
     
-    <h2>Rules</h2>
+    <h4>Rules Id</h4>
     <div id="rules-group">
       {% set x = 0 %}
       {% for ruleid, enabled in rules.iteritems() %}
@@ -77,14 +74,14 @@
             <button class="btn" name="delete"><i class="fa fa-times"></i></button>
       </div>
 
+    </div>
+      <div class="box-body top-bar">
     <button type="submit" class="pure-button pure-button-primary">Update</button>
   </form>
   {% if tryagain %}
     Try again
   {% end %}
 
-</div>
-</div>
 </div>
         </div>
 

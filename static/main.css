@@ -3,6 +3,26 @@ body{
   font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+.box-body {
+	padding: 1em;
+}
+
+.top-bar {
+  border-top: 1px solid rgba(120,130,140,.13);
+}
+
+.large-field {
+	width: 30em;
+}
+
+.text-muted {
+	opacity: 0.6;
+}
+
+.header-key, .header-value {
+	width: 15em;
+}
+
 .fixed-container {
   overflow-y: auto;
   height: 200px;
@@ -58,8 +78,11 @@ table.fixed-header th {
   top: 13em;
   line-height: normal;
 }*/
+.pure-control-group {
+  margin-bottom: 1em;
+}
 
-.protocol {
+.large-select {
   height: 2em;
 }
 
@@ -193,6 +216,10 @@ div.url {
   word-break: break-all;
 }
 
+.top-right {
+ float: right;
+}
+
 #curl, #btn-rsp, #onClear {
   float: right;
 }
@@ -250,16 +277,16 @@ div.right {
 }
 
 h2 {
-  font-size: 18px;
+  font-size: 20px;
   margin: 0;
 }
 
 h3 {
-  font-size: 16px;
+  font-size: 18px;
 }
 
 h4 {
-  font-size: 14px;
+  font-size: 16px;
 }
 
 .btn:hover {

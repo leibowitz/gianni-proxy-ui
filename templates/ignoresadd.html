@@ -3,12 +3,14 @@
 {% block content %}
 
 
-    <div id="main">
-  <h1 class="content-subhead">Add Host</h1>
+    <div id="main" class="box">
+      <div class="box-header">
+        <h2>Add Host</h2>
+      </div>
   <form class="pure-form" method="post">
-    <h2>Host</h2>
+      <div class="box-body top-bar">
 
-    <div class="pure-form-aligned">
+    <div class="pure-form-stacked">
 
     <div class="pure-control-group">
     <label for="host">Host</label>
@@ -17,7 +19,7 @@
 
     </div>
 
-    <h3>Paths</h3>
+    <h4>Paths</h4>
       <div id="paths-group">
       {% set x = 0 %}
       {% for path in paths %}
@@ -39,6 +41,8 @@
       </div>
 
 
+</div>
+      <div class="box-body top-bar">
     <button type="submit" class="pure-button pure-button-primary">Save</button>
   </form>
   {% if tryagain %}
@@ -48,6 +52,7 @@
       <div class="hidden" id="paths-template">
         <input type="text" value="" />
         <button class="btn" name="delete"><i class="fa fa-times"></i></button>
+      </div>
       </div>
 </div>
 

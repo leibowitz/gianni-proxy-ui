@@ -1,37 +1,47 @@
 {% extends "default.html" %}
-{% block title %}MockProxy - New request{% end %}
+{% block title %}Send request{% end %}
 {% block content %}
-    <div id="main">
-    <h1>Send request</h1>
+    <div id="main" class="box">
+      <div class="box-header">
+        <h2>Send request</h2>
+      </div>
+      <div class="box-body top-bar">
     <form class="pure-form" method="post" id="form">
         
-    <div class="pure-form-aligned">
+    <div class="pure-form-stacked">
+
+    <div class="pure-control-group">
+    <label for="url">Url</label>
+    <input type="text" name="url" class="large-field" placeholder="http://www.google.com" value="{% if url %}{{ url }}{% end %}" />
+    </div>
 
     <div class="pure-control-group">
     <label for="method">Method</label>
-    <input type="text" name="method" size="5" placeholder="GET" value="{% if method %}{{ method }}{% else %}GET{% end %}" />
+    <select name="method" class="large-select">
+      <option value="GET">GET</option>
+      <option value="POST">POST</option>
+      <option value="DELETE">DELETE</option>
+      <option value="PUT">PUT</option>
+      <option value="PATCH">PATCH</option>
+      <option value="HEAD">HEAD</option>
+    </select>
     </div>
     
     <div class="pure-control-group">
-    <label for="url">Url</label>
-    <input type="text" name="url" size="35" placeholder="http://www.google.com" value="{% if url %}{{ url }}{% end %}" />
-    </div>
-
-    <div class="pure-control-group">
-    <label for="body">body</label>
-    <textarea name="body">{% if body %}{{ body }}{% end %}</textarea>
+    <label for="body">Body</label>
+    <textarea name="body" class="large-field" rows="15">{% if body %}{{ body }}{% end %}</textarea>
     </div>
 
 </div>
 
-    <h3>Request Headers</h3>
+    <h4>Request Headers</h4>
       <div id="header-group">
       {% set x = 0 %}
       {% for name, values in headers.iteritems() %}
         {% for value in values %}
         <div class="pure-control-group">
-          <input type="text" name="header[{{ x }}][]" value="{{ name }}" />
-          <input type="text" name="header[{{ x }}][]" value="{{ value }}" />
+          <input type="text" class="header-key" name="header[{{ x }}][]" value="{{ name }}" />
+          <input type="text" class="header-value" name="header[{{ x }}][]" value="{{ value }}" />
             <button class="btn" name="delete"><i class="fa fa-times"></i></button>
         </div>
         {% set x = x + 1 %}
@@ -40,8 +50,8 @@
       {% end %}
 
       <div class="pure-control-group">
-        <input type="text" name="header[{{ x }}][]" value="" />
-        <input type="text" name="header[{{ x }}][]" value="" />
+        <input type="text" class="header-key" name="header[{{ x }}][]" value="" />
+        <input type="text" class="header-value" name="header[{{ x }}][]" value="" />
         {% if x != 0 %}
             <button class="btn" name="delete"><i class="fa fa-times"></i></button>
         {% end %}
@@ -49,15 +59,18 @@
 
       </div>
 
+</div>
+      <div class="box-body top-bar">
     <button type="submit" class="pure-button pure-button-primary">Send</button>
     </form>
   {% if tryagain %}
     Try again
   {% end %}
+      </div>
 </div>
       <div class="hidden" id="headers-template">
-        <input type="text" value="" />
-        <input type="text" value="" />
+        <input type="text" class="header-key" value="" />
+        <input type="text" class="header-value" value="" />
             <button class="btn" name="delete"><i class="fa fa-times"></i></button>
       </div>
   <script src="/static/jquery.min.js"></script>

@@ -2,10 +2,13 @@
 {% block title %}Edit an existing rule{% end %}
 {% block content %}
 
-    <div id="main">
-  <a class="pure-button" href="/rules/add?ruleid={{ entry['_id'] }}">Copy rule</a>
-  <h1 class="content-subhead">Edit Rule</h1>
+    <div id="main" class="box">
+  <a class="pure-button top-right" href="/rules/add?ruleid={{ entry['_id'] }}">Copy rule</a>
+      <div class="box-header">
+        <h2>Edit Rule</h2>
+      </div>
   <form class="pure-form" method="post">
+      <div class="box-body top-bar">
     {% if host is not None %}
     <input type="hidden" name="host" value="{{ host }}" />
     {% end %}
@@ -15,7 +18,7 @@
     {% end %}
     <input type="hidden" name="id" value="{{ entry['_id'] }}" />
 
-    <h2>Request Filter</h2>
+    <h3>Request Filter</h3>
 
     <div>
     Enter here the criterias used to filter requests
@@ -62,8 +65,8 @@
       {% for name, values in reqheaders.iteritems() %}
         {% for value in values %}
         <div class="pure-control-group">
-          <input type="text" name="reqheader[{{ x }}][]" value="{{ name }}" />
-          <input type="text" name="reaheader[{{ x }}][]" value="{{ value }}" />
+          <input type="text" class="header-key" name="reqheader[{{ x }}][]" value="{{ name }}" />
+          <input type="text" class="header-value" name="reaheader[{{ x }}][]" value="{{ value }}" />
             <button class="btn" name="delete"><i class="fa fa-times"></i></button>
         </div>
         {% set x = x + 1 %}
@@ -73,8 +76,8 @@
 
       {% end %}
       <div class="pure-control-group">
-        <input type="text" name="reqheader[{{ x }}][]" value="" />
-        <input type="text" name="reqheader[{{ x }}][]" value="" />
+        <input type="text" class="header-key" name="reqheader[{{ x }}][]" value="" />
+        <input type="text" class="header-value" name="reqheader[{{ x }}][]" value="" />
         {% if x != 0 %}
             <button class="btn" name="delete"><i class="fa fa-times"></i></button>
         {% end %}
@@ -82,7 +85,7 @@
     
       </div>
 
-    <h2>Response</h2>
+    <h4 class="text-md">Response</h4>
 
     <input type="hidden" name="response" value="{% if entry['response'] != False %}{{ entry['response'] }}{% end %}" />
 
@@ -107,8 +110,8 @@
       {% for name, values in respheaders.iteritems() %}
         {% for value in values %}
         <div class="pure-control-group">
-          <input type="text" name="respheader[{{ x }}][]" value="{{ name }}" />
-          <input type="text" name="respheader[{{ x }}][]" value="{{ value }}" />
+          <input type="text" class="header-key" name="respheader[{{ x }}][]" value="{{ name }}" />
+          <input type="text" class="header-value" name="respheader[{{ x }}][]" value="{{ value }}" />
             <button class="btn" name="delete"><i class="fa fa-times"></i></button>
         </div>
         {% set x = x + 1 %}
@@ -118,8 +121,8 @@
 
       {% end %}
       <div class="pure-control-group">
-        <input type="text" name="respheader[{{ x }}][]" value="" />
-        <input type="text" name="respheader[{{ x }}][]" value="" />
+        <input type="text" class="header-key" name="respheader[{{ x }}][]" value="" />
+        <input type="text" class="header-value" name="respheader[{{ x }}][]" value="" />
         {% if x != 0 %}
             <button class="btn" name="delete"><i class="fa fa-times"></i></button>
         {% end %}
@@ -129,17 +132,20 @@
 
     <h3>Response Body</h3>
 
-    <textarea rows="30" style="width:99%; display:none;" data-editor="{% if fmt %}{{ fmt }}{% end %}" name="body" placeholder="body content">{% if body %}{{ body }}{% elif 'body' in entry and entry['body'] %}{{ entry['body'] }}{% end %}</textarea>
+    <textarea rows="30" style="width:90%; display:none;" data-editor="{% if fmt %}{{ fmt }}{% end %}" name="body" placeholder="body content">{% if body %}{{ body }}{% elif 'body' in entry and entry['body'] %}{{ entry['body'] }}{% end %}</textarea>
 
+</div>
+      <div class="box-body top-bar">
     <button type="submit" class="pure-button pure-button-primary">Update</button>
   </form>
   {% if tryagain %}
     Try again
   {% end %}
 
+      </div>
       <div class="hidden" id="headers-template">
-        <input type="text" value="" />
-        <input type="text" value="" />
+        <input type="text" class="header-key" value="" />
+        <input type="text" class="header-value" value="" />
             <button class="btn" name="delete"><i class="fa fa-times"></i></button>
       </div>
 </div>

@@ -2,9 +2,12 @@
 {% block title %}Add a Host Rewrite{% end %}
 {% block content %}
 
-<div id="main">
-  <h1 class="content-subhead">Add Rewrite</h1>
+    <div id="main" class="box">
+      <div class="box-header">
+        <h2>Add Rewrite</h2>
+      </div>
   <form class="pure-form" method="post">
+      <div class="box-body top-bar">
     {% if host is not None %}
     <input type="hidden" name="host" value="{{ host }}" />
     {% end %}
@@ -19,7 +22,7 @@
     <h2>Destination</h2>
     <div class="pure-control-group">
         <label for="protocol">Protocol</label>
-        <select name="protocol" class="protocol">
+        <select name="protocol" class="large-select">
           <option value="">any</option>
           <option value="http" {% if protocol and protocol == 'http' or (entry and 'request' in entry and 'scheme' in entry['request'] and entry['request']['scheme'] == 'http') %}selected="selected"{% end %}>http</option>
           <option value="https" {% if protocol and protocol == 'https' or (entry and 'request' in entry and 'scheme' in entry['request'] and entry['request']['scheme'] == 'https') %}selected="selected"{% end %}>https</option>
@@ -34,7 +37,7 @@
     <h2>Rewrite To</h2>
     <div class="pure-control-group">
         <label for="dprotocol">Protocol</label>
-        <select name="dprotocol" class="protocol">
+        <select name="dprotocol" class="large-select">
           <option value="">any</option>
           <option value="http" {% if dprotocol and dprotocol == 'http' %}selected="selected"{% end %}>http</option>
           <option value="https" {% if dprotocol and dprotocol == 'https' %}selected="selected"{% end %}>https</option>
@@ -48,11 +51,14 @@
 
     </div>
 
+</div>
+      <div class="box-body top-bar">
     <button type="submit" class="pure-button pure-button-primary">Save</button>
   </form>
   {% if tryagain %}
     Try again
   {% end %}
+      </div>
 
 </div>
 
