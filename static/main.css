@@ -216,12 +216,28 @@ div.url {
   word-break: break-all;
 }
 
+.input-icon {
+  font-family: Arial, FontAwesome;
+}
+
+input[type=search]::-webkit-search-cancel-button {
+   -webkit-appearance: searchfield-cancel-button;
+    display: block;
+   -webkit-flex: none;
+   -webkit-align-self: flex-start;
+    margin: auto 0;
+}
+
 .top-right {
- float: right;
+  float: right;
 }
 
 #curl, #btn-rsp, #onClear {
   float: right;
+}
+
+.full-width {
+  width: 100%;
 }
 
 div.right {

@@ -41,7 +41,7 @@
 
 <form id="filterForm" class="pure-form">
   <div>{% if host %}Host filter: {{ host }}<a class="pure-button" href="{% if origin %}/origin/{{ origin }}{% else %}/all{% end %}">X</a>{% end %}</div>
-  <input type="text" id="filterText" placeholder="Search" style="width:100%;" />
+  <input type="search" id="filterText" placeholder="&#xf002; Search" class="full-width input-icon" />
   <input type="hidden" id="host" value="{% if host %}{{ host }}{% end %}" />
   <input type="hidden" id="origin" value="{% if origin %}{{ origin }}{% end %}" />
 </form>
