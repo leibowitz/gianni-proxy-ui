@@ -34,8 +34,9 @@ class RewritesAddHandler(BaseRequestHandler):
         protocol = self.get_argument('protocol', False)
         dprotocol = self.get_argument('dprotocol', False)
 
+        entry = None
         if not dhost and not dprotocol or not ohost and not protocol:
-            self.render("rewriteadd.html", tryagain=True, item=item, origin=origin, host=host, ohost=ohost, dhost=dhost, protocol=protocol, dprotocol=dprotocol)
+            self.render("rewriteadd.html", tryagain=True, item=item, origin=origin, host=host, ohost=ohost, dhost=dhost, protocol=protocol, dprotocol=dprotocol, entry=entry)
             return
 
         collection = self.settings['db'].proxyservice['log_hostrewrite']
