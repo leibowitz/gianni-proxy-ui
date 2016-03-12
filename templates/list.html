@@ -221,10 +221,10 @@ createSocket(origin);
 
 function setStatus(status) {
   if (!status) {
-    $('#onPlayPause').text('Start Recording');
+    $('#onPlayPause').text('Start Recording').toggleClass("recording");
     document.title = 'MockProxy{% if origin %} - {{ origin }}{% end %} (not listening)';
   } else {
-    $('#onPlayPause').text('Stop Recording');
+    $('#onPlayPause').text('Stop Recording').toggleClass("recording");
     document.title = '● Recording {% if origin %}{{ origin }}{% end %}';
   }
 }
