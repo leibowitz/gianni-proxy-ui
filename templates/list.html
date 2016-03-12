@@ -307,7 +307,6 @@ $('#filterForm').on('submit', function(evt){
     }
   });
 
-scrollToBottom();
 var lastScrollTop = $('table.fixed-header tbody').scrollTop();
 var doNotScroll = null;
     
@@ -324,14 +323,16 @@ $('table.fixed-header tbody').scroll(function(evt){
     lastScrollTop = currentScroll;
 });
 
-})();
-
 // Make the tbody height as big as possible
 $(document).ready(function(){
     $('table.fixed-header tbody').height($(window).height()-(200+$('#filterBox').height()));
+    $("html, body").animate({ scrollTop: $(document).height() }, 1);
+    scrollToBottom(0);
 });
 $( window ).resize(function() {
     $('table.fixed-header tbody').height($(window).height()-(200+$('#filterBox').height()));
 });
+})();
+
 </script>
 {% end %}
