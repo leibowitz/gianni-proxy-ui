@@ -168,7 +168,7 @@ table.headers td.key {
 }
 
 td, th {
-  padding: 7px 16px;
+  padding: 7px 10px;
   border-color: rgba(120,130,140,.045);
   border-top: 1px solid #eceeef;
   line-height: 1.5;
