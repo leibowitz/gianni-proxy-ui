@@ -12,7 +12,7 @@
         
     <div class="pure-control-group">
     <label for="active">Record</label>
-    <input type="checkbox" name="active" {% if not 'filterAll' in entry or not entry['filterAll'] %}checked="checked"{% end %} />
+    <input type="checkbox" name="active" {% if not entry or not 'filterAll' in entry or not entry['filterAll'] %}checked="checked"{% end %} />
     </div>
       
     <div class="pure-control-group">
