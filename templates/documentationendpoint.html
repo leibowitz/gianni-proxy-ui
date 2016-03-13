@@ -1,0 +1,20 @@
+{% extends "default.html" %}
+{% block title %}List of endpoints{% end %}
+{% block content %}
+<div class="box">
+
+  <div class="layout">
+
+    <div>
+    {% for entry in items %}
+    <a href="/documentation/view/{{ entry['_id'] }}">
+    {{ entry['request']['method'] }}
+    {{ entry['response']['status'] }}
+    </a>
+    {% end %}
+    </div>
+
+  </div>
+</div>
+
+{% end %}

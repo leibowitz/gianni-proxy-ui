@@ -12,6 +12,9 @@
       Method
     </th>
     <th>
+      Status
+    </th>
+    <th>
       Host
     </th>
     <th>
@@ -27,7 +30,12 @@
       {{ row['request']['method'] }}
     </td>
     <td>
+      {{ row['response']['status'] }}
+    </td>
+    <td>
+      <a href="/documentation/host/{{ row['request']['host'] }}">
       {{ row['request']['host'] }}
+      </a>
     </td>
     <td>
       <a href="/documentation/view/{{ row['_id'] }}">

@@ -26,6 +26,8 @@ from origins import OriginsHandler
 from originsedit import OriginsEditHandler
 from originsadd import OriginsAddHandler
 from documentation import DocumentationHandler
+from documentationhost import DocumentationHostHandler
+from documentationendpoint import DocumentationEndpointHandler
 from documentationview import DocumentationViewHandler
 
 #__all__ = [

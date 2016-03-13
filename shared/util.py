@@ -185,3 +185,6 @@ def get_gridfs_content(fs, ident):
     except Exception as e:
         print e
     raise gen.Return(data)
+
+def tree(): return collections.defaultdict(tree)
+

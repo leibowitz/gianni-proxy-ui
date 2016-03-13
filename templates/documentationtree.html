@@ -1,0 +1,25 @@
+<ul class="{% if fullpath == '/' %}root{% end %}">
+{% for path, values in tree['children'].iteritems() %}
+<li>
+	<span class="path">{{ path }}</span>
+	<div>
+<ul>
+    {% for method, statuses in values['methods'].iteritems() %}
+	<li>
+		{% if len(statuses) == 1 %}
+		<a href="/documentation/view/{{ statuses.values()[0] }}">
+			<span class="method">{{ method }}</span> {{ fullpath }}{{ path }}
+		</a>
+		{% else %}
+		<a href="/documentation/endpoint/{{ host }}?path={{ fullpath }}{{ path }}&method={{ method }}">
+			<span class="method">{{ method }}</span> {{ fullpath }}{{ path }}
+		</a>
+		{% end %}
+	</li>
+	{% end %}
+</ul>
+	</div>
+	{% raw render_tree(host, values, fullpath + path) %}
+</li>
+{% end %}
+</ul>
