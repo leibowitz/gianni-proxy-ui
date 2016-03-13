@@ -36,7 +36,7 @@ class ViewHandler(BaseRequestHandler):
         origin = self.get_argument('origin', None)
         host = self.get_argument('host', None)
         collection = self.settings['db'].proxyservice['log_logentry']
-        fs = motor.MotorGridFS(self.settings['db'].proxyservice)
+        reqbody = None
 
         try:
             oid = objectid.ObjectId(ident)
@@ -54,7 +54,7 @@ class ViewHandler(BaseRequestHandler):
         responseheaders = self.nice_headers(entry['response']['headers'])
         requestbody = None
         responsebody = None
-        reqbody = None
+        resbody = None
 
         socketuuid = util.get_uuid(entry)
 
@@ -68,8 +68,8 @@ class ViewHandler(BaseRequestHandler):
             finished = util.is_finished(filepath)
             
             if finished:
-                rb, ctype = yield self.get_gridfs_body(respfileid, responseheaders)
-                responsebody = self.get_formatted_body(rb, ctype)
+                resbody, ctype = yield self.get_gridfs_body(respfileid, responseheaders)
+                responsebody = self.get_formatted_body(resbody, ctype)
             else:
                 response_mime_type = util.get_content_type(requests.structures.CaseInsensitiveDict(responseheaders))
                 responsebody = self.get_partial_content_body(filepath, response_mime_type)
@@ -90,9 +90,13 @@ class ViewHandler(BaseRequestHandler):
 
         cmd = yield self.get_curl_cmd(entry, reqbody)
 
+        fmt = util.get_format(util.get_content_type(self.nice_headers(responseheaders))) if responseheaders else None
+
         self.render("one.html", 
                 item=entry, 
                 cmd=cmd,
+                body=resbody,
+                fmt=fmt,
                 messages=messages,
                 requestheaders=requestheaders, 
                 responseheaders=responseheaders,
