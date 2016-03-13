@@ -22,7 +22,7 @@
         
     <div class="pure-control-group">
     <label for="host">Host</label>
-    <input type="text" name="host" size="35" placeholder="google.com" value="{% if entry['host'] != False %}{{ entry['host'] }}{% end %}" />
+    <input type="text" class="large-field" name="host" placeholder="google.com" value="{% if entry['host'] != False %}{{ entry['host'] }}{% end %}" />
     </div>
 
     <div class="pure-control-group">
@@ -37,7 +37,7 @@
       {% set x = 0 %}
       {% for ruleid, enabled in rules.iteritems() %}
         <div class="pure-control-group">
-            <input type="text" value="{{ ruleid }}" name="rules_ids[{{ x }}]" />
+            <input type="text" class="large-field" value="{{ ruleid }}" name="rules_ids[{{ x }}]" />
             <input type="checkbox" name="rules_states[{{ x }}]" {% if enabled %}checked="checked"{% end %} />
             <button class="btn" name="delete"><i class="fa fa-times"></i></button>
 <!--
@@ -60,7 +60,7 @@
       {% end %}
 
       <div class="pure-control-group">
-            <input type="text" name="rules_ids[{{ x }}]" />
+            <input type="text" class="large-field" name="rules_ids[{{ x }}]" />
             <input type="checkbox" name="rules_states[{{ x }}]" />
         {% if x != 0 %}
             <button class="btn" name="delete"><i class="fa fa-times"></i></button>
@@ -69,7 +69,7 @@
     </div>
 
       <div class="hidden pure-control-group" id="rules-template">
-        <input type="text" value="" name="rules_ids[]" />
+        <input type="text" class="large-field" value="" name="rules_ids[]" />
         <input type="checkbox" name="rules_states[]" />
             <button class="btn" name="delete"><i class="fa fa-times"></i></button>
       </div>
