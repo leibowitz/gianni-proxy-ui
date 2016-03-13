@@ -134,6 +134,8 @@ class ViewHandler(BaseRequestHandler):
 
         cmd = cmd + ' ' + util.QuoteForPOSIX(entry['request']['url'])
 
+        cmd = yield self.get_curl_cmd(entry)
+
         self.render("one.html", 
                 item=entry, 
                 cmd=cmd,
@@ -149,6 +151,37 @@ class ViewHandler(BaseRequestHandler):
                 host=host,
                 show_save=True,
                 show_resend=True)
+
+    @gen.coroutine
+    def get_curl_cmd(self, entry):
+        cmd = 'curl' 
+        cmd = cmd + ' -X ' + entry['request']['method']
+
+        requestheaders = self.nice_headers(entry['request']['headers'])
+
+        for key, value in requestheaders.iteritems():
+            cmd = cmd + ' -H ' + util.QuoteForPOSIX(key + ': ' + value)
+            if key == 'Cookie':
+                requestheaders[key] = util.nice_body(value, 'application/x-www-form-urlencoded')
+
+        if 'fileid' in entry['request'] and not self.has_binary_content(requestheaders):
+            fs = motor.MotorGridFS(self.settings['db'].proxyservice)
+            requestbody = yield util.get_gridfs_content(fs, entry['request']['fileid'])
+            if requestbody:
+                if util.get_content_encoding(requestheaders) == 'gzip':
+                    requestbody = util.ungzip(requestbody)
+
+                bodyparam = util.QuoteForPOSIX(requestbody)
+                try:
+                    cmd = cmd + ' -d ' + bodyparam
+                except Exception as e:
+                    # probably failed because the content has a different encoding
+                    print e
+
+        cmd = cmd + ' ' + util.QuoteForPOSIX(entry['request']['url'])
+
+        raise gen.Return(cmd)
+
 
     @gen.coroutine
     def get_messages(self, entry):
