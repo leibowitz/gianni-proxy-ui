@@ -34,7 +34,7 @@
 
     <div class="pure-control-group">
     <label for="query">Query</label>
-    <input type="text" name="query" size="35" placeholder="query=1" {% if entry and entry['query'] %}value="{{ entry['query'] }}"{% end %} />
+    <textarea name="query" class="large-field" rows="15">{% if entry and entry['query'] %}{{ entry['query'] }}{% end %}</textarea>
     </div>
 
     <div class="pure-control-group">
