@@ -70,6 +70,7 @@ class ViewHandler(BaseRequestHandler):
             if finished:
                 body = yield util.get_gridfs_content(fs, respfileid)
                 if body:
+                    body, response_mime_type = self.get_uncompressed_body(responseheaders, body)
                     responsebody = self.get_formatted_body(body, response_mime_type)
             else:
                 responsebody = self.get_partial_content_body(filepath, response_mime_type)
@@ -156,6 +157,17 @@ class ViewHandler(BaseRequestHandler):
         for msg in messages:
             msg['message'] = re.escape(msg['message'])
         raise gen.Return(messages)
+
+    def get_uncompressed_body(self, headers, body):
+        ctype = util.get_content_type(headers)
+        # default to x-www-form-urlencoded
+        ctype = ctype if ctype is not None else 'application/x-www-form-urlencoded'
+
+        if util.get_content_encoding(headers) == 'gzip':
+            body = util.ungzip(body)
+            ctype = util.get_body_content_type(body)
+
+        return body, ctype
 
     def get_partial_content_body(self, filepath, mime_type):
         if not mime_type:
