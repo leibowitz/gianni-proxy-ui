@@ -78,17 +78,7 @@ class ViewHandler(BaseRequestHandler):
         if 'fileid' in entry['request'] and not self.has_binary_content(requestheaders):
             requestbody = yield util.get_gridfs_content(fs, entry['request']['fileid'])
             if requestbody:
-                ctype = util.get_content_type(requestheaders)
-                # default to x-www-form-urlencoded
-                ctype = ctype if ctype is not None else 'application/x-www-form-urlencoded'
-
-                if util.get_content_encoding(requestheaders) == 'gzip':
-                    requestbody = util.ungzip(requestbody)
-
-                    ctype = None
-
-                bodyparam = util.QuoteForPOSIX(requestbody)
-
+                requestbody, ctype = self.get_uncompressed_body(requestheaders, requestbody)
                 requestbody = util.nice_body(requestbody, ctype)
 
         # format the cookie header
