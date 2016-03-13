@@ -93,8 +93,6 @@ class ViewHandler(BaseRequestHandler):
                 bodyparam = util.QuoteForPOSIX(requestbody)
 
                 requestbody = util.nice_body(requestbody, ctype)
-        #requestbody = util.nice_body(entry['request']['body'], requestheaders)
-        #responsebody = util.nice_body(entry['response']['body'], responseheaders)
 
         # get pre-formatted messages for this host if needed
         messages = []
