@@ -17,6 +17,8 @@
     <th>
       Path
     </th>
+    <th class="delete">
+    </th>
   </thead>
   <tbody>
 {% for row in items %}
@@ -32,6 +34,13 @@
       {{ row['request']['path'] }}
       </a>
     </td>
+    <td class="delete">
+      <form method="post" name="deleteForm">
+        <input type="hidden" name="ident" value="{{ row['_id'] }}" />
+        <input type="hidden" name="action" value="delete" />
+          <button class="btn" name="delete"><i class="fa fa-times"></i></button>
+      </form>
+    </td>
   </tr>
 {% end %}
   </tbody>
@@ -41,4 +50,18 @@
   </div>
 </div>
 
+<script src="/static/jquery.min.js"></script>
+<script type="text/javascript">
+    $('form[name=deleteForm] button[name=delete]').on('click', function(evt){
+      var t = evt.currentTarget;
+      evt.preventDefault();
+      if (confirm("Are you sure you want to delete this document?")) {
+        var id = t.parentNode.querySelector('input[name=ident]').value;
+        $.post("/documentation", {ident: id, action: "delete"}, function(data, status) {
+          var row = t.parentNode.parentNode.parentNode;
+          row.parentNode.removeChild(row);
+        });
+      }
+    });
+</script>
 {% end %}
