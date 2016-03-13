@@ -97,10 +97,7 @@ class ViewHandler(BaseRequestHandler):
                 #ctype = responseheaders['Content-Type']
                 #responsebody = util.nice_body(responsebody, ctype)
 
-        cmd = 'curl' 
-        cmd = cmd + ' -X ' + entry['request']['method']
         for key, value in requestheaders.iteritems():
-            cmd = cmd + ' -H ' + util.QuoteForPOSIX(key + ': ' + value)
             if key == 'Cookie':
                 requestheaders[key] = util.nice_body(value, 'application/x-www-form-urlencoded')
 
@@ -118,10 +115,6 @@ class ViewHandler(BaseRequestHandler):
                     ctype = None
 
                 bodyparam = util.QuoteForPOSIX(requestbody)
-                try:
-                    cmd = cmd + ' -d ' + bodyparam
-                except Exception as e:
-                    print e
 
                 requestbody = util.nice_body(requestbody, ctype)
         #requestbody = util.nice_body(entry['request']['body'], requestheaders)
@@ -131,8 +124,6 @@ class ViewHandler(BaseRequestHandler):
         messages = []
         if not finished:
             messages = yield self.get_messages(entry)
-
-        cmd = cmd + ' ' + util.QuoteForPOSIX(entry['request']['url'])
 
         cmd = yield self.get_curl_cmd(entry)
 
