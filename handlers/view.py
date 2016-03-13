@@ -44,14 +44,12 @@ class ViewHandler(BaseRequestHandler):
             print e
             self.send_error(500)
             return
-        #raise tornado.web.HTTPError(400)
 
         entry = yield motor.Op(collection.find_one, {'_id': oid})
         if not entry:
             raise tornado.web.HTTPError(404)
 
         requestquery = util.nice_body(entry['request']['query'], 'application/x-www-form-urlencoded')
-        #print entry['request']['headers']
         requestheaders = self.nice_headers(entry['request']['headers'])
         responseheaders = self.nice_headers(entry['response']['headers'])
         requestbody = None
@@ -62,8 +60,6 @@ class ViewHandler(BaseRequestHandler):
         # consider the response finished
         finished = True
 
-        #print entry['request']
-        #print entry['response']
         if 'fileid' in entry['response']:
 
             respfileid = entry['response']['fileid']
@@ -93,9 +89,6 @@ class ViewHandler(BaseRequestHandler):
                     responsebody = util.nice_body(content, response_mime_type)
                 elif 'image' in response_mime_type:
                     responsebody = util.raw_image_html(content, response_mime_type)
-                #responsebody = open(filepath).read()
-                #ctype = responseheaders['Content-Type']
-                #responsebody = util.nice_body(responsebody, ctype)
 
         for key, value in requestheaders.iteritems():
             if key == 'Cookie':
@@ -107,7 +100,6 @@ class ViewHandler(BaseRequestHandler):
                 ctype = util.get_content_type(requestheaders)
                 # default to x-www-form-urlencoded
                 ctype = ctype if ctype is not None else 'application/x-www-form-urlencoded'
-                #if self.has_text_content(requestheaders)
 
                 if util.get_content_encoding(requestheaders) == 'gzip':
                     requestbody = util.ungzip(requestbody)
