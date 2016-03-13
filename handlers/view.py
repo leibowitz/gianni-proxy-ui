@@ -74,10 +74,6 @@ class ViewHandler(BaseRequestHandler):
             else:
                 responsebody = self.get_partial_content_body(filepath, response_mime_type)
 
-        for key, value in requestheaders.iteritems():
-            if key == 'Cookie':
-                requestheaders[key] = util.nice_body(value, 'application/x-www-form-urlencoded')
-
         if 'fileid' in entry['request'] and not self.has_binary_content(requestheaders):
             requestbody = yield util.get_gridfs_content(fs, entry['request']['fileid'])
             if requestbody:
@@ -93,6 +89,11 @@ class ViewHandler(BaseRequestHandler):
                 bodyparam = util.QuoteForPOSIX(requestbody)
 
                 requestbody = util.nice_body(requestbody, ctype)
+
+        # format the cookie header
+        for key, value in requestheaders.iteritems():
+            if key == 'Cookie':
+                requestheaders[key] = util.nice_body(value, 'application/x-www-form-urlencoded')
 
         # get pre-formatted messages for this host if needed
         messages = []
