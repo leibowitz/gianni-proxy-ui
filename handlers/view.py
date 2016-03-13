@@ -84,7 +84,7 @@ class ViewHandler(BaseRequestHandler):
         # format the cookie header
         for key, value in requestheaders.iteritems():
             if key == 'Cookie':
-                requestheaders[key] = util.nice_body(value, 'application/x-www-form-urlencoded')
+                requestheaders[key] = util.nice_body(value, 'application/x-www-form-urlencoded', 'nopadding')
 
         # get pre-formatted messages for this host if needed
         messages = []

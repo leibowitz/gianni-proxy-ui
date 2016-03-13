@@ -36,6 +36,10 @@ body{
   background-color: #fff;
 }
 
+.nopadding pre {
+  padding: 0;
+}
+
 .fixed-container th {
   height: 2em;
 }

@@ -113,9 +113,13 @@ def get_body_content_type(body, content = None):
         ctype = None
     return ctype
 
-def nice_body(body, content=None):
+def nice_body(body, content=None, cssclass=None):
     if not body:
         return None
+    cssclasses = ['codehilite']
+    if cssclass:
+        cssclasses.append(cssclass)
+    classes = ' '.join(cssclasses)
     content = get_body_content_type(body, content)
     if content is not None:
         if 'x-www-form-urlencoded' in content:
@@ -134,14 +138,14 @@ def nice_body(body, content=None):
                 return tornado.escape.xhtml_escape(body)
             args = collections.OrderedDict(sorted(parsedbody))
             params = "\n".join([k + "=" + v for k, v in args.iteritems()])
-            return highlight(params, IniLexer(), HtmlFormatter(cssclass='codehilite'))
+            return highlight(params, IniLexer(), HtmlFormatter(cssclass=classes))
         elif isinstance(lex, JsonLexer):
             try:
-                return highlight(json.dumps(json.loads(body), indent=4), JsonLexer(), HtmlFormatter(cssclass='codehilite'))
+                return highlight(json.dumps(json.loads(body), indent=4), JsonLexer(), HtmlFormatter(cssclass=classes))
             except ValueError as e:
                 pass
 
-    return highlight(body, lex, HtmlFormatter(cssclass='codehilite'))
+    return highlight(body, lex, HtmlFormatter(cssclass=classes))
     #except Exception as e:
     #    raise e
     #    print e
