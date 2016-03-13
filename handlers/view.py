@@ -127,8 +127,6 @@ class ViewHandler(BaseRequestHandler):
 
         for key, value in requestheaders.iteritems():
             cmd = cmd + ' -H ' + util.QuoteForPOSIX(key + ': ' + value)
-            if key == 'Cookie':
-                requestheaders[key] = util.nice_body(value, 'application/x-www-form-urlencoded')
 
         if 'fileid' in entry['request'] and not self.has_binary_content(requestheaders):
             fs = motor.MotorGridFS(self.settings['db'].proxyservice)
