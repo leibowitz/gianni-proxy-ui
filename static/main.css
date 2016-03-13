@@ -19,8 +19,12 @@ body{
 	opacity: 0.6;
 }
 
-.header-key, .header-value {
+.header-key {
 	width: 15em;
+}
+
+.header-value {
+  width: 30em;
 }
 
 .fixed-container {
