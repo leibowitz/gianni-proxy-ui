@@ -35,6 +35,7 @@ if __name__ == "__main__":
         (r"/origins/add", OriginsAddHandler),
         (r"/origins/(?P<ident>[^\/]+)", OriginsEditHandler),
         (r"/documentation", DocumentationHandler),
+        (r"/documentation/(?P<ident>[^\/]+)", DocumentationViewHandler),
         (r'/static/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'static')}),
         (r'/css/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'css')}),
         (r'/fonts/(.*)', tornado.web.StaticFileHandler, {'path': os.path.join(os.path.dirname(__file__), 'fonts')}),

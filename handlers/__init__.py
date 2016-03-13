@@ -26,6 +26,7 @@ from origins import OriginsHandler
 from originsedit import OriginsEditHandler
 from originsadd import OriginsAddHandler
 from documentation import DocumentationHandler
+from documentationview import DocumentationViewHandler
 
 #__all__ = [
 #"base", 
