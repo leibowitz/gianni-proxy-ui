@@ -127,15 +127,12 @@ class ViewHandler(BaseRequestHandler):
         #requestbody = util.nice_body(entry['request']['body'], requestheaders)
         #responsebody = util.nice_body(entry['response']['body'], responseheaders)
 
-        cmd = cmd + ' ' + util.QuoteForPOSIX(entry['request']['url'])
+        # get pre-formatted messages for this host if needed
+        messages = []
+        if not finished:
+            messages = yield self.get_messages(entry)
 
-        if entry['request']['method'] == 'GET':
-            collection = self.settings['db'].proxyservice['log_messages']
-            messages = yield collection.find({"host": entry['request']['host']}).sort('_id').to_list(100)
-            for msg in messages:
-                msg['message'] = re.escape(msg['message'])
-        else:
-            messages = {}
+        cmd = cmd + ' ' + util.QuoteForPOSIX(entry['request']['url'])
 
         self.render("one.html", 
                 item=entry, 
@@ -152,3 +149,13 @@ class ViewHandler(BaseRequestHandler):
                 host=host,
                 show_save=True,
                 show_resend=True)
+
+    @gen.coroutine
+    def get_messages(self, entry):
+        if entry['request']['method'] != 'GET':
+            raise gen.Return({})
+        collection = self.settings['db'].proxyservice['log_messages']
+        messages = yield collection.find({"host": entry['request']['host']}).sort('_id').to_list(100)
+        for msg in messages:
+            msg['message'] = re.escape(msg['message'])
+        raise gen.Return(messages)
