@@ -12,7 +12,9 @@
       <div class="tree">
 {% raw render_tree(host, tree) %}
       </div>
-      <div></div>
+      {% if entry is not None %}
+      {% raw render_document(entry) %}
+      {% end %}
       <div class="clear"></div>
     </div>
 
