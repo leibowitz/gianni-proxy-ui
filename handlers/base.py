@@ -1,4 +1,6 @@
 from tornado.web import RequestHandler
+from tornado import gen
+import motor
 from bson import objectid
 from collections import defaultdict
 import pytz
@@ -91,17 +93,6 @@ class BaseRequestHandler(RequestHandler):
 
         return False
 
-    def get_uncompressed_body(self, headers, body):
-        ctype = util.get_content_type(headers)
-        # default to x-www-form-urlencoded
-        ctype = ctype if ctype is not None else 'application/x-www-form-urlencoded'
-
-        if util.get_content_encoding(headers) == 'gzip':
-            body = util.ungzip(body)
-            ctype = util.get_body_content_type(body)
-
-        return body, ctype
-
     def get_partial_content_body(self, filepath, mime_type):
         if not mime_type:
             return None
@@ -127,3 +118,9 @@ class BaseRequestHandler(RequestHandler):
             return util.raw_image_html(body, mime_type)
         return None
         
+
+    @gen.coroutine
+    def get_gridfs_body(self, fileid, headers):
+        fs = motor.MotorGridFS(self.settings['db'].proxyservice)
+        body = yield util.get_gridfs_content(fs, fileid)
+        raise gen.Return(util.get_uncompressed_body(headers, body))

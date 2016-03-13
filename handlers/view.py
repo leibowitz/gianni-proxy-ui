@@ -54,6 +54,7 @@ class ViewHandler(BaseRequestHandler):
         responseheaders = self.nice_headers(entry['response']['headers'])
         requestbody = None
         responsebody = None
+        reqbody = None
 
         socketuuid = util.get_uuid(entry)
 
@@ -66,20 +67,16 @@ class ViewHandler(BaseRequestHandler):
             filepath = util.getfilepath(respfileid)
             finished = util.is_finished(filepath)
             
-            response_mime_type = util.get_content_type(requests.structures.CaseInsensitiveDict(responseheaders))
             if finished:
-                body = yield util.get_gridfs_content(fs, respfileid)
-                if body:
-                    body, response_mime_type = self.get_uncompressed_body(responseheaders, body)
-                    responsebody = self.get_formatted_body(body, response_mime_type)
+                rb, ctype = yield self.get_gridfs_body(respfileid, responseheaders)
+                responsebody = self.get_formatted_body(rb, ctype)
             else:
+                response_mime_type = util.get_content_type(requests.structures.CaseInsensitiveDict(responseheaders))
                 responsebody = self.get_partial_content_body(filepath, response_mime_type)
 
-        if 'fileid' in entry['request'] and not self.has_binary_content(requestheaders):
-            requestbody = yield util.get_gridfs_content(fs, entry['request']['fileid'])
-            if requestbody:
-                requestbody, ctype = self.get_uncompressed_body(requestheaders, requestbody)
-                requestbody = util.nice_body(requestbody, ctype)
+        if 'fileid' in entry['request']:
+            reqbody, ctype = yield self.get_gridfs_body(entry['request']['fileid'], requestheaders)
+            requestbody = self.get_formatted_body(reqbody, ctype)
 
         # format the cookie header
         for key, value in requestheaders.iteritems():
@@ -91,7 +88,7 @@ class ViewHandler(BaseRequestHandler):
         if not finished:
             messages = yield self.get_messages(entry)
 
-        cmd = yield self.get_curl_cmd(entry)
+        cmd = yield self.get_curl_cmd(entry, reqbody)
 
         self.render("one.html", 
                 item=entry, 
@@ -110,7 +107,7 @@ class ViewHandler(BaseRequestHandler):
                 show_resend=True)
 
     @gen.coroutine
-    def get_curl_cmd(self, entry):
+    def get_curl_cmd(self, entry, body = None):
         cmd = 'curl' 
         cmd = cmd + ' -X ' + entry['request']['method']
 
@@ -119,19 +116,13 @@ class ViewHandler(BaseRequestHandler):
         for key, value in requestheaders.iteritems():
             cmd = cmd + ' -H ' + util.QuoteForPOSIX(key + ': ' + value)
 
-        if 'fileid' in entry['request'] and not self.has_binary_content(requestheaders):
-            fs = motor.MotorGridFS(self.settings['db'].proxyservice)
-            requestbody = yield util.get_gridfs_content(fs, entry['request']['fileid'])
-            if requestbody:
-                if util.get_content_encoding(requestheaders) == 'gzip':
-                    requestbody = util.ungzip(requestbody)
-
-                bodyparam = util.QuoteForPOSIX(requestbody)
-                try:
-                    cmd = cmd + ' -d ' + bodyparam
-                except Exception as e:
-                    # probably failed because the content has a different encoding
-                    print e
+        if not self.has_binary_content(requestheaders) and body:
+            bodyparam = util.QuoteForPOSIX(body)
+            try:
+                cmd = cmd + ' -d ' + bodyparam
+            except Exception as e:
+                # probably failed because the content has a different encoding
+                print e
 
         cmd = cmd + ' ' + util.QuoteForPOSIX(entry['request']['url'])
 

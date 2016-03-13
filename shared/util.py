@@ -197,3 +197,18 @@ def is_finished(filepath):
     
 def getfilepath(fileid):
     return os.path.join(tempfile.gettempdir(), "proxy-service", str(fileid))
+
+def get_uncompressed_body(headers, body):
+    ctype = get_content_type(headers)
+    # default to x-www-form-urlencoded
+    ctype = ctype if ctype is not None else 'application/x-www-form-urlencoded'
+
+    if not body:
+        return body, ctype
+
+    if get_content_encoding(headers) == 'gzip':
+        body = ungzip(body)
+        ctype = get_body_content_type(body)
+
+    return body, ctype
+
