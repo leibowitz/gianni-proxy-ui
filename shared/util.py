@@ -103,7 +103,7 @@ def array_headers(headers):
 def get_body_non_empty_lines(lines, ctype = None):
     return '\n'.join(map(lambda line: nice_body(line, ctype), filter(None, map(lambda line: line.strip(), lines)))) if len(lines) != 0 else []
 
-def get_body_content_type(body, content):
+def get_body_content_type(body, content = None):
     if content is not None:
         mimetype, chars = httpheader.parse_media_type(content, with_parameters=False)
         ctype = '/'.join(filter(None, mimetype))
