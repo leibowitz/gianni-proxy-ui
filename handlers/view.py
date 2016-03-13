@@ -81,6 +81,7 @@ class ViewHandler(BaseRequestHandler):
                     content = open(filepath).read()
                     responsebody = util.nice_body(content, response_mime_type)
                 elif 'image' in response_mime_type:
+                    content = open(filepath).read()
                     responsebody = util.raw_image_html(content, response_mime_type)
 
         for key, value in requestheaders.iteritems():
