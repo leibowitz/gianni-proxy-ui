@@ -72,17 +72,7 @@ class ViewHandler(BaseRequestHandler):
                 if body:
                     responsebody = self.get_formatted_body(body, response_mime_type)
             else:
-                if not response_mime_type:
-                    pass
-                elif 'text/plain' in response_mime_type:
-                    lines = open(filepath).readlines()
-                    responsebody = util.get_body_non_empty_lines(lines)
-                elif self.is_text_content(response_mime_type):
-                    content = open(filepath).read()
-                    responsebody = util.nice_body(content, response_mime_type)
-                elif 'image' in response_mime_type:
-                    content = open(filepath).read()
-                    responsebody = util.raw_image_html(content, response_mime_type)
+                responsebody = self.get_partial_content_body(filepath, response_mime_type)
 
         for key, value in requestheaders.iteritems():
             if key == 'Cookie':
@@ -169,6 +159,20 @@ class ViewHandler(BaseRequestHandler):
         for msg in messages:
             msg['message'] = re.escape(msg['message'])
         raise gen.Return(messages)
+
+    def get_partial_content_body(self, filepath, mime_type):
+        if not mime_type:
+            return None
+        elif 'text/plain' in mime_type:
+            lines = open(filepath).readlines()
+            return util.get_body_non_empty_lines(lines)
+        elif self.is_text_content(mime_type):
+            content = open(filepath).read()
+            return util.nice_body(content, mime_type)
+        elif 'image' in mime_type:
+            content = open(filepath).read()
+            return util.raw_image_html(content, mime_type)
+        return None
 
     def get_formatted_body(self, body, mime_type=None):
         if not mime_type:
