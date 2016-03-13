@@ -123,4 +123,4 @@ class BaseRequestHandler(RequestHandler):
     def get_gridfs_body(self, fileid, headers):
         fs = motor.MotorGridFS(self.settings['db'].proxyservice)
         body = yield util.get_gridfs_content(fs, fileid)
-        raise gen.Return(util.get_uncompressed_body(headers, body))
+        raise gen.Return(util.get_uncompressed_body(self.nice_headers(headers), body))
