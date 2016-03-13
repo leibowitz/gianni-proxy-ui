@@ -25,6 +25,7 @@ from ignoresadd import IgnoresAddHandler
 from origins import OriginsHandler
 from originsedit import OriginsEditHandler
 from originsadd import OriginsAddHandler
+from documentation import DocumentationHandler
 
 #__all__ = [
 #"base", 
