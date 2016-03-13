@@ -151,4 +151,6 @@ class ViewHandler(BaseRequestHandler):
                 finished=finished,
                 socketuuid=socketuuid,
                 origin=origin,
-                host=host)
+                host=host,
+                show_save=True,
+                show_resend=True)
