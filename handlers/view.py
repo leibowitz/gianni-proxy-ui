@@ -70,14 +70,7 @@ class ViewHandler(BaseRequestHandler):
             if finished:
                 body = yield util.get_gridfs_content(fs, respfileid)
                 if body:
-                    if not response_mime_type:
-                        pass
-                    elif 'text/plain' in response_mime_type:
-                        responsebody = util.get_body_non_empty_lines(body.strip().split("\n"))
-                    elif self.is_text_content(response_mime_type):
-                        responsebody = util.nice_body(body, response_mime_type)
-                    elif 'image' in response_mime_type:
-                        responsebody = util.raw_image_html(body, response_mime_type)
+                    responsebody = self.get_formatted_body(body, response_mime_type)
             else:
                 if not response_mime_type:
                     pass
@@ -175,3 +168,15 @@ class ViewHandler(BaseRequestHandler):
         for msg in messages:
             msg['message'] = re.escape(msg['message'])
         raise gen.Return(messages)
+
+    def get_formatted_body(self, body, mime_type=None):
+        if not mime_type:
+            return None
+        elif 'text/plain' in mime_type:
+            return util.get_body_non_empty_lines(body.strip().split("\n"))
+        elif self.is_text_content(mime_type):
+            return util.nice_body(body, mime_type)
+        elif 'image' in mime_type:
+            return util.raw_image_html(body, mime_type)
+        return None
+        
