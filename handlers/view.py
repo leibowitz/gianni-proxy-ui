@@ -67,11 +67,11 @@ class ViewHandler(BaseRequestHandler):
         if 'fileid' in entry['response']:
 
             respfileid = entry['response']['fileid']
-            filepath = os.path.join(tempfile.gettempdir(), "proxy-service", str(respfileid))
-            #print filepath
+            filepath = util.getfilepath(respfileid)
+            finished = util.is_finished(filepath)
             
             response_mime_type = util.get_content_type(requests.structures.CaseInsensitiveDict(responseheaders))
-            if not os.path.exists(filepath):
+            if finished:
                 body = yield util.get_gridfs_content(fs, respfileid)
                 if body:
                     if not response_mime_type:
@@ -93,8 +93,6 @@ class ViewHandler(BaseRequestHandler):
                     responsebody = util.nice_body(content, response_mime_type)
                 elif 'image' in response_mime_type:
                     responsebody = util.raw_image_html(content, response_mime_type)
-                # request seems to be still open
-                finished = False
                 #responsebody = open(filepath).read()
                 #ctype = responseheaders['Content-Type']
                 #responsebody = util.nice_body(responsebody, ctype)

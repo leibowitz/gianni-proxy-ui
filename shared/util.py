@@ -188,3 +188,8 @@ def get_gridfs_content(fs, ident):
 
 def tree(): return collections.defaultdict(tree)
 
+def is_finished(filepath):
+    return not os.path.exists(filepath)
+    
+def getfilepath(fileid):
+    return os.path.join(tempfile.gettempdir(), "proxy-service", str(fileid))
