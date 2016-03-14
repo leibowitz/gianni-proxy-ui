@@ -48,11 +48,14 @@ class DocumentationEndpointHandler(BaseRequestHandler):
                     entries[k]['request']['body'] = urlparse.parse_qsl(reqbody, keep_blank_values=True)
 
             if 'response' in entry and 'fileid' in entry['response']:
-                entry['response']['body'], entries[k]['response']['content-type'] = yield self.get_gridfs_body(entry['response']['fileid'], entry['response']['headers'])
+                entries[k]['response']['body'], entries[k]['response']['content-type'] = yield self.get_gridfs_body(entry['response']['fileid'], entry['response']['headers'])
 
                 if util.get_format(entry['response']['content-type']) == 'json':
                     entries[k]['response']['schema'] = skinfer.generate_schema(json.loads(entry['response']['body']))
                     #genson.Schema().add_object(json.loads(resbody)).to_dict()
+                
+                print entries[k]['response']['content-type']
+                entries[k]['response']['body'] = self.get_formatted_body(entries[k]['response']['body'], entries[k]['response']['content-type'])
 
         self.render("documentationhost.html", host=host, entries=entries, tree=tree, render_tree=self.render_tree, render_document=self.render_document, currentpath=path, method=method)
 

@@ -1,3 +1,6 @@
+{% block stylesheets %}
+<link href="/static/default.css" media="all" rel="stylesheet" type="text/css" />
+{% end %}
 <div class="doc-view">
 
 <h1 class="center no-margin">Request</h1>
@@ -80,18 +83,62 @@
 
 {% end %}
 
+<ul class="statuses">
 {% for item in entries %}
-<a href="/documentation/view/{{ item['_id'] }}">
+{% if 'schema' in item['response'] %}
+<a class="response-status" data-target="{{ item['response']['status'] }}">
 <span class="status-{{ (item['response']['status']/100)*100 }}">{{ item['response']['status'] }}</span>
 </a>
-{% if 'schema' in item['response'] %}
-<h3>JSON Schema</h3>
+{% end %}
+{% end %}
+</ul>
 
-<div class="content-schema">
+{% for key, item in enumerate(entries) %}
+<ul class="content-schema" id="response-title-{{ item['response']['status'] }}" {% if key != 0 %}style="display: none;"{% end %}>
+{% if 'schema' in item['response'] %}
+<li><a class="response-content" data-target="response-content-{{ item['response']['status'] }}-json">JSON schema</a>
+</li>
+{% end %}
+<li>
+<a class="response-content" data-target="response-content-{{ item['response']['status'] }}-body">Example</a>
+</li>
+</ul>
+{% end %}
+
+{% for key, item in enumerate(entries) %}
+<div class="content-schema box" id="response-content-{{ item['response']['status'] }}" {% if key != 0 %}style="display: none;"{% end %}>
+  <span class="top-right">
+  <a class="pure-button" href="/documentation/view/{{ item['_id'] }}">View</a>
+  </span>
+<ul class="list-content">
+{% if 'schema' in item['response'] %}
+<li id="response-content-{{ item['response']['status'] }}-json" class="response-content-data response-content-data-json">
+<div>
 {% raw render_schema(item['response']['schema']) %}
 </div>
+</li>
 {% end %}
+<li style="display: none;" id="response-content-{{ item['response']['status'] }}-body" class="response-content-data response-content-data-body">
+  <div>
 
+ {% raw item['response']['body'] %}
+  </div>
+</li>
+</ul>
+</div>
 {% end %}
-
+<script src="/static/jquery.min.js"></script>
+<script type="text/javascript">
+$('.response-status').on('click', function(evt){
+  $('.content-schema').hide();
+  $('.response-content-data').hide();
+  $('#response-title-'+$(evt.currentTarget).data('target')).show();
+  $('#response-content-'+$(evt.currentTarget).data('target')).show();
+  $('#response-content-'+$(evt.currentTarget).data('target') + '-json' ).show();
+});
+$('.response-content').on('click', function(evt){
+  $('.response-content-data').hide();
+  $('#'+$(evt.currentTarget).data('target')).show();
+});
+</script>
 </div>

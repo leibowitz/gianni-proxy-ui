@@ -110,6 +110,10 @@ table.fixed-header th {
   height: 2em;
 }
 
+.response-status, .response-content {
+  cursor: pointer;
+}
+
 .status-200 {
 	color: #4caf50;
 }
@@ -488,8 +492,15 @@ h4 {
   text-align: center;
 }
 
+.statuses {
+}
+
 .content-schema {
   color: #595959;
+}
+
+ul.content-schema li {
+  display: inline;
 }
 
 ul.schema {
@@ -520,6 +531,16 @@ ul.root > li > ul > li > .path {
 
 ul.root > li > ul.group > li {
   margin-bottom: 2em;
+}
+
+ul.list-content {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.response-content-data-json {
+  margin-left: 2em;
 }
 
 .method {
