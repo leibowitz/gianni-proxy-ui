@@ -6,6 +6,9 @@ from tornado import gen
 import tornado.web
 import motor
 import requests
+from pygments import highlight
+from pygments.lexers import BashLexer
+from pygments.formatters import HtmlFormatter
 
 from base import BaseRequestHandler
 from shared import util
@@ -90,6 +93,8 @@ class ViewHandler(BaseRequestHandler):
 
         cmd = yield self.get_curl_cmd(entry, reqbody)
 
+        cmd = highlight(cmd, BashLexer(), HtmlFormatter(cssclass='codehilite curl'))
+
         fmt = util.get_format(util.get_content_type(self.nice_headers(responseheaders))) if responseheaders else None
 
         self.render("one.html", 
@@ -119,3 +124,4 @@ class ViewHandler(BaseRequestHandler):
         for msg in messages:
             msg['message'] = re.escape(msg['message'])
         raise gen.Return(messages)
+

@@ -56,6 +56,8 @@ class DocumentationViewHandler(BaseRequestHandler):
 
         cmd = yield self.get_curl_cmd(entry, reqbody)
 
+        cmd = highlight(cmd, BashLexer(), HtmlFormatter(cssclass='codehilite curl'))
+
         fmt = util.get_format(util.get_content_type(self.nice_headers(responseheaders))) if responseheaders else None
 
         self.render("one.html", 
