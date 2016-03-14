@@ -21,7 +21,6 @@ class RequestHandler(BaseRequestHandler):
         method = None
         if itemid:
             collection = self.settings['db'].proxyservice['log_logentry']
-            fs = motor.MotorGridFS(self.settings['db'].proxyservice)
             entry = yield motor.Op(collection.find_one, {'_id': self.get_id(itemid)})
             if entry and entry['request']:
                 headers = entry['request']['headers']
@@ -29,12 +28,9 @@ class RequestHandler(BaseRequestHandler):
                 method = entry['request']['method']
                 requestquery = entry['request']['query']
                 requestheaders = self.nice_headers(headers)
-                body = None
-                if 'fileid' in entry['request'] and not self.has_binary_content(requestheaders):
-                    body = yield util.get_gridfs_content(fs, entry['request']['fileid'])
-                    if body:
-                        if util.get_content_encoding(requestheaders) == 'gzip':
-                            body = util.ungzip(body)
+
+		if 'fileid' in entry['request']:
+		    body, ctype = yield self.get_gridfs_body(entry['request']['fileid'], requestheaders)
 
         self.render("request.html", headers=headers, method=method, body=body, url=url, tryagain=False)
 

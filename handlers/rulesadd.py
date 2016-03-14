@@ -24,16 +24,16 @@ class RulesAddHandler(BaseRequestHandler):
             collection = self.settings['db'].proxyservice['log_logentry']
             entry = yield motor.Op(collection.find_one, {'_id': self.get_id(item)})
             if entry:
-                fs = motor.MotorGridFS(self.settings['db'].proxyservice)
-                body = yield util.get_gridfs_content(fs, entry['response']['fileid'])
+                reqheaders = entry['request']['headers'] if 'request' in entry and 'headers' in entry['request'] else reqheaders
+                respheaders = entry['response']['headers'] if 'response' in entry and 'headers' in entry['response'] else respheaders
+                status = entry['response']['status']
+
+                body, ctype = yield self.get_gridfs_body(entry['response']['fileid'], respheaders)
+                fmt = util.get_format(ctype)
                 
-                if entry:
-                    reqheaders = entry['request']['headers'] if 'request' in entry and 'headers' in entry['request'] else reqheaders
-                    respheaders = entry['response']['headers'] if 'response' in entry and 'headers' in entry['response'] else respheaders
-                    fmt = util.get_format(util.get_content_type(self.nice_headers(respheaders))) if respheaders else None
-                    status = entry['response']['status']
-                    entry = entry['request']
-                    entry['status'] = status
+                entry = entry['request']
+                entry['status'] = status
+
         elif ruleid:
             collection = self.settings['db'].proxyservice['log_rules']
             entry = yield motor.Op(collection.find_one, {'_id': self.get_id(ruleid)})
