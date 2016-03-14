@@ -1,10 +1,4 @@
 <div class="doc-view">
-<div>
-<a href="/documentation/view/{{ entry['_id'] }}">
-<span class="status-{{ (entry['response']['status']/100)*100 }}">{{ entry['response']['status'] }}</span>
-<span class="method-{{ entry['request']['method'] }}">{{ entry['request']['method'] }}</span>
-</a>
-</div>
 
 <h1>Request</h1>
 
@@ -86,6 +80,12 @@
 {% end %}
 </table>
 
+{% end %}
+
+{% for entry in entries %}
+<a href="/documentation/view/{{ entry['_id'] }}">
+<span class="status-{{ (entry['response']['status']/100)*100 }}">{{ entry['response']['status'] }}</span>
+</a>
 {% end %}
 
 {% if schema %}
