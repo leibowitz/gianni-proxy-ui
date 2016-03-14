@@ -415,9 +415,15 @@ h4 {
   display: none;
 }
 
+ul.schema {
+  list-style: none;
+  margin: 0;
+}
+
 ul.root, ul.root ul {
   list-style: none;
   padding: 0;
+  margin: 0;
 }
 
 ul.root > li > .path {
@@ -433,7 +439,6 @@ ul.root > li > ul > li > .path {
   font-size: 20px;
   font-weight: bold;
   display: block;
-  margin: 1em 0;
 }
 
 .method {

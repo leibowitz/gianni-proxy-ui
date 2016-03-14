@@ -1,8 +1,7 @@
 <span class="type-{{ schema['type'] }}">{{ schema['type'] }}</span>
 {% if schema['type'] == 'object' %}
-{
 {% if 'properties' in schema %}
-	<ul>
+	<ul class="schema">
 	{% for field, options in schema['properties'].iteritems() %}
 		<li>
 			{{ field }}
@@ -10,14 +9,13 @@
 		</li>
 	{% end %}
 	</ul>
-}
 {% end %}
 {% elif schema['type'] == 'array' %}
-[
 {% if 'items' in schema %}
+[
 	{% raw render_schema(schema['items']) %}
+]
 {% else %}
 {% end %}
-]
 {% end %}
 
