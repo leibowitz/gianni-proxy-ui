@@ -39,7 +39,7 @@
     <td class="key">
   {{ key }}
     </td>
-    <td>
+    <td class="table-header-value">
   {% if key == 'Cookie' %}
     {% raw requestheaders[key] %}
   {% else %}
@@ -98,7 +98,7 @@
     <td class="key">
   {{ key }}
     </td>
-    <td>
+    <td class="table-header-value">
   {{ responseheaders[key] }}
     </td>
   </tr>
