@@ -214,7 +214,6 @@ table {
 
 table.headers {
   word-break: break-word;
-  
 }
 
 table.headers td.key {
@@ -226,6 +225,10 @@ table.headers td.key {
 
 table.headers td {
   font-weight: 300;
+}
+
+td.table-header-value {
+  word-break: break-all;
 }
 
 td, th {
