@@ -13,7 +13,7 @@
 {% raw render_tree(host, tree) %}
       </div>
       {% if entry is not None %}
-      {% raw render_document(entry) %}
+      {% raw render_document(entry, requestheaders, responseheaders, reqbody, resbody) %}
       {% end %}
       <div class="clear"></div>
     </div>

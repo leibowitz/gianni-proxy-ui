@@ -4,3 +4,20 @@
 {{ entry['response']['status'] }}
 </a>
 </div>
+
+<table class="headers">
+{% for key, value in requestheaders.iteritems() %}
+  <tr>
+    <td class="key">
+  {{ key }}
+    </td>
+    <td>
+  {% if key == 'Cookie' %}
+    {% raw value %}
+  {% else %}
+    {{ value }}
+  {% end %}
+    </td>
+  </tr>
+{% end %}
+</table>

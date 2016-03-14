@@ -31,10 +31,25 @@ class DocumentationEndpointHandler(BaseRequestHandler):
 
         entry = yield collection.find_one({'request.host': host, 'request.path': path, 'request.method': method})
 
-        self.render("documentationhost.html", host=host, entry=entry, tree=tree, render_tree=self.render_tree, render_document=self.render_document)
+        requestheaders = {}
+        responseheaders = {}
+        reqbody = None
+        resbody = None
+
+        if entry:
+            requestheaders = self.nice_headers(entry['request']['headers'])
+            responseheaders = self.nice_headers(entry['response']['headers'])
+
+            if 'request' in entry and 'fileid' in entry['request']:
+                reqbody, ctype = yield self.get_gridfs_body(entry['request']['fileid'], requestheaders)
+
+            if 'response' in entry and 'fileid' in entry['response']:
+                resbody, ctype = yield self.get_gridfs_body(entry['response']['fileid'], responseheaders)
+
+        self.render("documentationhost.html", host=host, entry=entry, tree=tree, render_tree=self.render_tree, render_document=self.render_document, requestheaders=requestheaders, responseheaders=responseheaders, reqbody=reqbody, resbody=resbody)
 
     def render_tree(self, host, tree, fullpath = ''):
         return self.render_string("documentationtree.html", host=host, tree=tree, render_tree=self.render_tree, fullpath=fullpath+'/')
 
-    def render_document(self, entry):
-        return self.render_string("documentationendpoint.html", entry=entry)
+    def render_document(self, entry, requestheaders, responseheaders, reqbody, resbody):
+        return self.render_string("documentationendpoint.html", entry=entry, requestheaders=requestheaders, responseheaders=responseheaders, resbody=resbody, reqbody=reqbody)
