@@ -11,16 +11,16 @@
 <h3>Headers</h3>
 
 <table class="headers">
-{% for key, value in requestheaders.iteritems() %}
-  <tr>
+{% for num, key in enumerate(requestheaders) %}
+  <tr {% if num % 2 == 0 %}class="stripped"{% end %}>
     <td class="key">
   {{ key }}
     </td>
     <td>
   {% if key == 'Cookie' %}
-    {% raw value %}
+    {% raw requestheaders[key] %}
   {% else %}
-    {{ value }}
+    {{ requestheaders[key] }}
   {% end %}
     </td>
   </tr>
@@ -30,8 +30,8 @@
 <h3>Query String</h3>
 
 <table class="headers">
-{% for key, value in query %}
-  <tr>
+{% for num, (key, value) in enumerate(query) %}
+  <tr {% if num % 2 == 0 %}class="stripped"{% end %}>
     <td class="key">
   {{ key }}
     </td>
@@ -47,16 +47,16 @@
 <h3>Headers</h3>
 
 <table class="headers">
-{% for key, value in responseheaders.iteritems() %}
-  <tr>
+{% for num, key in enumerate(responseheaders) %}
+  <tr {% if num % 2 == 0 %}class="stripped"{% end %}>
     <td class="key">
   {{ key }}
     </td>
     <td>
   {% if key == 'Cookie' %}
-    {% raw value %}
+    {% raw responseheaders[key] %}
   {% else %}
-    {{ value }}
+    {{ responseheaders[key] }}
   {% end %}
     </td>
   </tr>
