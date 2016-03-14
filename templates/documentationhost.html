@@ -19,7 +19,7 @@
   <div class="layout layout-with-tree">
     <div class="box-body">
       {% if entry is not None %}
-      {% raw render_document(entry, requestheaders, responseheaders, reqbody, resbody, reqtype, restype, reqfields) %}
+      {% raw render_document(entry, entries, requestheaders, responseheaders, reqbody, resbody, reqtype, restype, reqfields) %}
       {% end %}
       <div class="clear"></div>
     </div>
