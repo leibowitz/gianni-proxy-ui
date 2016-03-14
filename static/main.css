@@ -485,7 +485,10 @@ ul.root > li > ul > li > .path {
   font-size: 1.5em;
   font-weight: 400;
   display: block;
-  margin-bottom: 0.5em;
+}
+
+ul.root > li > ul.group > li {
+  margin-bottom: 2em;
 }
 
 .method {

@@ -1,4 +1,4 @@
-<ul class="{% if fullpath == '/' %}root{% end %}">
+<ul class="{% if fullpath == '/' %}root{% else %}group{% end %}">
 {% for path, values in tree['children'].iteritems() %}
 <li>
 	<span class="path">{{ path }}</span>
