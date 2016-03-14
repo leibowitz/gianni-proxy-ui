@@ -444,8 +444,7 @@ h4 {
 }
 
 .tree-link-selected {
-  font-weight: 600;
-  font-style: italic;
+  font-weight: 500;
 }
 
 .tree-link:hover {
