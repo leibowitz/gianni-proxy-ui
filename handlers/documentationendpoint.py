@@ -55,10 +55,10 @@ class DocumentationEndpointHandler(BaseRequestHandler):
             if 'response' in entry and 'fileid' in entry['response']:
                 resbody, restype = yield self.get_gridfs_body(entry['response']['fileid'], responseheaders)
 
-        self.render("documentationhost.html", host=host, entry=entry, tree=tree, render_tree=self.render_tree, render_document=self.render_document, requestheaders=requestheaders, responseheaders=responseheaders, reqbody=reqbody, resbody=resbody, reqtype=reqtype, restype=restype, reqfields=reqfields)
+        self.render("documentationhost.html", host=host, entry=entry, tree=tree, render_tree=self.render_tree, render_document=self.render_document, requestheaders=requestheaders, responseheaders=responseheaders, reqbody=reqbody, resbody=resbody, reqtype=reqtype, restype=restype, reqfields=reqfields, currentpath=path)
 
-    def render_tree(self, host, tree, fullpath = ''):
-        return self.render_string("documentationtree.html", host=host, tree=tree, render_tree=self.render_tree, fullpath=fullpath+'/')
+    def render_tree(self, host, tree, currentpath=None, fullpath = ''):
+        return self.render_string("documentationtree.html", host=host, tree=tree, render_tree=self.render_tree, fullpath=fullpath+'/', currentpath=currentpath)
 
     def render_document(self, entry, requestheaders, responseheaders, reqbody, resbody, reqtype, restype, reqfields):
         schema = None
