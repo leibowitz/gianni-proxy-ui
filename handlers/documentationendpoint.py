@@ -1,5 +1,9 @@
 from tornado import gen
 import tornado.web
+import skinfer
+import genson
+import json
+import urlparse
 
 from shared import util
 
@@ -35,21 +39,30 @@ class DocumentationEndpointHandler(BaseRequestHandler):
         responseheaders = {}
         reqbody = None
         resbody = None
+        reqtype = None
+        restype = None
 
         if entry:
             requestheaders = self.nice_headers(entry['request']['headers'])
             responseheaders = self.nice_headers(entry['response']['headers'])
 
             if 'request' in entry and 'fileid' in entry['request']:
-                reqbody, ctype = yield self.get_gridfs_body(entry['request']['fileid'], requestheaders)
+                reqbody, reqtype = yield self.get_gridfs_body(entry['request']['fileid'], requestheaders)
 
             if 'response' in entry and 'fileid' in entry['response']:
-                resbody, ctype = yield self.get_gridfs_body(entry['response']['fileid'], responseheaders)
+                resbody, restype = yield self.get_gridfs_body(entry['response']['fileid'], responseheaders)
 
-        self.render("documentationhost.html", host=host, entry=entry, tree=tree, render_tree=self.render_tree, render_document=self.render_document, requestheaders=requestheaders, responseheaders=responseheaders, reqbody=reqbody, resbody=resbody)
+        self.render("documentationhost.html", host=host, entry=entry, tree=tree, render_tree=self.render_tree, render_document=self.render_document, requestheaders=requestheaders, responseheaders=responseheaders, reqbody=reqbody, resbody=resbody, reqtype=reqtype, restype=restype)
 
     def render_tree(self, host, tree, fullpath = ''):
         return self.render_string("documentationtree.html", host=host, tree=tree, render_tree=self.render_tree, fullpath=fullpath+'/')
 
-    def render_document(self, entry, requestheaders, responseheaders, reqbody, resbody):
-        return self.render_string("documentationendpoint.html", entry=entry, requestheaders=requestheaders, responseheaders=responseheaders, resbody=resbody, reqbody=reqbody)
+    def render_document(self, entry, requestheaders, responseheaders, reqbody, resbody, reqtype, restype):
+        schema = None
+        if util.get_format(restype) == 'json':
+            schema = skinfer.generate_schema(json.loads(resbody))
+            print schema
+            #print genson.Schema().add_object(json.loads(resbody)).to_dict()
+        
+        query = urlparse.parse_qsl(entry['request']['query'], keep_blank_values=True)
+        return self.render_string("documentationendpoint.html", entry=entry, requestheaders=requestheaders, responseheaders=responseheaders, resbody=resbody, reqbody=reqbody, schema=schema, query=query)

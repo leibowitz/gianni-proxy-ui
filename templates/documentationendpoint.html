@@ -5,6 +5,11 @@
 </a>
 </div>
 
+<div class="doc-view">
+<h1>Request</h1>
+
+<h3>Headers</h3>
+
 <table class="headers">
 {% for key, value in requestheaders.iteritems() %}
   <tr>
@@ -21,3 +26,40 @@
   </tr>
 {% end %}
 </table>
+
+<h3>Query String</h3>
+
+<table class="headers">
+{% for key, value in query %}
+  <tr>
+    <td class="key">
+  {{ key }}
+    </td>
+    <td>
+    {{ value }}
+    </td>
+  </tr>
+{% end %}
+</table>
+
+<h1>Response</h1>
+
+<h3>Headers</h3>
+
+<table class="headers">
+{% for key, value in responseheaders.iteritems() %}
+  <tr>
+    <td class="key">
+  {{ key }}
+    </td>
+    <td>
+  {% if key == 'Cookie' %}
+    {% raw value %}
+  {% else %}
+    {{ value }}
+  {% end %}
+    </td>
+  </tr>
+{% end %}
+</table>
+</div>
