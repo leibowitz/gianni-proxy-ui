@@ -183,6 +183,7 @@ html {
 
 #curl-cmd, .clear {
   clear: both;
+  word-break: break-all;
 }
 
 .doc-view {
