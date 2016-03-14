@@ -57,19 +57,19 @@ class DocumentationEndpointHandler(BaseRequestHandler):
             if 'response' in entry and 'fileid' in entry['response']:
                 resbody, restype = yield self.get_gridfs_body(entry['response']['fileid'], responseheaders)
 
-        self.render("documentationhost.html", host=host, entries=entries, entry=entry, tree=tree, render_tree=self.render_tree, render_document=self.render_document, requestheaders=requestheaders, responseheaders=responseheaders, reqbody=reqbody, resbody=resbody, reqtype=reqtype, restype=restype, reqfields=reqfields, currentpath=path)
+        self.render("documentationhost.html", host=host, entries=entries, entry=entry, tree=tree, render_tree=self.render_tree, render_document=self.render_document, requestheaders=requestheaders, responseheaders=responseheaders, reqbody=reqbody, resbody=resbody, reqtype=reqtype, restype=restype, reqfields=reqfields, currentpath=path, method=method)
 
     def render_tree(self, host, tree, currentpath=None, fullpath = ''):
         return self.render_string("documentationtree.html", host=host, tree=tree, render_tree=self.render_tree, fullpath=fullpath+'/', currentpath=currentpath)
 
-    def render_document(self, entry, entries, requestheaders, responseheaders, reqbody, resbody, reqtype, restype, reqfields):
+    def render_document(self, entry, entries, requestheaders, responseheaders, reqbody, resbody, reqtype, restype, reqfields, method):
         schema = None
         if util.get_format(restype) == 'json':
             schema = skinfer.generate_schema(json.loads(resbody))
             #print genson.Schema().add_object(json.loads(resbody)).to_dict()
         
         query = urlparse.parse_qsl(entry['request']['query'], keep_blank_values=True)
-        return self.render_string("documentationendpoint.html", entry=entry, entries=entries, requestheaders=requestheaders, responseheaders=responseheaders, resbody=resbody, reqbody=reqbody, schema=schema, query=query, render_schema=self.render_schema, reqfields=reqfields)
+        return self.render_string("documentationendpoint.html", entry=entry, entries=entries, requestheaders=requestheaders, responseheaders=responseheaders, resbody=resbody, reqbody=reqbody, schema=schema, query=query, render_schema=self.render_schema, reqfields=reqfields, method=method)
 
     def render_schema(self, schema):
         return self.render_string("documentationschema.html", schema=schema, render_schema=self.render_schema)
