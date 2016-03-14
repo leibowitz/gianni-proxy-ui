@@ -163,6 +163,10 @@ table.fixed-header th {
   color: brown;
 }
 
+.type-null {
+  color: orange;
+}
+
 html {
   background-color: #e0e0e0;
 }
