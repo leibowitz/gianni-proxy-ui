@@ -65,4 +65,7 @@ class DocumentationEndpointHandler(BaseRequestHandler):
             #print genson.Schema().add_object(json.loads(resbody)).to_dict()
         
         query = urlparse.parse_qsl(entry['request']['query'], keep_blank_values=True)
-        return self.render_string("documentationendpoint.html", entry=entry, requestheaders=requestheaders, responseheaders=responseheaders, resbody=resbody, reqbody=reqbody, schema=schema, query=query)
+        return self.render_string("documentationendpoint.html", entry=entry, requestheaders=requestheaders, responseheaders=responseheaders, resbody=resbody, reqbody=reqbody, schema=schema, query=query, render_schema=self.render_schema)
+
+    def render_schema(self, schema):
+        return self.render_string("documentationschema.html", schema=schema, render_schema=self.render_schema)

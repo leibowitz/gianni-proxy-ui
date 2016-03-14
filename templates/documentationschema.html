@@ -1,0 +1,23 @@
+{% if schema['type'] == 'object' %}
+{
+{% if 'properties' in schema %}
+	<ul>
+	{% for field, options in schema['properties'].iteritems() %}
+		<li>
+			{{ field }}
+		{% raw render_schema(options) %}
+		</li>
+	{% end %}
+	</ul>
+}
+{% end %}
+{% elif schema['type'] == 'array' %}
+[
+{% if 'items' in schema %}
+	{% raw render_schema(schema['items']) %}
+{% end %}
+]
+{% else %}
+	{{ schema['type'] }}
+{% end %}
+
