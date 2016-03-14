@@ -2,33 +2,31 @@
 
 <h1 class="center no-margin">Request</h1>
 
-{% if requestheaders %}
 <h3 class="no-top-padding no-top-margin">Headers</h3>
 
 <table class="headers full-width">
-{% for num, key in enumerate(requestheaders) %}
+{% for num, key in enumerate(entry['request']['headers']) %}
   <tr {% if num % 2 == 0 %}class="stripped"{% end %}>
     <td class="key">
   {{ key }}
     </td>
     <td class="table-header-value">
   {% if key == 'Cookie' %}
-    {% raw requestheaders[key] %}
+    {% raw entry['request']['headers'][key] %}
   {% else %}
-    {{ requestheaders[key] }}
+    {{ entry['request']['headers'][key] }}
   {% end %}
     </td>
   </tr>
 {% end %}
 </table>
 
-{% end %}
 
-{% if query and len(query) != 0 %}
+{% if entry and entry['request']['query'] and len(entry['request']['query']) != 0 %}
 <h3>Query String</h3>
 
 <table class="headers full-width">
-{% for num, (key, value) in enumerate(query) %}
+{% for num, (key, value) in enumerate(entry['request']['query']) %}
   <tr {% if num % 2 == 0 %}class="stripped"{% end %}>
     <td class="key">
   {{ key }}
@@ -41,11 +39,11 @@
 </table>
 {% end %}
 
-{% if reqfields %}
+{% if entry and entry['request']['body'] %}
 <h3>Body</h3>
 
 <table class="headers full-width">
-{% for num, (key, value) in enumerate(reqfields) %}
+{% for num, (key, value) in enumerate(entry['request']['body'] ) %}
   <tr {% if num % 2 == 0 %}class="stripped"{% end %}>
     <td class="key">
   {{ key }}
@@ -58,22 +56,22 @@
 </table>
 
 {% end %}
-<h1 class="center no-margin">Response</h1>
+<h1 class="center">Response</h1>
 
-{% if responseheaders %}
+{% if entry and entry['response']['headers'] %}
 <h3 class="no-top-padding no-top-margin">Headers</h3>
 
 <table class="headers full-width">
-{% for num, key in enumerate(responseheaders) %}
+{% for num, key in enumerate(entry['response']['headers']) %}
   <tr {% if num % 2 == 0 %}class="stripped"{% end %}>
     <td class="key">
   {{ key }}
     </td>
     <td class="table-header-value">
   {% if key == 'Cookie' %}
-    {% raw responseheaders[key] %}
+    {% raw entry['response']['headers'][key] %}
   {% else %}
-    {{ responseheaders[key] }}
+    {{ entry['response']['headers'][key] }}
   {% end %}
     </td>
   </tr>
@@ -82,18 +80,18 @@
 
 {% end %}
 
-{% for entry in entries %}
-<a href="/documentation/view/{{ entry['_id'] }}">
-<span class="status-{{ (entry['response']['status']/100)*100 }}">{{ entry['response']['status'] }}</span>
+{% for item in entries %}
+<a href="/documentation/view/{{ item['_id'] }}">
+<span class="status-{{ (item['response']['status']/100)*100 }}">{{ item['response']['status'] }}</span>
 </a>
-{% end %}
-
-{% if schema %}
+{% if 'schema' in item['response'] %}
 <h3>JSON Schema</h3>
 
 <div class="content-schema">
-{% raw render_schema(schema) %}
+{% raw render_schema(item['response']['schema']) %}
 </div>
+{% end %}
+
 {% end %}
 
 </div>

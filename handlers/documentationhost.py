@@ -27,10 +27,10 @@ class DocumentationHostHandler(BaseRequestHandler):
 
             o['methods'][item['request']['method']][item['response']['status']] = item['_id']
 
-        self.render("documentationhost.html", host=host, entry=None, entries=[], tree=tree, render_tree=self.render_tree, render_document=self.render_document, reqbody=None, resbody=None, requestheaders={}, responseheaders={}, reqtype=None, restype=None, currentpath=None, method=None)
+        self.render("documentationhost.html", host=host, entries=[], tree=tree, render_tree=self.render_tree, render_document=self.render_document, currentpath=None, method=None)
 
     def render_tree(self, host, tree, currentpath=None, fullpath = '', method=None):
         return self.render_string("documentationtree.html", host=host, tree=tree, render_tree=self.render_tree, fullpath=fullpath+'/', currentpath=currentpath, currentmethod=method)
 
-    def render_document(self, entry, entries=[]):
-        return self.render_string("documentationendpoint.html", entry=entry, entries=entries)
+    def render_document(self, entries=[], method=None, entry=None):
+        return self.render_string("documentationendpoint.html", entries=entries, method=method, entry=entry)

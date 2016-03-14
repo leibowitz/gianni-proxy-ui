@@ -35,41 +35,35 @@ class DocumentationEndpointHandler(BaseRequestHandler):
 
         entries = yield collection.find({'request.host': host, 'request.path': path, 'request.method': method}).to_list(100)
 
-        requestheaders = {}
-        responseheaders = {}
-        reqbody = None
-        resbody = None
-        reqtype = None
-        restype = None
-        reqfields = {}
+        for k, entry in enumerate(entries):
+            entries[k]['request']['headers'] = self.nice_headers(entry['request']['headers'])
+            entries[k]['response']['headers'] = self.nice_headers(entry['response']['headers'])
 
-        entry = None
-        if len(entries) != 0:
-            entry = entries[0]
-            requestheaders = self.nice_headers(entry['request']['headers'])
-            responseheaders = self.nice_headers(entry['response']['headers'])
+            if entry['request']['query']:
+                entries[k]['request']['query'] = urlparse.parse_qsl(entry['request']['query'], keep_blank_values=True)
 
             if 'request' in entry and 'fileid' in entry['request']:
-                reqbody, reqtype = yield self.get_gridfs_body(entry['request']['fileid'], requestheaders)
-                if reqtype == 'application/x-www-form-urlencoded':
-                    reqfields = urlparse.parse_qsl(reqbody, keep_blank_values=True)
+                reqbody, entries[k]['request']['content-type'] = yield self.get_gridfs_body(entry['request']['fileid'], entry['request']['headers'])
+                if entries[k]['request']['content-type'] == 'application/x-www-form-urlencoded':
+                    entries[k]['request']['body'] = urlparse.parse_qsl(reqbody, keep_blank_values=True)
 
             if 'response' in entry and 'fileid' in entry['response']:
-                resbody, restype = yield self.get_gridfs_body(entry['response']['fileid'], responseheaders)
+                entry['response']['body'], entries[k]['response']['content-type'] = yield self.get_gridfs_body(entry['response']['fileid'], entry['response']['headers'])
 
-        self.render("documentationhost.html", host=host, entries=entries, entry=entry, tree=tree, render_tree=self.render_tree, render_document=self.render_document, requestheaders=requestheaders, responseheaders=responseheaders, reqbody=reqbody, resbody=resbody, reqtype=reqtype, restype=restype, reqfields=reqfields, currentpath=path, method=method)
+                if util.get_format(entry['response']['content-type']) == 'json':
+                    entries[k]['response']['schema'] = skinfer.generate_schema(json.loads(entry['response']['body']))
+                    #genson.Schema().add_object(json.loads(resbody)).to_dict()
+
+        self.render("documentationhost.html", host=host, entries=entries, tree=tree, render_tree=self.render_tree, render_document=self.render_document, currentpath=path, method=method)
 
     def render_tree(self, host, tree, currentpath=None, fullpath = '', method=None):
         return self.render_string("documentationtree.html", host=host, tree=tree, render_tree=self.render_tree, fullpath=fullpath+'/', currentpath=currentpath, currentmethod=method)
 
-    def render_document(self, entry, entries, requestheaders, responseheaders, reqbody, resbody, reqtype, restype, reqfields, method):
-        schema = None
-        if util.get_format(restype) == 'json':
-            schema = skinfer.generate_schema(json.loads(resbody))
-            #print genson.Schema().add_object(json.loads(resbody)).to_dict()
-        
-        query = urlparse.parse_qsl(entry['request']['query'], keep_blank_values=True)
-        return self.render_string("documentationendpoint.html", entry=entry, entries=entries, requestheaders=requestheaders, responseheaders=responseheaders, resbody=resbody, reqbody=reqbody, schema=schema, query=query, render_schema=self.render_schema, reqfields=reqfields, method=method)
+    def render_document(self, entries, method):
+        entry = None
+        if len(entries) != 0:
+            entry = entries[0]
+        return self.render_string("documentationendpoint.html", entries=entries, render_schema=self.render_schema, method=method, entry=entry)
 
     def render_schema(self, schema):
         return self.render_string("documentationschema.html", schema=schema, render_schema=self.render_schema)
