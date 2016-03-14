@@ -47,6 +47,23 @@
 </table>
 {% end %}
 
+{% if reqfields %}
+<h3>Body</h3>
+
+<table class="headers">
+{% for num, (key, value) in enumerate(reqfields) %}
+  <tr {% if num % 2 == 0 %}class="stripped"{% end %}>
+    <td class="key">
+  {{ key }}
+    </td>
+    <td>
+    {{ value }}
+    </td>
+  </tr>
+{% end %}
+</table>
+
+{% end %}
 <h1>Response</h1>
 
 {% if responseheaders %}
