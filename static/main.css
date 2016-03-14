@@ -482,9 +482,10 @@ ul.root > li > ul {
 }
 
 ul.root > li > ul > li > .path {
-  font-size: 20px;
-  font-weight: bold;
+  font-size: 1.5em;
+  font-weight: 400;
   display: block;
+  margin-bottom: 0.5em;
 }
 
 .method {
