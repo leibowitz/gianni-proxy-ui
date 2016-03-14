@@ -456,6 +456,9 @@ h4 {
   color: black;
   width: 13em;
   display: inline-block;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  vertical-align: bottom;
 }
 
 ul.schema {
