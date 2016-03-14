@@ -5,7 +5,7 @@
 {% if requestheaders %}
 <h3>Headers</h3>
 
-<table class="headers">
+<table class="headers full-width">
 {% for num, key in enumerate(requestheaders) %}
   <tr {% if num % 2 == 0 %}class="stripped"{% end %}>
     <td class="key">
@@ -27,7 +27,7 @@
 {% if query and len(query) != 0 %}
 <h3>Query String</h3>
 
-<table class="headers">
+<table class="headers full-width">
 {% for num, (key, value) in enumerate(query) %}
   <tr {% if num % 2 == 0 %}class="stripped"{% end %}>
     <td class="key">
@@ -44,7 +44,7 @@
 {% if reqfields %}
 <h3>Body</h3>
 
-<table class="headers">
+<table class="headers full-width">
 {% for num, (key, value) in enumerate(reqfields) %}
   <tr {% if num % 2 == 0 %}class="stripped"{% end %}>
     <td class="key">
@@ -63,7 +63,7 @@
 {% if responseheaders %}
 <h3>Headers</h3>
 
-<table class="headers">
+<table class="headers full-width">
 {% for num, key in enumerate(responseheaders) %}
   <tr {% if num % 2 == 0 %}class="stripped"{% end %}>
     <td class="key">
