@@ -7,7 +7,7 @@
     {% for method, statuses in values['methods'].iteritems() %}
 	<li>
 		<a href="/documentation/endpoint/{{ host }}?path={{ fullpath }}{{ path }}&method={{ method }}">
-			<span class="method">{{ method }}</span> {{ fullpath }}{{ path }}
+			<span class="method method-{{ method }}">{{ method }}</span> <span class="path-tree-link">{{ fullpath }}{{ path }}</span>
 		</a>
 	</li>
 	{% end %}

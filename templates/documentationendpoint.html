@@ -1,8 +1,8 @@
 <div class="doc-view">
 <div>
 <a href="/documentation/view/{{ entry['_id'] }}">
-{{ entry['request']['method'] }}
-{{ entry['response']['status'] }}
+<span class="status-{{ (entry['response']['status']/100)*100 }}">{{ entry['response']['status'] }}</span>
+<span class="method-{{ entry['request']['method'] }}">{{ entry['request']['method'] }}</span>
 </a>
 </div>
 
