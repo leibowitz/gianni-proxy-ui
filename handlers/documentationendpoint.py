@@ -59,8 +59,8 @@ class DocumentationEndpointHandler(BaseRequestHandler):
 
         self.render("documentationhost.html", host=host, entries=entries, entry=entry, tree=tree, render_tree=self.render_tree, render_document=self.render_document, requestheaders=requestheaders, responseheaders=responseheaders, reqbody=reqbody, resbody=resbody, reqtype=reqtype, restype=restype, reqfields=reqfields, currentpath=path, method=method)
 
-    def render_tree(self, host, tree, currentpath=None, fullpath = ''):
-        return self.render_string("documentationtree.html", host=host, tree=tree, render_tree=self.render_tree, fullpath=fullpath+'/', currentpath=currentpath)
+    def render_tree(self, host, tree, currentpath=None, fullpath = '', method=None):
+        return self.render_string("documentationtree.html", host=host, tree=tree, render_tree=self.render_tree, fullpath=fullpath+'/', currentpath=currentpath, currentmethod=method)
 
     def render_document(self, entry, entries, requestheaders, responseheaders, reqbody, resbody, reqtype, restype, reqfields, method):
         schema = None
