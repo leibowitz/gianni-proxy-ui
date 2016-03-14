@@ -5,19 +5,24 @@
 
   <div class="layout">
     <div class="box-header">
-      <h2><a href="/documentation/host/{{ host }}">{{ host }}</a>{% if entry is not None %}{{ entry['request']['path'] }}{% end %}</h2>
+      <h2 class="url"><a href="/documentation/host/{{ host }}">{{ host }}</a>{% if entry is not None %}{{ entry['request']['path'] }}{% end %}</h2>
     </div>
+  </div>
+</div>
 
-    <div class="box-body b-t">
-      <div class="tree">
+
+      <div class="tree box">
 {% raw render_tree(host, tree) %}
       </div>
+<div class="box box-with-tree">
+
+  <div class="layout layout-with-tree">
+    <div class="box-body">
       {% if entry is not None %}
       {% raw render_document(entry, requestheaders, responseheaders, reqbody, resbody, reqtype, restype, reqfields) %}
       {% end %}
       <div class="clear"></div>
     </div>
-
 
   </div>
 </div>

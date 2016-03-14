@@ -7,6 +7,14 @@ body{
 	padding: 1em;
 }
 
+.box-with-tree {
+  margin-left: 20em;
+}
+
+.layout-with-tree {
+  margin-left: -20em;
+}
+
 .top-bar {
   border-top: 1px solid rgba(120,130,140,.13);
 }
@@ -173,11 +181,6 @@ html {
   clear: both;
 }
 
-.tree {
-  float: left;
-  width: 20em;
-}
-
 .doc-view {
   margin-left: 20em;
 }
@@ -307,6 +310,13 @@ div.right {
   box-shadow: 0 0 1px rgba(0,0,0,.15);
 }
 
+.tree {
+  float: left;
+  width: 20em;
+  padding: 1em;
+  background-color: #f8f8f8;
+}
+
 .padding {
   padding: 1.5rem;
 }
@@ -432,7 +442,7 @@ ul.schema {
 ul.root, ul.root ul {
   list-style: none;
   padding: 0;
-  margin: 0;
+  margin: 3px 0 5px;
 }
 
 ul.root > li > .path {
