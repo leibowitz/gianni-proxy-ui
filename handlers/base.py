@@ -124,3 +124,27 @@ class BaseRequestHandler(RequestHandler):
         fs = motor.MotorGridFS(self.settings['db'].proxyservice)
         body = yield util.get_gridfs_content(fs, fileid)
         raise gen.Return(util.get_uncompressed_body(self.nice_headers(headers), body))
+    
+    @gen.coroutine
+    def get_curl_cmd(self, entry, body = None):
+        cmd = 'curl' 
+        cmd = cmd + ' -X ' + entry['request']['method']
+
+        requestheaders = self.nice_headers(entry['request']['headers'])
+
+        for key, value in requestheaders.iteritems():
+            cmd = cmd + ' -H ' + util.QuoteForPOSIX(key + ': ' + value)
+
+        if not self.has_binary_content(requestheaders) and body:
+            bodyparam = util.QuoteForPOSIX(body)
+            try:
+                cmd = cmd + ' -d ' + bodyparam
+            except Exception as e:
+                # probably failed because the content has a different encoding
+                print e
+
+        cmd = cmd + ' ' + util.QuoteForPOSIX(entry['request']['url'])
+
+        raise gen.Return(cmd)
+
+
