@@ -127,6 +127,30 @@ table.fixed-header th {
 	color: #e67e22;
 }
 
+.type-string {
+  color: blue;
+}
+
+.type-boolean {
+  color: green;
+}
+
+.type-number {
+  color: pink;
+}
+
+.type-date {
+  color: yellow;
+}
+
+.type-array {
+  color: grey;
+}
+
+.type-object {
+  color: brown;
+}
+
 html {
   background-color: #e0e0e0;
 }

@@ -1,3 +1,4 @@
+<span class="type-{{ schema['type'] }}">{{ schema['type'] }}</span>
 {% if schema['type'] == 'object' %}
 {
 {% if 'properties' in schema %}
@@ -15,9 +16,8 @@
 [
 {% if 'items' in schema %}
 	{% raw render_schema(schema['items']) %}
+{% else %}
 {% end %}
 ]
-{% else %}
-	{{ schema['type'] }}
 {% end %}
 
