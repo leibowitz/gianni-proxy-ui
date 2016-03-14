@@ -54,13 +54,15 @@ class DocumentationViewHandler(BaseRequestHandler):
             if key == 'Cookie':
                 requestheaders[key] = util.nice_body(value, 'application/x-www-form-urlencoded')
 
+        cmd = yield self.get_curl_cmd(entry, reqbody)
+
         fmt = util.get_format(util.get_content_type(self.nice_headers(responseheaders))) if responseheaders else None
 
         self.render("one.html", 
                 item=entry, 
                 body=resbody,
                 fmt=fmt,
-                cmd=None,
+                cmd=cmd,
                 requestheaders=requestheaders, 
                 responseheaders=responseheaders,
                 requestbody=requestbody, 
