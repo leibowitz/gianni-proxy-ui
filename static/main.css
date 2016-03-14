@@ -40,6 +40,10 @@ body{
   padding: 0;
 }
 
+tr.stripped{ /*:nth-child(odd){*/
+  background-color: rgba(0,0,0,.025);
+}
+
 .fixed-container th {
   height: 2em;
 }
@@ -202,9 +206,14 @@ table.headers {
 }
 
 table.headers td.key {
-  width: 200px;
+  width: 15em;
   text-align: right;
   vertical-align: top;
+  font-weight: 400;
+}
+
+table.headers td {
+  font-weight: 300;
 }
 
 td, th {

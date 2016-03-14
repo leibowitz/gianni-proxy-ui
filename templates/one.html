@@ -32,16 +32,16 @@
   </div>
 
 <table class="headers full-width">
-{% for key, value in requestheaders.iteritems() %}
-  <tr>
+{% for num, key in enumerate(requestheaders) %}
+  <tr {% if num % 2 == 0 %}class="stripped"{% end %}>
     <td class="key">
   {{ key }}
     </td>
     <td>
   {% if key == 'Cookie' %}
-    {% raw value %}
+    {% raw requestheaders[key] %}
   {% else %}
-    {{ value }}
+    {{ requestheaders[key]  }}
   {% end %}
     </td>
   </tr>
@@ -88,13 +88,13 @@
 <h2>Response</h2>
   </div>
 <table class="headers full-width">
-{% for key, value in responseheaders.iteritems() %}
-  <tr>
+{% for num, key in enumerate(responseheaders) %}
+  <tr {% if num % 2 == 0 %}class="stripped"{% end %}>
     <td class="key">
   {{ key }}
     </td>
     <td>
-  {{ value }}
+  {{ responseheaders[key] }}
     </td>
   </tr>
 {% end %}
