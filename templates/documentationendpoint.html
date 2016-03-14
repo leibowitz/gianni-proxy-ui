@@ -1,9 +1,9 @@
 <div class="doc-view">
 
-<h1>Request</h1>
+<h1 class="center no-margin">Request</h1>
 
 {% if requestheaders %}
-<h3>Headers</h3>
+<h3 class="no-top-padding no-top-margin">Headers</h3>
 
 <table class="headers full-width">
 {% for num, key in enumerate(requestheaders) %}
@@ -58,10 +58,10 @@
 </table>
 
 {% end %}
-<h1>Response</h1>
+<h1 class="center no-margin">Response</h1>
 
 {% if responseheaders %}
-<h3>Headers</h3>
+<h3 class="no-top-padding no-top-margin">Headers</h3>
 
 <table class="headers full-width">
 {% for num, key in enumerate(responseheaders) %}
@@ -91,7 +91,9 @@
 {% if schema %}
 <h3>JSON Schema</h3>
 
+<div class="content-schema">
 {% raw render_schema(schema) %}
+</div>
 {% end %}
 
 </div>

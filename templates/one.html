@@ -27,10 +27,12 @@
 {% raw cmd %}
 </div>
 
-  <div class="box-header b-t">
-<h2>Request</h2>
+  <div class="b-t">
+<h1 class="center no-bottom-margin">Request</h1>
   </div>
 
+  <div class="box-body no-top-padding no-top-margin">
+<h3 class="no-top-padding no-top-margin">Headers</h3>
 <table class="headers full-width">
 {% for num, key in enumerate(requestheaders) %}
   <tr {% if num % 2 == 0 %}class="stripped"{% end %}>
@@ -47,6 +49,7 @@
   </tr>
 {% end %}
 </table>
+  </div>
   </div>
 
 {% if requestquery %}
@@ -84,9 +87,11 @@
   </div>
   <div class="box b-t">
 {% end %}
-  <div class="box-header">
-<h2>Response</h2>
+  <div>
+<h1 class="center no-bottom-margin">Response</h1>
   </div>
+  <div class="box-body no-top-padding no-top-margin">
+<h3 class="no-top-padding no-top-margin">Headers</h3>
 <table class="headers full-width">
 {% for num, key in enumerate(responseheaders) %}
   <tr {% if num % 2 == 0 %}class="stripped"{% end %}>
