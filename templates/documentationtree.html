@@ -6,8 +6,8 @@
 <ul>
     {% for method, statuses in values['methods'].iteritems() %}
 	<li>
-		<a href="/documentation/endpoint/{{ host }}?path={{ fullpath }}{{ path }}&method={{ method }}">
-			<span class="method method-{{ method }}">{{ method }}</span> <span class="path-tree-link">{{ fullpath }}{{ path }}</span>
+		<a class="tree-link" href="/documentation/endpoint/{{ host }}?path={{ fullpath }}{{ path }}&method={{ method }}">
+			<span class="method method-{{ method }}">{{ method }}</span> <span class="path-tree">{{ fullpath }}{{ path }}</span>
 		</a>
 	</li>
 	{% end %}
