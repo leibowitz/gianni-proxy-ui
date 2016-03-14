@@ -38,7 +38,7 @@
       </a>
     </td>
     <td>
-      <a href="/documentation/view/{{ row['_id'] }}">
+      <a href="/documentation/endpoint/{{ row['request']['host'] }}?path={{ row['request']['path'] }}&method={{ row['request']['method'] }}">
       {{ row['request']['path'] }}
       </a>
     </td>
