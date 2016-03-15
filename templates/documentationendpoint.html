@@ -110,9 +110,11 @@
 <li><a class="response-content" data-target="response-content-{{ item['response']['status'] }}-json">Schema</a>
 </li>
 {% end %}
+{% if item['response']['body'] %}
 <li>
 <a class="response-content" data-target="response-content-{{ item['response']['status'] }}-body">Example</a>
 </li>
+{% end %}
 </ul>
 {% end %}
 
@@ -126,7 +128,7 @@
 </div>
 </li>
 {% end %}
-<li style="display: none;" id="response-content-{{ item['response']['status'] }}-body" class="response-content-data response-content-data-body">
+<li {% if 'schema' in item['response'] %}style="display: none;"{% end %} id="response-content-{{ item['response']['status'] }}-body" class="response-content-data response-content-data-body">
   <div>
 
  {% raw item['response']['body'] %}
