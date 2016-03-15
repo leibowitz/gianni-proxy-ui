@@ -231,7 +231,7 @@ table.headers td {
   font-weight: 300;
 }
 
-.table-header-value {
+.table-header-value, .break-all {
   word-break: break-all;
 }
 

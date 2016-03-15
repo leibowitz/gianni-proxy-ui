@@ -55,7 +55,7 @@ class DocumentationEndpointHandler(BaseRequestHandler):
                     #genson.Schema().add_object(json.loads(resbody)).to_dict()
                 
                 print entries[k]['response']['content-type']
-                entries[k]['response']['body'] = self.get_formatted_body(entries[k]['response']['body'], entries[k]['response']['content-type'])
+                entries[k]['response']['body'] = self.get_formatted_body(entries[k]['response']['body'], entries[k]['response']['content-type'], 'break-all')
 
         self.render("documentationhost.html", host=host, entries=entries, tree=tree, render_tree=self.render_tree, render_document=self.render_document, currentpath=path, method=method)
 

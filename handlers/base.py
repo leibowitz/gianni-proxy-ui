@@ -93,7 +93,7 @@ class BaseRequestHandler(RequestHandler):
 
         return False
 
-    def get_partial_content_body(self, filepath, mime_type):
+    def get_partial_content_body(self, filepath, mime_type, cssclass=None):
         if not mime_type:
             return None
         elif 'text/plain' in mime_type:
@@ -101,19 +101,19 @@ class BaseRequestHandler(RequestHandler):
             return util.get_body_non_empty_lines(lines)
         elif self.is_text_content(mime_type):
             content = open(filepath).read()
-            return util.nice_body(content, mime_type)
+            return util.nice_body(content, mime_type, cssclass)
         elif 'image' in mime_type:
             content = open(filepath).read()
             return util.raw_image_html(content, mime_type)
         return None
 
-    def get_formatted_body(self, body, mime_type=None):
+    def get_formatted_body(self, body, mime_type=None, cssclass=None):
         if not mime_type:
             return None
         elif 'text/plain' in mime_type:
             return util.get_body_non_empty_lines(body.strip().split("\n"))
         elif self.is_text_content(mime_type):
-            return util.nice_body(body, mime_type)
+            return util.nice_body(body, mime_type, cssclass)
         elif 'image' in mime_type:
             return util.raw_image_html(body, mime_type)
         return None
