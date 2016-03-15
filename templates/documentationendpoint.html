@@ -1,11 +1,29 @@
 {% block stylesheets %}
 <link href="/static/default.css" media="all" rel="stylesheet" type="text/css" />
 {% end %}
+{% for key, entry in enumerate(entries) %}
+  <span class="top-right content-schema response-content-{{ entry['response']['status'] }}" {% if key != 0 %}style="display: none;"{% end %}>
+  <a class="pure-button" href="/documentation/view/{{ entry['_id'] }}">View</a>
+  </span>
+{% end %}
 <div class="doc-view">
+
+<ul class="statuses">
+{% for item in entries %}
+{% if 'schema' in item['response'] %}
+<a class="response-status" data-target="{{ item['response']['status'] }}">
+<span class="status-{{ (item['response']['status']/100)*100 }}">{{ item['response']['status'] }}</span>
+</a>
+{% end %}
+{% end %}
+</ul>
 
 <h1 class="center no-margin">Request</h1>
 
 <h3 class="no-top-padding no-top-margin">Headers</h3>
+
+{% for key, entry in enumerate(entries) %}
+<div class="content-schema response-content-{{ entry['response']['status'] }}" {% if key != 0 %}style="display: none;"{% end %}>
 
 <table class="headers full-width">
 {% for num, key in enumerate(entry['request']['headers']) %}
@@ -83,20 +101,13 @@
 
 {% end %}
 
-<ul class="statuses">
-{% for item in entries %}
-{% if 'schema' in item['response'] %}
-<a class="response-status" data-target="{{ item['response']['status'] }}">
-<span class="status-{{ (item['response']['status']/100)*100 }}">{{ item['response']['status'] }}</span>
-</a>
+</div>
 {% end %}
-{% end %}
-</ul>
 
 {% for key, item in enumerate(entries) %}
-<ul class="content-schema" id="response-title-{{ item['response']['status'] }}" {% if key != 0 %}style="display: none;"{% end %}>
+<ul class="content-schema response-content-{{ item['response']['status'] }}" {% if key != 0 %}style="display: none;"{% end %}>
 {% if 'schema' in item['response'] %}
-<li><a class="response-content" data-target="response-content-{{ item['response']['status'] }}-json">JSON schema</a>
+<li><a class="response-content" data-target="response-content-{{ item['response']['status'] }}-json">Schema</a>
 </li>
 {% end %}
 <li>
@@ -106,10 +117,7 @@
 {% end %}
 
 {% for key, item in enumerate(entries) %}
-<div class="content-schema box" id="response-content-{{ item['response']['status'] }}" {% if key != 0 %}style="display: none;"{% end %}>
-  <span class="top-right">
-  <a class="pure-button" href="/documentation/view/{{ item['_id'] }}">View</a>
-  </span>
+<div class="content-schema box response-content-{{ item['response']['status'] }}" {% if key != 0 %}style="display: none;"{% end %}>
 <ul class="list-content">
 {% if 'schema' in item['response'] %}
 <li id="response-content-{{ item['response']['status'] }}-json" class="response-content-data response-content-data-json">
@@ -132,8 +140,7 @@
 $('.response-status').on('click', function(evt){
   $('.content-schema').hide();
   $('.response-content-data').hide();
-  $('#response-title-'+$(evt.currentTarget).data('target')).show();
-  $('#response-content-'+$(evt.currentTarget).data('target')).show();
+  $('.response-content-'+$(evt.currentTarget).data('target')).show();
   $('#response-content-'+$(evt.currentTarget).data('target') + '-json' ).show();
 });
 $('.response-content').on('click', function(evt){

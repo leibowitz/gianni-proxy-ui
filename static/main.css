@@ -114,6 +114,10 @@ table.fixed-header th {
   cursor: pointer;
 }
 
+.response-content-data-json {
+  padding: 1em 0;
+}
+
 .status-200 {
 	color: #4caf50;
 }
@@ -497,10 +501,12 @@ h4 {
 
 .content-schema {
   color: #595959;
+  padding: 0;
 }
 
 ul.content-schema li {
   display: inline;
+  margin-right: 1em;
 }
 
 ul.schema {
@@ -537,6 +543,8 @@ ul.list-content {
   list-style: none;
   padding: 0;
   margin: 0;
+  background-color: #fafafa;
+  font-size: 20px;
 }
 
 .response-content-data-json {
