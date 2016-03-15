@@ -4,6 +4,7 @@ import skinfer
 import genson
 import json
 import urlparse
+import urllib
 
 from shared import util
 
@@ -42,10 +43,14 @@ class DocumentationEndpointHandler(BaseRequestHandler):
             if entry['request']['query']:
                 entries[k]['request']['query'] = urlparse.parse_qsl(entry['request']['query'], keep_blank_values=True)
 
-            if 'request' in entry and 'fileid' in entry['request']:
+            reqbody = None
+            if 'body' in entries[k]['request'] and entries[k]['request']['body']:
+                reqbody = entries[k]['request']['body']
+            elif 'request' in entry and 'fileid' in entry['request']:
                 reqbody, entries[k]['request']['content-type'] = yield self.get_gridfs_body(entry['request']['fileid'], entry['request']['headers'])
-                if entries[k]['request']['content-type'] == 'application/x-www-form-urlencoded':
-                    entries[k]['request']['body'] = urlparse.parse_qsl(reqbody, keep_blank_values=True)
+
+            if 'content-type' in entries[k]['request'] and entries[k]['request']['content-type'] == 'application/x-www-form-urlencoded' and reqbody:
+                entries[k]['request']['body'] = urlparse.parse_qsl(reqbody, keep_blank_values=True)
 
             if 'response' in entry and 'fileid' in entry['response']:
                 entries[k]['response']['body'], entries[k]['response']['content-type'] = yield self.get_gridfs_body(entry['response']['fileid'], entry['response']['headers'])
@@ -68,3 +73,44 @@ class DocumentationEndpointHandler(BaseRequestHandler):
     def render_schema(self, schema):
         return self.render_string("documentationschema.html", schema=schema, render_schema=self.render_schema)
     
+    @tornado.web.asynchronous
+    @gen.engine
+    def post(self, host):
+        print "hi", host
+        key = self.get_argument("key", None)
+        ident = self.get_argument("ident", None)
+        part = self.get_argument("type", None)
+        action = self.get_argument("action", None)
+        if action == "delete":
+            collection = self.settings['db'].proxyservice['documentation']
+            if 'header' in part:
+                if part == "reqheader":
+                    field = "request.headers." + key
+                elif part == "resheader":
+                    field = "response.headers." + key
+                print "removing field", field
+                collection.update({'_id': self.get_id(ident)}, {'$unset': {field: ""}})
+            else:
+                entry = yield collection.find_one({'_id': self.get_id(ident)})
+                if not entry:
+                    return
+                if part == "query":
+                    print entry['request']['query']
+                    query = urlparse.parse_qs(entry['request']['query'], keep_blank_values=True)
+                    del query[key]
+                    query = urllib.urlencode(query, doseq=True)
+                    collection.update({'_id': self.get_id(ident)}, {'$set': {'request.query': query}})
+                    pass
+                elif part == "reqbody":
+                    if 'body' in entry['request'] and entry['request']['body']:
+                        body = entry['request']['body']
+                        ctype = entry['request']['content-type']
+                    else:
+                        body, ctype = yield self.get_gridfs_body(entry['request']['fileid'], entry['request']['headers'])
+                    print body, ctype
+                    body = urlparse.parse_qs(body, keep_blank_values=True)
+                    del body[key]
+                    body = urllib.urlencode(body, doseq=True)
+                    collection.update({'_id': self.get_id(ident)}, {'$set': {'request.body': body, 'request.content-type': ctype}})
+                    pass
+                return

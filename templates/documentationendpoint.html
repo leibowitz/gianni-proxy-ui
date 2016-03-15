@@ -38,6 +38,15 @@
     {{ entry['request']['headers'][key] }}
   {% end %}
     </td>
+    <td class="delete">
+      <form method="post" name="deleteForm">
+        <input type="hidden" name="ident" value="{{ entry['_id'] }}" />
+        <input type="hidden" name="key" value="{{ key }}" />
+        <input type="hidden" name="type" value="reqheader" />
+        <input type="hidden" name="action" value="delete" />
+          <button class="btn" name="delete"><i class="fa fa-times"></i></button>
+      </form>
+    </td>
   </tr>
 {% end %}
 </table>
@@ -55,6 +64,15 @@
     <td class="table-header-value">
     {{ value }}
     </td>
+    <td class="delete">
+      <form method="post" name="deleteForm">
+        <input type="hidden" name="ident" value="{{ entry['_id'] }}" />
+        <input type="hidden" name="key" value="{{ key }}" />
+        <input type="hidden" name="type" value="query" />
+        <input type="hidden" name="action" value="delete" />
+          <button class="btn" name="delete"><i class="fa fa-times"></i></button>
+      </form>
+    </td>
   </tr>
 {% end %}
 </table>
@@ -71,6 +89,15 @@
     </td>
     <td class="table-header-value">
     {{ value }}
+    </td>
+    <td class="delete">
+      <form method="post" name="deleteForm">
+        <input type="hidden" name="ident" value="{{ entry['_id'] }}" />
+        <input type="hidden" name="key" value="{{ key }}" />
+        <input type="hidden" name="action" value="delete" />
+        <input type="hidden" name="type" value="reqbody" />
+          <button class="btn" name="delete"><i class="fa fa-times"></i></button>
+      </form>
     </td>
   </tr>
 {% end %}
@@ -94,6 +121,15 @@
   {% else %}
     {{ entry['response']['headers'][key] }}
   {% end %}
+    </td>
+    <td class="delete">
+      <form method="post" name="deleteForm">
+        <input type="hidden" name="ident" value="{{ entry['_id'] }}" />
+        <input type="hidden" name="key" value="{{ key }}" />
+        <input type="hidden" name="action" value="delete" />
+        <input type="hidden" name="type" value="resheader" />
+          <button class="btn" name="delete"><i class="fa fa-times"></i></button>
+      </form>
     </td>
   </tr>
 {% end %}
@@ -148,6 +184,19 @@ $('.response-status').on('click', function(evt){
 $('.response-content').on('click', function(evt){
   $('.response-content-data').hide();
   $('#'+$(evt.currentTarget).data('target')).show();
+});
+$('form[name=deleteForm] button[name=delete]').on('click', function(evt){
+  var t = evt.currentTarget;
+  evt.preventDefault();
+  if (confirm("Are you sure you want to remove this from the definition?")) {
+    var id = t.parentNode.querySelector('input[name=ident]').value;
+    var key = t.parentNode.querySelector('input[name=key]').value;
+    var type = t.parentNode.querySelector('input[name=type]').value;
+    $.post("/documentation/endpoint/{{ host }}", {ident: id, key: key, type: type, action: "delete"}, function(data, status) {
+      var row = t.parentNode.parentNode.parentNode;
+      row.parentNode.removeChild(row);
+    });
+  }
 });
 </script>
 </div>
