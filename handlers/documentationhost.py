@@ -32,5 +32,5 @@ class DocumentationHostHandler(BaseRequestHandler):
     def render_tree(self, host, tree, currentpath=None, fullpath = '', method=None):
         return self.render_string("documentationtree.html", host=host, tree=tree, render_tree=self.render_tree, fullpath=fullpath+'/', currentpath=currentpath, currentmethod=method)
 
-    def render_document(self, entries=[], method=None, entry=None):
-        return self.render_string("documentationendpoint.html", entries=entries, method=method, entry=entry)
+    def render_document(self, entries=[], method=None, host=None):
+        return self.render_string("documentationendpoint.html", entries=entries, method=method, host=host)

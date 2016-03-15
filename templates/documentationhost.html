@@ -24,7 +24,7 @@
   <div class="layout layout-with-tree">
     <div class="box-body">
       {% if method is not None %}
-      {% raw render_document(entries, method) %}
+      {% raw render_document(entries, method, host) %}
       {% end %}
       <div class="clear"></div>
     </div>
