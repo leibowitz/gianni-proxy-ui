@@ -73,10 +73,11 @@ class DocumentationEndpointHandler(BaseRequestHandler):
     def render_schema(self, schema):
         return self.render_string("documentationschema.html", schema=schema, render_schema=self.render_schema)
     
-    @tornado.web.asynchronous
     @gen.engine
     def post(self, host):
-        print "hi", host
+        if not 'X-Requested-With' in self.request.headers or self.request.headers['X-Requested-With'] != "XMLHttpRequest":
+            return
+
         key = self.get_argument("key", None)
         ident = self.get_argument("ident", None)
         part = self.get_argument("type", None)
