@@ -31,7 +31,8 @@
       <form name="activateForm" method="post">
         <input type="hidden" name="ident" value="{{ row['_id'] }}" />
         <input type="hidden" name="action" value="{% if row['active'] %}disable{% else %}enable{% end %}" />
-        <input type="checkbox" class="uiswitch" {% if row['active'] %}checked="checked"{% end %} />
+        <input type="checkbox" id="cmn-toggle-{{ row['_id'] }}" class="cmn-toggle cmn-toggle-round" {% if row['active'] %}checked="checked"{% end %} />
+        <label for="cmn-toggle-{{ row['_id'] }}"></label>
       </form>
     </td>
     <td>

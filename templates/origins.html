@@ -30,7 +30,8 @@
       <form name="activateForm" method="post">
         <input type="hidden" name="ident" value="{{ row['origin'] }}" />
         <input type="hidden" name="action" value="{% if not 'filterAll' in row or not row['filterAll'] %}disable{% else %}enable{% end %}" />
-        <input type="checkbox" class="uiswitch" {% if not 'filterAll' in row or not row['filterAll'] %}checked="checked"{% end %} />
+        <input type="checkbox" id="cmn-toggle-{{ row['origin'] }}" class="cmn-toggle cmn-toggle-round" {% if not 'filterAll' in row or not row['filterAll'] %}checked="checked"{% end %} />
+        <label for="cmn-toggle-{{ row['origin'] }}"></label>
       </form>
     </td>
     <td>
