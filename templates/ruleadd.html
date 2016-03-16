@@ -49,8 +49,8 @@
       {% for name, values in reqheaders.iteritems() %}
         {% for value in values %}
         <div class="pure-control-group">
-          <input type="text" class="header-key" name="reqheader[{{ x }}][]" value="{{ name }}" />
-          <input type="text" class="header-value" name="reqheader[{{ x }}][]" value="{{ value }}" />
+          <input type="text" class="header-key" name="reqheader[{{ x }}][]" placeholder="name" value="{{ name }}" />
+          <input type="text" class="header-value" name="reqheader[{{ x }}][]" placeholder="value" value="{{ value }}" />
             <button class="btn" name="delete"><i class="fa fa-times"></i></button>
         </div>
         {% set x = x + 1 %}
@@ -59,8 +59,8 @@
       {% end %}
 
       <div class="pure-control-group">
-        <input type="text" class="header-key" name="reqheader[{{ x }}][]" value="" />
-        <input type="text" class="header-value" name="reqheader[{{ x }}][]" value="" />
+        <input type="text" class="header-key" name="reqheader[{{ x }}][]" placeholder="name" value="" />
+        <input type="text" class="header-value" name="reqheader[{{ x }}][]" placeholder="value" value="" />
         {% if x != 0 %}
             <button class="btn" name="delete"><i class="fa fa-times"></i></button>
         {% end %}
@@ -92,8 +92,8 @@
       {% for name, values in respheaders.iteritems() %}
         {% for value in values %}
         <div class="pure-control-group">
-          <input type="text" class="header-key" name="respheader[{{ x }}][]" value="{{ name }}" />
-          <input type="text" class="header-value" name="respheader[{{ x }}][]" value="{{ value }}" />
+          <input type="text" class="header-key" name="respheader[{{ x }}][]" placeholder="name" value="{{ name }}" />
+          <input type="text" class="header-value" name="respheader[{{ x }}][]" placeholder="value" value="{{ value }}" />
             <button class="btn" name="delete"><i class="fa fa-times"></i></button>
         </div>
         {% set x = x + 1 %}
@@ -102,8 +102,8 @@
       {% end %}
 
       <div class="pure-control-group">
-        <input type="text" class="header-key" name="respheader[{{ x }}][]" value="" />
-        <input type="text" class="header-value" name="respheader[{{ x }}][]" value="" />
+        <input type="text" class="header-key" name="respheader[{{ x }}][]" placeholder="name" value="" />
+        <input type="text" class="header-value" name="respheader[{{ x }}][]" placeholder="value" value="" />
         {% if x != 0 %}
             <button class="btn" name="delete"><i class="fa fa-times"></i></button>
         {% end %}
@@ -124,8 +124,8 @@
   {% end %}
 
       <div class="hidden" id="headers-template">
-        <input type="text" class="header-key" value="" />
-        <input type="text" class="header-value" value="" />
+        <input type="text" class="header-key" placeholder="name" value="" />
+        <input type="text" class="header-value" placeholder="value" value="" />
             <button class="btn" name="delete"><i class="fa fa-times"></i></button>
       </div>
       </div>
