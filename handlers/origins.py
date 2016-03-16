@@ -57,9 +57,9 @@ class OriginsHandler(BaseRequestHandler):
         if action == "delete":
             collection.remove({'origin': ident})
         elif action == "enable":
-            collection.update({'origin': ident}, {'$set': {"filterAll": False}})
+            collection.update({'origin': ident}, {'$set': {"filterAll": False}}, upsert=True)
         elif action == "disable":
-            collection.update({'origin': ident}, {'$set': {"filterAll": True}})
+            collection.update({'origin': ident}, {'$set': {"filterAll": True}}, upsert=True)
 
         if 'X-Requested-With' in self.request.headers and self.request.headers['X-Requested-With'] == "XMLHttpRequest":
             return
