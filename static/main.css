@@ -439,8 +439,9 @@ h4 {
   list-style: none;
   text-align: left;
   background-color: #fff;
-  padding: 1em 2em;
+  padding: 0.5em 1em 0;
   margin: 0;
+  font-size: 2em;
 }
 
 .nav-item {
@@ -449,11 +450,11 @@ h4 {
 }
 
 .nav-item+.nav-item {
-  padding-left: 1rem;
+  padding-left: 0.5rem;
 }
 
 .nav-link {
-  line-height: 4rem;
+  line-height: 2rem;
   white-space: nowrap;
 }
 
