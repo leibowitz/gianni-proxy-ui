@@ -7,6 +7,14 @@ body{
 	padding: 1em;
 }
 
+form {
+  margin: 0;
+}
+
+.top-margin {
+  margin-top: 2em;
+}
+
 .no-top-padding {
   padding-top: 0;
 }
@@ -104,6 +112,11 @@ table.fixed-header th {
 }*/
 .pure-control-group {
   margin-bottom: 1em;
+}
+
+.pure-menu-selected {
+  background-color: #eaeaea;
+  text-shadow: 0px 0px 5px rgba(255, 255, 255, 1);
 }
 
 .large-select {
@@ -227,7 +240,6 @@ table.headers {
 table.headers td.key {
   width: 15em;
   text-align: right;
-  vertical-align: top;
   font-weight: 400;
 }
 
@@ -406,7 +418,7 @@ h4 {
 
 .btn {
   background-color: #fff;
-  padding: .35rem .45rem;
+  padding: .15rem .45rem;
   font-size: .875rem;
   border: 0 solid rgba(0, 0, 0, 0);
   border-radius: .25rem;
@@ -497,6 +509,8 @@ h4 {
 }
 
 .statuses {
+  padding: 0;
+  margin: 0;
 }
 
 .content-schema {

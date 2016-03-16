@@ -8,15 +8,19 @@
 {% end %}
 <div class="doc-view">
 
-<ul class="statuses">
-{% for item in entries %}
+<div class="pure-menu pure-menu-horizontal">
+<ul class="pure-menu-list statuses">
+{% for key, item in enumerate(entries) %}
 {% if 'schema' in item['response'] %}
-<a class="response-status" data-target="{{ item['response']['status'] }}">
+<li class="pure-menu-item {% if key == 0 %}pure-menu-selected{% end %}">
+<a class="pure-menu-link response-status" data-target="{{ item['response']['status'] }}">
 <span class="status-{{ (item['response']['status']/100)*100 }}">{{ item['response']['status'] }}</span>
 </a>
+</li>
 {% end %}
 {% end %}
 </ul>
+</div>
 
 <h1 class="center no-margin">Request</h1>
 
@@ -140,22 +144,26 @@
 </div>
 {% end %}
 
+<div class="top-margin">
 {% for key, item in enumerate(entries) %}
-<ul class="content-schema response-content-{{ item['response']['status'] }}" {% if key != 0 %}style="display: none;"{% end %}>
+<div class="pure-menu pure-menu-horizontal">
+<ul class="pure-menu-list content-schema content-tabs response-content-{{ item['response']['status'] }}" {% if key != 0 %}style="display: none;"{% end %}>
 {% if 'schema' in item['response'] %}
-<li><a class="response-content" data-target="response-content-{{ item['response']['status'] }}-json">Schema</a>
+<li class="pure-menu-item pure-menu-selected"><a class="response-content pure-menu-link" data-target="response-content-{{ item['response']['status'] }}-json">Schema</a>
 </li>
 {% end %}
 {% if item['response']['body'] %}
-<li>
-<a class="response-content" data-target="response-content-{{ item['response']['status'] }}-body">Example</a>
+<li class="pure-menu-item {% if not 'schema' in item['response'] %}pure-menu-selected{% end %}">
+<a class="response-content pure-menu-link" data-target="response-content-{{ item['response']['status'] }}-body">Example</a>
 </li>
 {% end %}
 </ul>
+</div>
 {% end %}
+</div>
 
 {% for key, item in enumerate(entries) %}
-<div class="content-schema box response-content-{{ item['response']['status'] }}" {% if key != 0 %}style="display: none;"{% end %}>
+<div class="content-schema response-content-{{ item['response']['status'] }}" {% if key != 0 %}style="display: none;"{% end %}>
 <ul class="list-content">
 {% if 'schema' in item['response'] %}
 <li id="response-content-{{ item['response']['status'] }}-json" class="response-content-data response-content-data-json">
@@ -177,12 +185,19 @@
 <script type="text/javascript">
 $('.response-status').on('click', function(evt){
   $('.content-schema').hide();
+  $('.statuses li').removeClass('pure-menu-selected');
+  $(evt.currentTarget).parent().addClass('pure-menu-selected');
   $('.response-content-data').hide();
   $('.response-content-'+$(evt.currentTarget).data('target')).show();
   $('#response-content-'+$(evt.currentTarget).data('target') + '-json' ).show();
+  // reset schema active tab
+  $('.response-content').parent().removeClass('pure-menu-selected');
+  $('.content-tabs.response-content-'+$(evt.currentTarget).data('target')+' li').first().addClass('pure-menu-selected');
 });
 $('.response-content').on('click', function(evt){
   $('.response-content-data').hide();
+  $('.response-content').parent().removeClass('pure-menu-selected');
+  $(evt.currentTarget).parent().addClass('pure-menu-selected');
   $('#'+$(evt.currentTarget).data('target')).show();
 });
 $('form[name=deleteForm] button[name=delete]').on('click', function(evt){
