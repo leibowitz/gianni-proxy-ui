@@ -89,14 +89,12 @@ class DocumentationEndpointHandler(BaseRequestHandler):
                     field = "request.headers." + key
                 elif part == "resheader":
                     field = "response.headers." + key
-                print "removing field", field
                 collection.update({'_id': self.get_id(ident)}, {'$unset': {field: ""}})
             else:
                 entry = yield collection.find_one({'_id': self.get_id(ident)})
                 if not entry:
                     return
                 if part == "query":
-                    print entry['request']['query']
                     query = urlparse.parse_qs(entry['request']['query'], keep_blank_values=True)
                     del query[key]
                     query = urllib.urlencode(query, doseq=True)
@@ -108,7 +106,6 @@ class DocumentationEndpointHandler(BaseRequestHandler):
                         ctype = entry['request']['content-type']
                     else:
                         body, ctype = yield self.get_gridfs_body(entry['request']['fileid'], entry['request']['headers'])
-                    print body, ctype
                     body = urlparse.parse_qs(body, keep_blank_values=True)
                     del body[key]
                     body = urllib.urlencode(body, doseq=True)
