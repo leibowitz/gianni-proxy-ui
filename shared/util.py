@@ -85,7 +85,7 @@ def get_header(headers, key, default=None):
 # http://www.iana.org/assignments/media-types/media-types.xhtml
 # http://en.wikipedia.org/wiki/Internet_media_type#Type_text
 def get_format(content):
-    if content is None:
+    if content is None or content == '':
         return None
     mtype = mimes.MIMEType.from_string(content)
     if mtype.format:
