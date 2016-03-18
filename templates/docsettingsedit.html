@@ -1,0 +1,41 @@
+{% extends "default.html" %}
+{% block stylesheets %}
+<link rel="stylesheet" href="/static/toggle-switch.css" type="text/css" />
+{% end %}
+{% block title %}Edit an existing host{% end %}
+{% block content %}
+
+        <div id="main" class="box">
+<div class="box-header">
+  <h2>Edit Host</h2>
+</div>
+  <form class="pure-form" method="post">
+    <div class="box-body top-bar">
+    <input type="hidden" name="id" value="{{ entry['_id'] }}" />
+
+    <div class="pure-form-stacked">
+
+    <div class="pure-control-group">
+    <label for="active">Active</label>
+    <input type="checkbox" name="active" {% if entry['active'] %}checked="checked"{% end %} />
+    </div>
+      
+    <div class="pure-control-group">
+    <label for="host">Host</label>
+    <input type="text" class="large-field" name="host" placeholder="google.com" value="{% if entry['host'] != False %}{{ entry['host'] }}{% end %}" />
+    </div>
+
+    </div>
+    
+    </div>
+      <div class="box-body top-bar">
+    <button type="submit" class="pure-button pure-button-primary">Update</button>
+  </form>
+  {% if tryagain %}
+    Try again
+  {% end %}
+
+</div>
+        </div>
+
+{% end %}

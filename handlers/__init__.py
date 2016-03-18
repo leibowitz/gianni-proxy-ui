@@ -29,6 +29,9 @@ from documentation import DocumentationHandler
 from documentationhost import DocumentationHostHandler
 from documentationendpoint import DocumentationEndpointHandler
 from documentationview import DocumentationViewHandler
+from docsettings import DocSettingsHandler
+from docsettingsadd import DocSettingsAddHandler
+from docsettingsedit import DocSettingsEditHandler
 
 #__all__ = [
 #"base", 
