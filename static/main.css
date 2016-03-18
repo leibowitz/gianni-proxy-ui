@@ -148,19 +148,19 @@ table.fixed-header th {
 }
 
 
-.method-get {
+.method-GET {
 	color: #0D679C;
 }
 
-.method-post {
+.method-POST {
 	color: #8e44ad;
 }
 
-.method-delete {
+.method-DELETE {
 	color: #c0392b;
 }
 
-.method-put {
+.method-PUT {
 	color: #e67e22;
 }
 
