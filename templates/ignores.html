@@ -42,7 +42,9 @@
     </td>
     <td>
       {% if 'paths' in row %}
-      {{ len(row['paths']) }}
+      {% for path in row['paths'] %}
+      <div>{{ path }}</div>
+      {% end %}
       {% else %}
       <i class="fa fa-asterisk"></i>
       {% end %}
