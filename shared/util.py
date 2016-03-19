@@ -137,7 +137,7 @@ def nice_body(body, content=None, cssclass=None):
             if body and not parsedbody:
                 return tornado.escape.xhtml_escape(body)
             args = collections.OrderedDict(sorted(parsedbody))
-            params = "\n".join([k + "=" + v for k, v in args.iteritems()])
+            params = "\n".join([k.strip() + "=" + v for k, v in args.iteritems()])
             return highlight(params, IniLexer(), HtmlFormatter(cssclass=classes))
         elif isinstance(lex, JsonLexer):
             try:

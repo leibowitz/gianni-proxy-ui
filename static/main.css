@@ -11,6 +11,10 @@ form {
   margin: 0;
 }
 
+table.table-fixed {
+  table-layout: fixed;
+}
+
 .top-margin {
   margin-top: 2em;
 }
@@ -21,6 +25,10 @@ form {
 
 .box-with-tree {
   margin-left: 20em;
+}
+
+.nobg.codehilite, .nobg pre {
+  background-color: inherit;
 }
 
 .layout-with-tree {
