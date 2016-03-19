@@ -12,7 +12,7 @@
     {% if show_resend %}
     <a class="pure-button" href="/request?item={{ item['_id'] }}">Resend</a>
     {% end %}
-<button id="curl" class="pure-button" data-clipboard-action="copy" data-clipboard-target="#curl-cmd">Copy as CURL</button>
+<button id="curl" class="pure-button top-right" data-clipboard-action="copy" data-clipboard-target="#curl-cmd">Copy as CURL</button>
     <div class="box-header">
 <h2 class="url">
 <span class="status-{{ (item['response']['status']/100)*100 }}">{{ item['response']['status'] }}</span>
@@ -106,7 +106,7 @@
 </table>
 <div id="response" class="b-t">
 {% if responsebody %}
-<button id="btn-rsp" class="pure-button" data-clipboard-action="copy" data-clipboard-target="#response">Copy</button>
+<button id="btn-rsp" class="pure-button top-right" data-clipboard-action="copy" data-clipboard-target="#response">Copy</button>
 <script type="text/javascript">
 new Clipboard('#btn-rsp');
 </script>
