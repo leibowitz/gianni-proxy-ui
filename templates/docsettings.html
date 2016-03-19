@@ -68,7 +68,7 @@
     $('form[name=activateForm] input[type=checkbox]').on('click', function(evt){
       var id = evt.target.parentNode.querySelector('input[name=ident]').value;
       var action = evt.target.checked ? "enable" : "disable";
-      $.post("/rules", {ident: id, action: action});
+      $.post("/docsettings", {ident: id, action: action});
       
     });
 </script>

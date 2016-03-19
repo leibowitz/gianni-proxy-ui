@@ -20,6 +20,10 @@ class DocSettingsHandler(BaseRequestHandler):
         action = self.get_argument('action', None)
         if action == "delete":
             collection.remove({'_id': self.get_id(ident)})
+        elif action == "enable":
+            collection.update({'_id': self.get_id(ident)}, {'$set': {'active': True}})
+        elif action == "disable":
+            collection.update({'_id': self.get_id(ident)}, {'$set': {'active': False}})
 
         if 'X-Requested-With' in self.request.headers and self.request.headers['X-Requested-With'] == "XMLHttpRequest":
             return
