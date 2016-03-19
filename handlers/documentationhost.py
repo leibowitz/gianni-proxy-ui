@@ -27,7 +27,10 @@ class DocumentationHostHandler(BaseRequestHandler):
 
             o['methods'][item['request']['method']][item['response']['status']] = item['_id']
 
-        self.render("documentationhost.html", host=host, entries=[], tree=tree, render_tree=self.render_tree, render_document=self.render_document, currentpath=None, method=None)
+        collection = self.settings['db'].proxyservice['docsettings']
+        row = yield collection.find_one({'host': host})
+
+        self.render("documentationhost.html", row=row, host=host, entries=[], tree=tree, render_tree=self.render_tree, render_document=self.render_document, currentpath=None, method=None)
 
     def render_tree(self, host, tree, currentpath=None, fullpath = '', method=None):
         return self.render_string("documentationtree.html", host=host, tree=tree, render_tree=self.render_tree, fullpath=fullpath+'/', currentpath=currentpath, currentmethod=method)

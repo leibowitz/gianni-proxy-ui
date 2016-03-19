@@ -62,7 +62,7 @@ class DocumentationEndpointHandler(BaseRequestHandler):
                 print entries[k]['response']['content-type']
                 entries[k]['response']['body'] = self.get_formatted_body(entries[k]['response']['body'], entries[k]['response']['content-type'], 'break-all')
 
-        self.render("documentationhost.html", host=host, entries=entries, tree=tree, render_tree=self.render_tree, render_document=self.render_document, currentpath=path, method=method)
+        self.render("documentationhost.html", host=host, entries=entries, tree=tree, render_tree=self.render_tree, render_document=self.render_document, currentpath=path, method=method, row=None)
 
     def render_tree(self, host, tree, currentpath=None, fullpath = '', method=None):
         return self.render_string("documentationtree.html", host=host, tree=tree, render_tree=self.render_tree, fullpath=fullpath+'/', currentpath=currentpath, currentmethod=method)
