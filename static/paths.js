@@ -34,7 +34,7 @@
   /*
   * Adding path line when we edit the last line
   */
-  var tmplElements = $('#paths-template').clone().removeAttr('id').removeAttr('class');
+  var tmplElements = $('#paths-template').clone().removeAttr('id').removeClass('hidden');
   $(document).on('change paste keyup', 'input[type=text][name*="paths"]', function(evt){
 
     console.log(evt.target);
