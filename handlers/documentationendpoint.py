@@ -19,7 +19,7 @@ class DocumentationEndpointHandler(BaseRequestHandler):
         method = self.get_argument('method', None)
 
         collection = self.settings['db'].proxyservice['documentation']
-        cursor = collection.find({'request.host': host}).sort([('request.path', 1)])
+        cursor = collection.find({'request.host': host}).sort([('request.path', 1), ('response.status', 1)])
         res = cursor.to_list(100)
         endpoints = yield res
 

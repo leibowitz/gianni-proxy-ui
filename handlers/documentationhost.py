@@ -12,7 +12,7 @@ class DocumentationHostHandler(BaseRequestHandler):
     def get(self, host):
 
         collection = self.settings['db'].proxyservice['documentation']
-        cursor = collection.find({'request.host': host}).sort([('request.path', 1)])
+        cursor = collection.find({'request.host': host}).sort([('request.path', 1), ('response.status', 1)])
         res = cursor.to_list(100)
         entries = yield res
 
