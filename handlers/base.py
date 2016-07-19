@@ -126,6 +126,15 @@ class BaseRequestHandler(RequestHandler):
         raise gen.Return(util.get_uncompressed_body(self.nice_headers(headers), body))
     
     @gen.coroutine
+    def gridfs_body(self, fileid):
+        fs = motor.MotorGridFS(self.settings['db'].proxyservice)
+        data = None
+        gridout = yield fs.get(fileid)
+        if gridout:
+            data = yield gridout.read()
+        raise gen.Return(data)
+    
+    @gen.coroutine
     def get_curl_cmd(self, entry, body = None):
         cmd = 'curl' 
         cmd = cmd + ' -X ' + entry['request']['method']

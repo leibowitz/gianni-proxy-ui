@@ -1,0 +1,16 @@
+{% whitespace all %}
+{% if 'params' in entry and len(entry['params']) != 0 %}
+    + Parameters
+{% for name, value in entry['params'].iteritems() %}
+        + {{ name }}: `{{ value }}`{% end %}
+{% end %}
+{% if len(entry['headers']) != 0 %}
+    + Headers
+{% for key, values in entry['headers'].iteritems() %}
+{% for value in values %}            {{ key }}: {{ value }}{% end %}{% end %}{% end %}
+
+{% if 'body' in entry and entry['body'] != '' %}
+    + Body
+
+            {{ entry['body'] }}
+{% end %}

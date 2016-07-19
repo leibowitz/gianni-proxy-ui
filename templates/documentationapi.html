@@ -1,0 +1,41 @@
+{% extends "default.html" %}
+{% block title %}API Documentation{% end %}
+{% block content %}
+<div class="top-button">
+  <a class="pure-button" href="/host/{{ host }}">Traffic</a>
+  <a class="pure-button" href="/redirects?host={{ host }}">Redirects</a>
+  <a class="pure-button" href="/ignores?host={{ host }}">Filters</a>
+  <a class="pure-button" href="/messages?host={{ host }}">Messages</a>
+  <a class="pure-button" href="/rules?host={{ host }}">Mocks</a>
+</div>
+<div class="box">
+
+  <div class="layout">
+<button id="copy" class="pure-button top-right" data-clipboard-action="copy" data-clipboard-target="#copy-content">Copy</button>
+    <div class="box-header">
+      <h2 class="url"><a href="/documentation/host/{{ host }}">{{ host }}</a></h2>
+    </div>
+  </div>
+</div>
+
+
+<div class="box">
+
+  <div class="layout">
+    <div class="box-body">
+<pre id="copy-content">
+{% whitespace all %}
+{% raw documentation %}
+{% whitespace single %}
+</pre>
+      <div class="clear"></div>
+    </div>
+
+  </div>
+</div>
+
+<script type="text/javascript">
+new Clipboard('#copy');
+</script>
+
+{% end %}
