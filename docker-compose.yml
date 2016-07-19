@@ -1,11 +1,23 @@
-web:
-  build: .
-  command: python -u main.py --mongourl=db:27017
-  ports:
-    - 8002:8002
-  volumes:
-    - .:/code
-  links:
-    - db
-db:
-  image: mongo:3.0.2
+version: '2'
+services:
+  web:
+    build: .
+    command: python -u main.py --mongourl=db:27017
+    ports:
+      - 8002:8002
+    volumes:
+      - .:/code
+    links:
+      - db
+    depends_on:
+      - db
+      - proxy
+  proxy:
+    build: ../go-proxy-service
+    command: go-proxy-service -v -m --mongourl=db:27017
+    ports: 
+      - 8989:8080
+    links:
+      - db
+  db:
+    image: mongo:3.0.2
