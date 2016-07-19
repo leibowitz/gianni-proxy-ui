@@ -46,6 +46,8 @@
       newElements.appendTo("#rules-group");
       newElements.find('input[type=text]').attr('name', 'rules_ids[' + elements.length + ']');
       newElements.find('input[type=checkbox]').attr('name', 'rules_states[' + elements.length + ']');
+      newElements.find('input[type=checkbox]').attr('id', 'cmn-toggle-' + elements.length);
+      newElements.find('label').attr('for', 'cmn-toggle-' + elements.length);
     }
   });
 })();

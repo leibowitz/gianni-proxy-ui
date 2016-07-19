@@ -33,7 +33,8 @@
       {% for ruleid, enabled in rules.iteritems() %}
         <div class="pure-control-group">
             <input type="text" class="large-field" value="{{ ruleid }}" name="rules_ids[{{ x }}]" />
-            <input type="checkbox" name="rules_states[{{ x }}]" {% if enabled %}checked="checked"{% end %} />
+            <input type="checkbox" name="rules_states[{{ x }}]" id="cmn-toggle-{{ x }}" class="cmn-toggle cmn-toggle-round" {% if enabled %}checked="checked"{% end %} />
+            <label class="toggle" for="cmn-toggle-{{ x }}"></label>
             <button class="btn" name="delete"><i class="fa fa-times"></i></button>
         </div>
         {% set x = x + 1 %}
@@ -42,7 +43,8 @@
 
       <div class="pure-control-group">
             <input type="text" class="large-field" name="rules_ids[{{ x }}]" />
-            <input type="checkbox" name="rules_states[{{ x }}]" />
+            <input type="checkbox" name="rules_states[{{ x }}]" id="cmn-toggle-{{ x }}" class="cmn-toggle cmn-toggle-round" />
+            <label class="toggle" for="cmn-toggle-{{ x }}"></label>
         {% if x != 0 %}
             <button class="btn" name="delete"><i class="fa fa-times"></i></button>
         {% end %}
@@ -52,7 +54,8 @@
 
       <div class="hidden pure-control-group" id="rules-template">
         <input type="text" class="large-field" value="" name="rules_ids[]" />
-        <input type="checkbox" name="rules_states[]" />
+        <input type="checkbox" name="rules_states[]" class="cmn-toggle cmn-toggle-round" />
+        <label class="toggle"></label>
             <button class="btn" name="delete"><i class="fa fa-times"></i></button>
       </div>
 
