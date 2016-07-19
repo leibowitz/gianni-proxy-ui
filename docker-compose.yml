@@ -1,0 +1,11 @@
+web:
+  build: .
+  command: python -u main.py --mongourl=db:27017
+  ports:
+    - 8002:8002
+  volumes:
+    - .:/code
+  links:
+    - db
+db:
+  image: mongo:3.0.2
