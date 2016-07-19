@@ -251,6 +251,7 @@ table.headers {
 
 table.headers td.key {
   width: 15em;
+  font-size: 0.9em;
   text-align: right;
   font-weight: 400;
 }
@@ -275,7 +276,7 @@ th.active, td.active {
 }
 
 th.delete, td.delete {
-	width: 2em;
+	width: 3em;
 }
 
 /*tbody>tr:nth-child(odd) {
