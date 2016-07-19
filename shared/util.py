@@ -51,7 +51,6 @@ def find_agent(useragent):
     parts = ismatch.groupdict()['agent'].split('; ')
     if len(parts) == 0:
         return useragent
-    print parts
     if len(parts) == 1:
         return parts[0]
     elif len(parts) > 3:
