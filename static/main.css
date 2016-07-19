@@ -396,6 +396,10 @@ div.right {
 	font-weight: 500;
 }
 
+.capitalize {
+  font-variant: small-caps;
+}
+
 h2 {
   font-size: 20px;
   margin: 0;
