@@ -148,13 +148,13 @@
 {% for key, item in enumerate(entries) %}
 <div class="pure-menu pure-menu-horizontal">
 <ul class="pure-menu-list content-schema content-tabs response-content-{{ item['response']['status'] }}" {% if key != 0 %}style="display: none;"{% end %}>
-{% if 'schema' in item['response'] %}
-<li class="pure-menu-item pure-menu-selected"><a class="response-content pure-menu-link" data-target="response-content-{{ item['response']['status'] }}-json">Schema</a>
+{% if item['response']['body'] %}
+<li class="pure-menu-item {% if True or not 'schema' in item['response'] %}pure-menu-selected{% end %}">
+<a class="response-content pure-menu-link" data-target="response-content-{{ item['response']['status'] }}-body">Example</a>
 </li>
 {% end %}
-{% if item['response']['body'] %}
-<li class="pure-menu-item {% if not 'schema' in item['response'] %}pure-menu-selected{% end %}">
-<a class="response-content pure-menu-link" data-target="response-content-{{ item['response']['status'] }}-body">Example</a>
+{% if 'schema' in item['response'] %}
+<li class="pure-menu-item {% if not item['response']['body'] %}pure-menu-selected{% end %}"><a class="response-content pure-menu-link" data-target="response-content-{{ item['response']['status'] }}-json">Schema</a>
 </li>
 {% end %}
 </ul>
@@ -165,19 +165,19 @@
 {% for key, item in enumerate(entries) %}
 <div class="content-schema response-content-{{ item['response']['status'] }}" {% if key != 0 %}style="display: none;"{% end %}>
 <ul class="list-content">
-{% if 'schema' in item['response'] %}
-<li id="response-content-{{ item['response']['status'] }}-json" class="response-content-data response-content-data-json">
-<div>
-{% raw render_schema(item['response']['schema']) %}
-</div>
-</li>
-{% end %}
-<li {% if 'schema' in item['response'] %}style="display: none;"{% end %} id="response-content-{{ item['response']['status'] }}-body" class="response-content-data response-content-data-body">
+<li {% if False and 'schema' in item['response'] %}style="display: none;"{% end %} id="response-content-{{ item['response']['status'] }}-body" class="response-content-data response-content-data-body">
   <div>
 
  {% raw item['response']['body'] %}
   </div>
 </li>
+{% if 'schema' in item['response'] %}
+<li id="response-content-{{ item['response']['status'] }}-json" class="response-content-data response-content-data-json"{% if item['response']['body'] %} style="display: none;"{% end %}>
+<div>
+{% raw render_schema(item['response']['schema']) %}
+</div>
+</li>
+{% end %}
 </ul>
 </div>
 {% end %}
@@ -189,7 +189,7 @@ $('.response-status').on('click', function(evt){
   $(evt.currentTarget).parent().addClass('pure-menu-selected');
   $('.response-content-data').hide();
   $('.response-content-'+$(evt.currentTarget).data('target')).show();
-  $('#response-content-'+$(evt.currentTarget).data('target') + '-json' ).show();
+  $('#response-content-'+$(evt.currentTarget).data('target') + '-body' ).show();
   // reset schema active tab
   $('.response-content').parent().removeClass('pure-menu-selected');
   $('.content-tabs.response-content-'+$(evt.currentTarget).data('target')+' li').first().addClass('pure-menu-selected');
