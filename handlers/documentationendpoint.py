@@ -1,7 +1,7 @@
 from tornado import gen
 import tornado.web
 import skinfer
-import genson
+#import genson
 import json
 import urlparse
 import urllib
