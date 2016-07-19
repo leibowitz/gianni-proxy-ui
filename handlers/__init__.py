@@ -29,6 +29,7 @@ from documentation import DocumentationHandler
 from documentationhost import DocumentationHostHandler
 from documentationendpoint import DocumentationEndpointHandler
 from documentationview import DocumentationViewHandler
+from documentationedit import DocumentationEditHandler
 from docsettings import DocSettingsHandler
 from docsettingsadd import DocSettingsAddHandler
 from docsettingsedit import DocSettingsEditHandler
