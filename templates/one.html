@@ -126,6 +126,7 @@ new Clipboard('#btn-rsp');
 <script src="/static/editor.js"></script>
 <script src="/static/formatjson.js"></script>
 <script type="text/javascript">
+{% if socketuuid %}
 function createSocket()
 {
   var sock = new SockJS('/body');
@@ -217,6 +218,7 @@ $('#msg-{{ msg['_id'] }}').on('click', function(){
 $('#format').on('click', function(evt){
   formatJsonContent("iace-message");
 });
+{% end %}
 </script>
 {% end %}
 <script type="text/javascript">
