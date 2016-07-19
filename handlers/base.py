@@ -110,7 +110,7 @@ class BaseRequestHandler(RequestHandler):
     def get_formatted_body(self, body, mime_type=None, cssclass=None):
         if not mime_type:
             return None
-        elif 'text/plain' in mime_type:
+        elif 'text/plain' in mime_type and body:
             return util.get_body_non_empty_lines(body.strip().split("\n"))
         elif self.is_text_content(mime_type):
             return util.nice_body(body, mime_type, cssclass)
