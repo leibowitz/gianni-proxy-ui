@@ -30,7 +30,7 @@
 <div class="content-schema response-content-{{ entry['response']['status'] }}" {% if key != 0 %}style="display: none;"{% end %}>
 
 <table class="headers full-width table-fixed">
-{% for num, key in enumerate(entry['request']['headers']) %}
+{% for num, key in enumerate(sorted(entry['request']['headers'])) %}
   <tr {% if num % 2 == 0 %}class="stripped"{% end %}>
     <td class="key">
   {{ key }}
@@ -114,7 +114,7 @@
 <h3 class="no-top-padding no-top-margin">Headers</h3>
 
 <table class="headers full-width table-fixed">
-{% for num, key in enumerate(entry['response']['headers']) %}
+{% for num, key in enumerate(sorted(entry['response']['headers'])) %}
   <tr {% if num % 2 == 0 %}class="stripped"{% end %}>
     <td class="key">
   {{ key }}
