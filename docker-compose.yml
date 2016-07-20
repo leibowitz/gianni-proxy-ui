@@ -4,7 +4,7 @@ services:
     build: .
     command: python -u main.py --mongourl=db:27017
     ports:
-      - 8002:8002
+      - "8002:8002"
     volumes:
       - .:/code
     links:
@@ -16,7 +16,7 @@ services:
     build: ../go-proxy-service
     command: go-proxy-service -v -m --mongourl=db:27017
     ports: 
-      - 8989:8080
+      - "8989:8080"
     links:
       - db
   db:
