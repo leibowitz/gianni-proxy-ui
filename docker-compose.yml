@@ -4,7 +4,7 @@ services:
     build: .
     command: python -u main.py --mongourl=db:27017
     ports:
-      - "8002:8002"
+      - "8002"
     volumes:
       - .:/code
     links:
@@ -21,3 +21,15 @@ services:
       - db
   db:
     image: mongo:3.0.2
+  lb:
+    image: dockercloud/haproxy
+    links:
+      - web
+    environment:
+      - DOCKER_TLS_VERIFY
+      - DOCKER_HOST
+      - DOCKER_CERT_PATH
+    volumes:
+      - $DOCKER_CERT_PATH:$DOCKER_CERT_PATH
+    ports:
+      - 8002:80
