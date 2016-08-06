@@ -39,6 +39,7 @@ if __name__ == "__main__":
         (r"/documentation/endpoint/(?P<host>[^\/]+)", DocumentationEndpointHandler),
         (r"/documentation/view/(?P<ident>[^\/]+)", DocumentationViewHandler),
         (r"/documentation/edit/(?P<ident>[^\/]+)", DocumentationEditHandler),
+        (r"/documentation/add", DocumentationAddHandler),
         (r"/docsettings", DocSettingsHandler),
         (r"/docsettings/add", DocSettingsAddHandler),
         (r"/docsettings/(?P<ident>[^\/]+)", DocSettingsEditHandler),
