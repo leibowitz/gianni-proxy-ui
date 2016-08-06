@@ -33,10 +33,11 @@
 <h1 class="center no-bottom-margin">Request</h1>
   </div>
 
+
   <div class="box-body no-top-padding no-top-margin">
 <h3 class="no-top-padding no-top-margin">Headers</h3>
 <table class="headers full-width table-fixed">
-{% for num, key in enumerate(requestheaders) %}
+{% for num, key in enumerate(sorted(requestheaders)) %}
   <tr {% if num % 2 == 0 %}class="stripped"{% end %}>
     <td class="key">
   {{ key }}
@@ -95,7 +96,7 @@
   <div class="box-body no-top-padding no-top-margin">
 <h3 class="no-top-padding no-top-margin">Headers</h3>
 <table class="headers full-width">
-{% for num, key in enumerate(responseheaders) %}
+{% for num, key in enumerate(sorted(responseheaders)) %}
   <tr {% if num % 2 == 0 %}class="stripped"{% end %}>
     <td class="key">
   {{ key }}
