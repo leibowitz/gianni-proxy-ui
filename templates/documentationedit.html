@@ -16,6 +16,11 @@
     <div class="pure-form-aligned">
         
     <div class="pure-control-group">
+    <label for="scheme">Scheme</label>
+    <input type="text" name="scheme" size="5" placeholder="http" value="{% if scheme %}{{ scheme }}{% end %}" />
+    </div>
+
+    <div class="pure-control-group">
     <label for="host">Host</label>
     <input type="text" class="large-field" name="host" size="35" placeholder="google.com" value="{% if entry['request']['host'] %}{{ entry['request']['host'] }}{% end %}" />
     </div>

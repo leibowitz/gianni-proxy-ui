@@ -38,13 +38,16 @@ class DocumentationEditHandler(BaseRequestHandler):
 
         reqfmt = util.get_format(util.get_content_type(self.nice_headers(reqheaders))) if reqheaders else None
         respfmt = util.get_format(util.get_content_type(self.nice_headers(respheaders))) if respheaders else None
-        self.render("documentationedit.html", entry=entry, tryagain=False, reqheaders=reqheaders, respheaders=respheaders, respfmt=respfmt, reqfmt=reqfmt)
+        scheme = entry['request']['scheme'] if 'scheme' in entry['request'] else 'http'
+
+        self.render("documentationedit.html", entry=entry, tryagain=False, reqheaders=reqheaders, respheaders=respheaders, respfmt=respfmt, reqfmt=reqfmt, scheme=scheme)
     
     @tornado.web.asynchronous
     @gen.engine
     def post(self, ident):
 
         host = util.cleanarg(self.get_argument('host'), False)
+        scheme = util.cleanarg(self.get_argument('scheme'), False)
         path = util.cleanarg(self.get_argument('path'), False)
         query = util.cleanarg(self.get_argument('query'), False)
         status = util.cleanarg(self.get_argument('status'), False)
@@ -61,11 +64,20 @@ class DocumentationEditHandler(BaseRequestHandler):
         respfmt = util.get_format(util.get_content_type(self.nice_headers(respheaders))) if respheaders else None
 
         if not host and not path and not query and not status:
-            self.render("documentationedit.html", entry=entry, tryagain=True, reqheaders=reqheaders, respheaders=respheaders, respfmt=respfmt, reqfmt=reqfmt)
+            self.render("documentationedit.html", entry=entry, tryagain=True, reqheaders=reqheaders, respheaders=respheaders, respfmt=respfmt, reqfmt=reqfmt, scheme=scheme)
             return
+
+        # default stuff
+        if not scheme:
+            scheme = 'http'
+        if not status:
+            status = 200
+        if not method:
+            method = 'GET'
 
         item = {
             'request': {
+                'scheme': scheme,
                 'host': host,
                 'path': path,
                 'query': query,
@@ -76,19 +88,20 @@ class DocumentationEditHandler(BaseRequestHandler):
             'response': {
                 'body': respbody,
                 'headers': respheaders,
-                'status': status,
+                'status': int(status),
             }
         }
 
         up = {
                 'request.host': host,
+                'request.scheme': scheme,
                 'request.path': path,
                 'request.query': query,
                 'request.method': method,
-                #'request.body': reqbody,
-                #'request.headers': reqheaders,
-                #'response.body': respbody,
-                #'response.headers': respheaders,
+                'request.body': reqbody,
+                'request.headers': reqheaders,
+                'response.body': respbody,
+                'response.headers': respheaders,
                 'response.status': int(status),
         }
 
@@ -96,5 +109,5 @@ class DocumentationEditHandler(BaseRequestHandler):
         item['_id'] = ident
         print item
 
-        self.render("documentationedit.html", entry=item, tryagain=False, reqheaders=reqheaders, respheaders=respheaders, respfmt=respfmt, reqfmt=reqfmt)
+        self.render("documentationedit.html", entry=item, tryagain=False, reqheaders=reqheaders, respheaders=respheaders, respfmt=respfmt, reqfmt=reqfmt, scheme=scheme)
 
