@@ -50,7 +50,8 @@ class DocumentationViewHandler(BaseRequestHandler):
         elif 'body' in entry['response']:
             if not respctype:
                 respctype = util.get_body_content_type(entry['response']['body'])
-            responsebody = self.get_formatted_body(entry['response']['body'], respctype)
+            resbody = entry['response']['body']
+            responsebody = self.get_formatted_body(resbody, respctype)
             
         if 'fileid' in entry['request']:
             reqbody, ctype = yield self.get_gridfs_body(entry['request']['fileid'], requestheaders)
@@ -69,7 +70,7 @@ class DocumentationViewHandler(BaseRequestHandler):
 
         cmd = highlight(cmd, BashLexer(), HtmlFormatter(cssclass='codehilite curl'))
 
-        fmt = util.get_format(respctype) if responseheaders else None
+        fmt = util.get_format(respctype) if respctype else None
 
         self.render("one.html", 
                 item=entry, 
