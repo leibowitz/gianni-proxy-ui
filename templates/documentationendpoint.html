@@ -173,7 +173,9 @@
 <li {% if False and 'schema' in item['response'] %}style="display: none;"{% end %} id="response-content-{{ item['response']['status'] }}-body" class="response-content-data response-content-data-body">
   <div>
 
+   {% if item['response']['body'] %}
  {% raw item['response']['body'] %}
+ {% end %}
   </div>
 </li>
 {% if 'schema' in item['response'] %}
