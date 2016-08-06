@@ -24,6 +24,8 @@ class RequestHandler(BaseRequestHandler):
             entry = yield motor.Op(collection.find_one, {'_id': self.get_id(itemid)})
             if entry and entry['request']:
                 headers = entry['request']['headers']
+                if 'Content-Length' in headers:
+		    del headers['Content-Length']
                 url = entry['request']['url'] if 'url' in entry['request'] else (entry['request']['scheme'] if 'scheme' in entry['request'] else '') + entry['request']['host'] + entry['request']['path']
                 method = entry['request']['method']
                 requestquery = entry['request']['query']
