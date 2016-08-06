@@ -85,6 +85,7 @@
 
 {% if entry and entry['request']['body'] %}
 <h3 class="capitalize">Body</h3>
+{% if isinstance(entry['request']['body'], list) %}
 
 <table class="headers full-width">
 {% for num, (key, value) in enumerate(entry['request']['body'] ) %}
@@ -107,6 +108,9 @@
   </tr>
 {% end %}
 </table>
+{% else %}
+ {% raw item['response']['body'] %}
+{% end %}
 
 {% end %}
 <h1 class="center">Response</h1>
