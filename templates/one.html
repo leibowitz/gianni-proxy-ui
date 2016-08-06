@@ -107,8 +107,8 @@
   </tr>
 {% end %}
 </table>
-<div id="response" class="b-t">
 {% if responsebody %}
+<div id="response" class="b-t">
 <button id="btn-rsp" class="pure-button top-right" data-clipboard-action="copy" data-clipboard-target="#response">Copy</button>
 <script type="text/javascript">
 new Clipboard('#btn-rsp');
@@ -117,8 +117,8 @@ new Clipboard('#btn-rsp');
 <pre lang="json"></pre>
 </div>-->
 {% raw responsebody %}
-{% end %}
 </div>
+{% end %}
   </div>
 <script src="/static/jquery.min.js"></script>
 {% if not finished %}
