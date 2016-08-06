@@ -139,6 +139,7 @@ class BaseRequestHandler(RequestHandler):
                 cmd = cmd + ' -H ' + util.QuoteForPOSIX(key + ': ' + value)
 
         if not self.has_binary_content(requestheaders) and body:
+            body = "".join(body.split())
             bodyparam = util.QuoteForPOSIX(body)
             try:
                 cmd = cmd + ' -d ' + bodyparam
