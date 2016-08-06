@@ -135,7 +135,8 @@ class BaseRequestHandler(RequestHandler):
         requestheaders = self.nice_headers(entry['request']['headers'])
 
         for key, value in requestheaders.iteritems():
-            cmd = cmd + ' -H ' + util.QuoteForPOSIX(key + ': ' + value)
+            if key not in ['Content-Length']:
+                cmd = cmd + ' -H ' + util.QuoteForPOSIX(key + ': ' + value)
 
         if not self.has_binary_content(requestheaders) and body:
             bodyparam = util.QuoteForPOSIX(body)
