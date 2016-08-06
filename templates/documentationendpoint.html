@@ -3,6 +3,7 @@
 {% end %}
 {% for key, entry in enumerate(entries) %}
   <span class="top-right content-schema response-content-{{ entry['response']['status'] }}" {% if key != 0 %}style="display: none;"{% end %}>
+  <a class="pure-button" href="/documentation/edit/{{ entry['_id'] }}">Edit</a>
   <a class="pure-button" href="/documentation/view/{{ entry['_id'] }}">View</a>
   </span>
 {% end %}
@@ -84,6 +85,7 @@
 
 {% if entry and entry['request']['body'] %}
 <h3 class="capitalize">Body</h3>
+{% if isinstance(entry['request']['body'], list) %}
 
 <table class="headers full-width">
 {% for num, (key, value) in enumerate(entry['request']['body'] ) %}
@@ -106,6 +108,9 @@
   </tr>
 {% end %}
 </table>
+{% else %}
+ {% raw item['response']['body'] %}
+{% end %}
 
 {% end %}
 <h1 class="center">Response</h1>

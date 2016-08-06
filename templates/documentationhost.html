@@ -9,13 +9,15 @@
       <div class="top-right top-right-method">
       <span class="method-{{ method }}">{{ method }}</span>
       </div>
-      {% elif row is not None %}
+      {% else %}
+      {% set itemid = row['_id'] if row is not None else ObjectId() %}
       <div class="top-right">
       <form name="activateForm" method="post">
-        <input type="hidden" name="ident" value="{{ row['_id'] }}" />
-        <input type="hidden" name="action" value="{% if row['active'] %}disable{% else %}enable{% end %}" />
-        <input type="checkbox" id="cmn-toggle-{{ row['_id'] }}" class="cmn-toggle cmn-toggle-round" {% if row['active'] %}checked="checked"{% end %} />
-        <label for="cmn-toggle-{{ row['_id'] }}"></label>
+        <input type="hidden" name="ident" value="{{ itemid }}" />
+        <input type="hidden" name="action" value="{% if row is not None and row['active'] %}disable{% else %}enable{% end %}" />
+        <input type="hidden" name="host" value="{{ host }}" />
+        <input type="checkbox" id="cmn-toggle-{{ itemid }}" class="cmn-toggle cmn-toggle-round" {% if row is not None and row['active'] %}checked="checked"{% end %} />
+        <label for="cmn-toggle-{{ itemid }}"></label>
       </form>
       </div>
       {% end %}
@@ -45,8 +47,9 @@
 <script type="text/javascript">
     $('form[name=activateForm] input[type=checkbox]').on('click', function(evt){
       var id = evt.target.parentNode.querySelector('input[name=ident]').value;
+      var host = evt.target.parentNode.querySelector('input[name=host]').value;
       var action = evt.target.checked ? "enable" : "disable";
-      $.post("/docsettings", {ident: id, action: action});
+      $.post("/docsettings", {ident: id, action: action, host: host});
       
     });
 </script>

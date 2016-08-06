@@ -143,7 +143,20 @@ class BaseRequestHandler(RequestHandler):
                 # probably failed because the content has a different encoding
                 print e
 
-        cmd = cmd + ' ' + util.QuoteForPOSIX(entry['request']['url'])
+        url = None
+
+        if 'url' in entry['request']:
+            url = entry['request']['url']
+        else:
+            if 'scheme' in entry['request']:
+                print entry['request']
+                url = entry['request']['scheme'] + '://' + entry['request']['host'] + entry['request']['path']
+                if 'query' in entry['request'] and entry['request']['query']:
+                    url = url + '?' + entry['request']['query']
+
+
+        if url:
+            cmd = cmd + ' ' + util.QuoteForPOSIX(url)
 
         raise gen.Return(cmd)
 

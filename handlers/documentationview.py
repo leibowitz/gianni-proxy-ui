@@ -21,7 +21,6 @@ class DocumentationViewHandler(BaseRequestHandler):
         origin = self.get_argument('origin', None)
         host = self.get_argument('host', None)
         collection = self.settings['db'].proxyservice['documentation']
-        resbody = None
 
         try:
             oid = objectid.ObjectId(ident)
@@ -36,19 +35,31 @@ class DocumentationViewHandler(BaseRequestHandler):
             raise tornado.web.HTTPError(404)
 
         requestquery = util.nice_body(entry['request']['query'], 'application/x-www-form-urlencoded')
-        #print entry['request']['headers']
         requestheaders = self.nice_headers(entry['request']['headers'])
         responseheaders = self.nice_headers(entry['response']['headers'])
+        respctype = util.get_content_type(self.nice_headers(responseheaders))
+        reqctype = util.get_content_type(self.nice_headers(requestheaders))
         requestbody = None
         responsebody = None
+        reqbody = None
+        resbody = None
 
         if 'fileid' in entry['response']:
             resbody, ctype = yield self.get_gridfs_body(entry['response']['fileid'], responseheaders)
             responsebody = self.get_formatted_body(resbody, ctype)
+        elif 'body' in entry['response']:
+            if not respctype:
+                respctype = util.get_body_content_type(entry['response']['body'])
+            responsebody = self.get_formatted_body(entry['response']['body'], respctype)
             
         if 'fileid' in entry['request']:
             reqbody, ctype = yield self.get_gridfs_body(entry['request']['fileid'], requestheaders)
             requestbody = self.get_formatted_body(reqbody, ctype)
+        elif 'body' in entry['request']:
+            reqbody = entry['request']['body']
+            if not reqctype:
+                reqctype = util.get_body_content_type(reqbody)
+            requestbody = self.get_formatted_body(reqbody, reqctype)
 
         for key, value in requestheaders.iteritems():
             if key == 'Cookie':
@@ -58,7 +69,7 @@ class DocumentationViewHandler(BaseRequestHandler):
 
         cmd = highlight(cmd, BashLexer(), HtmlFormatter(cssclass='codehilite curl'))
 
-        fmt = util.get_format(util.get_content_type(self.nice_headers(responseheaders))) if responseheaders else None
+        fmt = util.get_format(respctype) if responseheaders else None
 
         self.render("one.html", 
                 item=entry, 

@@ -3,6 +3,7 @@
 {% block content %}
 <div class="top-button">
     <a class="pure-button pure-button-primary" href="/docsettings/add">Add Host</a>
+    <a class="pure-button pure-button-primary" href="/documentation/add">Add Documentation</a>
 </div>
 <div class="box">
 
@@ -17,16 +18,18 @@
     <th>
       Host
     </th>
-    <th class="delete">
-    </th>
+    <!--<th class="delete">
+    </th>-->
   </thead>
   <tbody>
-{% for row in items %}
+{% for num, key in enumerate(sorted(items)) %}
+{% set row = items[key] %}
   <tr>
     <td>
       <form name="activateForm" method="post">
         <input type="hidden" name="ident" value="{{ row['_id'] }}" />
         <input type="hidden" name="action" value="{% if row['active'] %}disable{% else %}enable{% end %}" />
+        <input type="hidden" name="host" value="{{ row['host'] }}" />
         <input type="checkbox" id="cmn-toggle-{{ row['_id'] }}" class="cmn-toggle cmn-toggle-round" {% if row['active'] %}checked="checked"{% end %} />
         <label for="cmn-toggle-{{ row['_id'] }}"></label>
       </form>
@@ -36,13 +39,13 @@
       {{ row['host'] }}
       </a>
     </td>
-    <td class="delete">
+    <!--<td class="delete">
       <form method="post" name="deleteForm">
         <input type="hidden" name="ident" value="{{ row['_id'] }}" />
         <input type="hidden" name="action" value="delete" />
           <button class="btn" name="delete"><i class="fa fa-times"></i></button>
       </form>
-    </td>
+    </td>-->
   </tr>
 {% end %}
   </tbody>
@@ -67,8 +70,9 @@
     });
     $('form[name=activateForm] input[type=checkbox]').on('click', function(evt){
       var id = evt.target.parentNode.querySelector('input[name=ident]').value;
+      var host = evt.target.parentNode.querySelector('input[name=host]').value;
       var action = evt.target.checked ? "enable" : "disable";
-      $.post("/docsettings", {ident: id, action: action});
+      $.post("/docsettings", {ident: id, action: action, host: host});
       
     });
 </script>
