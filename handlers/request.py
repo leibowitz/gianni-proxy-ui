@@ -18,7 +18,7 @@ class RequestHandler(BaseRequestHandler):
         itemid = self.get_argument('item', None)
         body = None
         url = None
-        method = None
+        method = 'GET'
         if itemid:
             collection = self.settings['db'].proxyservice['log_logentry']
             entry = yield motor.Op(collection.find_one, {'_id': self.get_id(itemid)})
@@ -32,7 +32,7 @@ class RequestHandler(BaseRequestHandler):
 		if 'fileid' in entry['request']:
 		    body, ctype = yield self.get_gridfs_body(entry['request']['fileid'], requestheaders)
 
-        self.render("request.html", headers=headers, method=method, body=body, url=url, tryagain=False)
+        self.render("request.html", headers=headers, method=method, body=body, url=url, methods=self.methods, tryagain=False)
 
     @tornado.web.asynchronous
     @gen.coroutine
@@ -42,7 +42,7 @@ class RequestHandler(BaseRequestHandler):
         url = self.get_argument('url', None)
         method = self.get_argument('method', 'GET')
         if not url:
-            self.render("request.html", headers=headers, method=method, body=body, url=url, tryagain=True)
+            self.render("request.html", headers=headers, method=method, body=body, url=url, methods=self.methods, tryagain=True)
             return
 
         target = urlparse(url)

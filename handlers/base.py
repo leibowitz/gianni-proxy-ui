@@ -10,6 +10,8 @@ from shared import util
 class BaseRequestHandler(RequestHandler):
     TZ = pytz.timezone('Europe/London')
 
+    methods = ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'PATCH', 'POST', 'PUT']
+
     def get_id(self, ident):
         try:
             oid = objectid.ObjectId(ident)
