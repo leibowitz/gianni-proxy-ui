@@ -38,6 +38,8 @@ class RequestHandler(BaseRequestHandler):
     @gen.coroutine
     def post(self):
         body = self.get_argument('body', None)
+        if not body:
+            body = None
         headers = self.get_submitted_headers('header')
         url = self.get_argument('url', None)
         method = self.get_argument('method', 'GET')
