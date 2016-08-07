@@ -14,7 +14,7 @@ class DocSettingsAddHandler(BaseRequestHandler):
         item = self.get_argument('item', None)
         host = self.get_argument('host', None)
         groupindex = self.get_argument('groupindex', None)
-        groupindex = int(groupindex) if groupindex is not None else None
+        groupindex = int(groupindex) if groupindex else None
         entry = None
         if item:
             collection = self.settings['db'].proxyservice['log_logentry']
@@ -30,7 +30,7 @@ class DocSettingsAddHandler(BaseRequestHandler):
         item = self.get_argument('item', None)
         host = self.get_argument('host', None)
         groupindex = self.get_argument('groupindex', None)
-        groupindex = int(groupindex) if groupindex is not None else None
+        groupindex = int(groupindex) if groupindex else None
         
         if not host:
             self.render("docsettingsadd.html", entry=None, item=item, host=host, groupindex=groupindex, tryagain=True)

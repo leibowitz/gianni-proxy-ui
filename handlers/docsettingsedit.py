@@ -14,7 +14,7 @@ class DocSettingsEditHandler(BaseRequestHandler):
         item = self.get_argument('item', None)
         host = self.get_argument('host', None)
         groupindex = self.get_argument('groupindex', None)
-        groupindex = int(groupindex) if groupindex is not None else None
+        groupindex = int(groupindex) if groupindex else None
 
         collection = self.settings['db'].proxyservice['docsettings']
         entry = yield motor.Op(collection.find_one, {'_id': self.get_id(ident)})
@@ -32,7 +32,7 @@ class DocSettingsEditHandler(BaseRequestHandler):
         item = self.get_argument('item', None)
         host = self.get_argument('host', None)
         groupindex = self.get_argument('groupindex', None)
-        groupindex = int(groupindex) if groupindex is not None else None
+        groupindex = int(groupindex) if groupindex else None
         active = self.get_argument('active', False)
         active = active if active is False else True
 
