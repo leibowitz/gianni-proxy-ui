@@ -30,6 +30,7 @@
 {% raw cmd %}
 </div>
 
+{% if requestquery or len(requestheaders) or requestbody %}
   <div class="b-t">
   <div>
 <h1 class="center no-bottom-margin">Request</h1>
@@ -65,6 +66,7 @@
 {% end %}
 </table>
   </div>
+{% end %}
   </div>
 
 {% if requestbody %}
