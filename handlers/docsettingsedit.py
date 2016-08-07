@@ -53,5 +53,5 @@ class DocSettingsEditHandler(BaseRequestHandler):
         }, upsert=True)
 
 
-        self.redirect('/docsettings')
+        self.redirect('/documentation/host/' + host)
 
