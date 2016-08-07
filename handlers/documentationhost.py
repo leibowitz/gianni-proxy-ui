@@ -33,8 +33,8 @@ class DocumentationHostHandler(BaseRequestHandler):
 
         self.render("documentationhost.html", row=row, host=host, entries=[], tree=tree, render_tree=self.render_tree, render_document=self.render_document, currentpath=None, method=None, ObjectId=ObjectId)
 
-    def render_tree(self, host, tree, currentpath=None, fullpath = '', method=None):
-        return self.render_string("documentationtree.html", host=host, tree=tree, render_tree=self.render_tree, fullpath=fullpath+'/', currentpath=currentpath, currentmethod=method)
+    def render_tree(self, host, tree, currentpath=None, fullpath = '', method=None, hostsettings=None):
+        return self.render_string("documentationtree.html", host=host, tree=tree, render_tree=self.render_tree, fullpath=fullpath+'/', currentpath=currentpath, currentmethod=method, hostsettings=hostsettings)
 
     def render_document(self, entries=[], method=None, host=None):
         return self.render_string("documentationendpoint.html", entries=entries, method=method, host=host)
