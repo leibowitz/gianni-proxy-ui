@@ -545,11 +545,11 @@ ul.schema {
 ul.root, ul.root ul {
   list-style: none;
   padding: 0;
-  margin: 3px 0 5px;
 }
 
 ul.root > li > .path {
   font-weight: bold;
+  display: block;
 }
 
 ul.root > li > ul {
@@ -557,14 +557,24 @@ ul.root > li > ul {
   padding: 0;
 }
 
-ul.root > li > ul > li > .path {
+/*ul.root > li > ul > li > .path {
   font-size: 1.5em;
   font-weight: 400;
   display: block;
+}*/
+
+ul.root ul.group {
 }
 
-ul.root > li > ul.group > li {
+ul.group {
+  padding-left: 0px;
+  list-style-type: none;
   margin-bottom: 2em;
+}
+
+ul.endpoint {
+  list-style: none;
+  padding: 0;
 }
 
 ul.list-content {

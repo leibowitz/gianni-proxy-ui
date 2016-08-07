@@ -1,9 +1,10 @@
-<ul class="{% if fullpath == '/' %}root{% else %}group{% end %}">
+{% set groupbyidx = hostsettings['groupindex'] if hostsettings and 'groupindex' in hostsettings else None %}
+<ul class="group {% if groupbyidx is not None and fullpath.rstrip('/').count('/') == groupbyidx %}root{% end %}">
 {% for path, values in tree['children'].iteritems() %}
 <li>
 	<span class="path">{{ path }}</span>
 	<div>
-<ul>
+<ul class="endpoint">
     {% for method, statuses in values['methods'].iteritems() %}
 	<li>
 		<a class="tree-link{% if fullpath + path == currentpath and method == currentmethod %} tree-link-selected{% end %}" href="/documentation/endpoint/{{ host }}?path={{ fullpath }}{{ path }}&method={{ method }}">
