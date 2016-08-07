@@ -25,14 +25,26 @@
 </h2>
 
     </div>
+
 <div id="curl-cmd" class="hidden">
 {% raw cmd %}
 </div>
 
   <div class="b-t">
+  <div>
 <h1 class="center no-bottom-margin">Request</h1>
   </div>
 
+{% if requestquery %}
+<div class="box-body table-header-value">
+
+<h3 class="no-top-padding no-top-margin">Query</h3>
+{% raw requestquery %}
+</div>
+{% end %}
+
+
+  </div>
 
   <div class="box-body no-top-padding no-top-margin">
 <h3 class="no-top-padding no-top-margin">Headers</h3>
@@ -54,12 +66,6 @@
 </table>
   </div>
   </div>
-
-{% if requestquery %}
-<div class="box b-t table-header-value">
-{% raw requestquery %}
-</div>
-{% end %}
 
 {% if requestbody %}
 <div class="box b-t table-header-value">
