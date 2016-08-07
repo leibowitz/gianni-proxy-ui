@@ -19,7 +19,8 @@ class DocumentationAddHandler(BaseRequestHandler):
     @tornado.web.asynchronous
     @gen.engine
     def get(self):
-        self.render("documentationadd.html", tryagain=False, host=None, path=None, query=None, status=None, method=None, respbody=None, reqbody=None, reqheaders=None, respheaders=None, reqfmt=None, respfmt=None, scheme=None)
+        host = self.get_argument('host', None)
+        self.render("documentationadd.html", tryagain=False, host=host, path=None, query=None, status=None, method=None, respbody=None, reqbody=None, reqheaders=None, respheaders=None, reqfmt=None, respfmt=None, scheme=None)
     
     @tornado.web.asynchronous
     @gen.engine
