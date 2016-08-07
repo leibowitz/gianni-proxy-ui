@@ -73,5 +73,5 @@ class DocumentationAddHandler(BaseRequestHandler):
 
         yield collection.insert(item)
 
-        self.redirect('/documentation')
+        self.redirect('/documentation/host/' + host)
 
