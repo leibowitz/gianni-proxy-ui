@@ -27,20 +27,22 @@
 </div>
 
 
+{% if tree %}
       <div class="tree box">
 {% raw render_tree(host, tree, currentpath, '', method, row) %}
       </div>
+{% end %}
 <div class="box box-with-tree">
 
+  {% if method is not None %}
   <div class="layout layout-with-tree">
     <div class="box-body">
-      {% if method is not None %}
       {% raw render_document(entries, method, host) %}
-      {% end %}
       <div class="clear"></div>
     </div>
 
   </div>
+  {% end %}
 </div>
 
 <script src="/static/jquery.min.js"></script>

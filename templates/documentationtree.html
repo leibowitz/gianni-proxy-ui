@@ -1,4 +1,5 @@
 {% set groupbyidx = hostsettings['groupindex'] if hostsettings and 'groupindex' in hostsettings else None %}
+{% if len(tree['children']) %}
 <ul class="group {% if groupbyidx is not None and fullpath.rstrip('/').count('/') == groupbyidx %}root{% end %}">
 {% for path, values in tree['children'].iteritems() %}
 <li>
@@ -18,3 +19,4 @@
 </li>
 {% end %}
 </ul>
+{% end %}
