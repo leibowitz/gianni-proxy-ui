@@ -12,13 +12,11 @@
 <div class="pure-menu pure-menu-horizontal">
 <ul class="pure-menu-list statuses">
 {% for key, item in enumerate(entries) %}
-{% if 'schema' in item['response'] %}
 <li class="pure-menu-item {% if key == 0 %}pure-menu-selected{% end %}">
 <a class="pure-menu-link response-status" data-target="{{ item['response']['status'] }}">
 <span class="status-{{ (item['response']['status']/100)*100 }}">{{ item['response']['status'] }}</span>
 </a>
 </li>
-{% end %}
 {% end %}
 </ul>
 </div>
