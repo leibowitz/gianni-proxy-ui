@@ -19,7 +19,10 @@ class DocSettingsEditHandler(BaseRequestHandler):
         collection = self.settings['db'].proxyservice['docsettings']
         entry = yield motor.Op(collection.find_one, {'_id': self.get_id(ident)})
         if not entry:
-            raise tornado.web.HTTPError(404)
+            if not host:
+                raise tornado.web.HTTPError(404)
+            else:
+                entry = {'_id': self.get_id(ident), 'host': host, 'active': False}
 
         self.render("docsettingsedit.html", entry=entry, item=item, host=host, groupindex=groupindex, tryagain=False)
     
@@ -37,6 +40,8 @@ class DocSettingsEditHandler(BaseRequestHandler):
         entry = yield motor.Op(collection.find_one, {'_id': self.get_id(ident)})
 
         if not host:
+            if not entry:
+                entry = {'_id': self.get_id(ident), 'host': host, 'active': active, 'groupindex': groupindex}
             self.render("docsettingsedit.html", entry=entry, item=item, host=host, groupindex=groupindex, tryagain=True)
             return
 
@@ -45,7 +50,8 @@ class DocSettingsEditHandler(BaseRequestHandler):
             'active': active,
             'host': host,
             'groupindex': groupindex,
-        })
+        }, upsert=True)
+
 
         self.redirect('/docsettings')
 
