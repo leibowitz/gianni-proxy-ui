@@ -52,8 +52,11 @@ class DocumentationEndpointHandler(BaseRequestHandler):
             if 'content-type' in entries[k]['request'] and entries[k]['request']['content-type'] == 'application/x-www-form-urlencoded' and reqbody:
                 entries[k]['request']['body'] = urlparse.parse_qsl(reqbody, keep_blank_values=True)
 
-            if 'response' in entry and 'fileid' in entry['response']:
-                entries[k]['response']['body'], entries[k]['response']['content-type'] = yield self.get_gridfs_body(entry['response']['fileid'], entry['response']['headers'])
+            if 'response' in entry:
+                if 'fileid' in entry['response']:
+                    entries[k]['response']['body'], entries[k]['response']['content-type'] = yield self.get_gridfs_body(entry['response']['fileid'], entry['response']['headers'])
+                elif 'body' in entry['response']:
+                    entry['response']['content-type'] = util.get_content_type(entry['response']['headers'])
 
                 if util.get_format(entry['response']['content-type']) == 'json':
                     entries[k]['response']['schema'] = skinfer.generate_schema(json.loads(entry['response']['body']))
