@@ -15,6 +15,11 @@
     <input type="text" class="large-field" name="host" {% if host %}value="{{ host }}"{% elif entry %}value="{{ entry['request']['host'] }}"{% end %} placeholder="google.com" />
     </div>
 
+    <div class="pure-control-group">
+    <label for="groupindex">Group</label>
+    <input type="text" name="groupindex" {% if groupindex %}value="{{ groupindex }}"{% end %} placeholder="1" />
+    </div>
+
     </div>
     </div>
       <div class="box-body top-bar">

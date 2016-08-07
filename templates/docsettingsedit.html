@@ -25,6 +25,11 @@
     <input type="text" class="large-field" name="host" placeholder="google.com" value="{% if entry['host'] != False %}{{ entry['host'] }}{% end %}" />
     </div>
 
+    <div class="pure-control-group">
+    <label for="groupindex">Group</label>
+    <input type="text" name="groupindex" placeholder="1" value="{% if 'groupindex' in entry and entry['groupindex'] != None %}{{ entry['groupindex'] }}{% end %}" />
+    </div>
+
     </div>
     
     </div>
