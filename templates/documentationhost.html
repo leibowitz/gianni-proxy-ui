@@ -3,6 +3,10 @@
 {% block content %}
 <div class="top-button">
   <a class="pure-button pure-button-primary" href="/documentation/add?host={{ host }}">Add Entry</a>
+  <div class="top-right">
+  <a class="pure-button" href="/documentation/api/{{ host }}?raw=1">Raw</a>
+  <a class="pure-button" href="/documentation/api/{{ host }}?download=1">Download</a>
+  </div>
 </div>
 <div class="box">
 
