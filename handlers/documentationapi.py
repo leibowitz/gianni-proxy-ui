@@ -17,6 +17,7 @@ class DocumentationApiHandler(BaseRequestHandler):
     def get(self, host):
 
         raw = True if self.get_argument('raw', False) else False
+        download = True if self.get_argument('download', False) else False
         collection = self.settings['db'].proxyservice['documentation']
         cursor = collection.find({'request.host': host}).sort([('request.path', 1), ('response.status', 1)])
         res = cursor.to_list(100)
@@ -65,7 +66,12 @@ This is one of the simplest APIs written in the **API Blueprint**.
         Hello World!
 """)
 
-        if raw:
+        if raw or download:
+            self.set_header('Cache-Control', 'must-revalidate, post-check=0, pre-check=0')
+            self.set_header('Expires', '0')
+            self.set_header('Content-Type', 'text/plain')
+            if download:
+                self.set_header('Content-Disposition', 'attachment; filename="doc.md"')
             self.write(documentation)
             self.finish()
             return
