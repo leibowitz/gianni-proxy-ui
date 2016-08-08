@@ -1,4 +1,5 @@
 {% whitespace all %}
+{% autoescape None %}
 {% if 'params' in entry and len(entry['params']) != 0 %}
     + Parameters
 {% for name, value in entry['params'].iteritems() %}
