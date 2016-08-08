@@ -104,5 +104,5 @@ This is one of the simplest APIs written in the **API Blueprint**.
         #    print doc['body']
         #    del doc['body']
         #    doc['params'] = {}
-        return self.render_string("documentationapiendpoint.html", entry=doc)
+        return self.render_string("documentationapiendpoint.html", entry=doc, indent=util.indent)
 

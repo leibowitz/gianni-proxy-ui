@@ -13,5 +13,8 @@
 {% if 'body' in entry and entry['body'] != '' %}
     + Body
 
-            {{ entry['body'] }}
+            {% for line in indent(entry['body'], 3) %}
+{{ line }}
+{% end %}
+
 {% end %}

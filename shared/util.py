@@ -211,3 +211,7 @@ def get_uncompressed_body(headers, body):
 
     return body, ctype
 
+def indent(txt, stops=1):
+    spacer = "\t".expandtabs(4) * stops
+    for line in txt.splitlines():
+        yield "%s%s" % (spacer, line)
