@@ -16,6 +16,7 @@ class DocumentationApiHandler(BaseRequestHandler):
     @gen.engine
     def get(self, host):
 
+        raw = True if self.get_argument('raw', False) else False
         collection = self.settings['db'].proxyservice['documentation']
         cursor = collection.find({'request.host': host}).sort([('request.path', 1), ('response.status', 1)])
         res = cursor.to_list(100)
@@ -63,9 +64,14 @@ This is one of the simplest APIs written in the **API Blueprint**.
 
         Hello World!
 """)
-        print api
+
+        if raw:
+            self.write(documentation)
+            self.finish()
+            return
 
         self.render("documentationapi.html", host=host, entries=items, tree=tree, documentation=documentation)
+
 
     def render_api_blueprint(self, host=None, tree=[], entries=[]):
         return self.render_string("documentationapiblueprint.html", host=host, entries=entries, tree=tree, render_api_tree=self.render_api_tree)
