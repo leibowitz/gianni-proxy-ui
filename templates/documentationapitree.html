@@ -1,0 +1,15 @@
+{% whitespace all %}
+{% for path, values in tree['children'].iteritems() %}{% if 'methods' in values and len(values['methods']) != 0 %}
+## {{ fullpath + '/' + path }}
+{% for method, statuses in values['methods'].iteritems() %}
+### {{ method }}
+
++ Request
+
+{% raw render_api_document(entries[str(statuses[200])]['request']) %}
+
+{% for status, id in statuses.iteritems() %}
+
++ Response {{ status }}
+
+{% raw render_api_document(entries[str(id)]['response']) %}{% end %}{% end %}{% end %}{% raw render_api_tree(host, values, entries, fullpath + '/' + path) %}{% end %}

@@ -34,6 +34,7 @@ from documentationadd import DocumentationAddHandler
 from docsettings import DocSettingsHandler
 from docsettingsadd import DocSettingsAddHandler
 from docsettingsedit import DocSettingsEditHandler
+from documentationapi import DocumentationApiHandler
 
 #__all__ = [
 #"base", 

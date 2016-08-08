@@ -24,7 +24,7 @@
       </form>
       </div>
       {% end %}
-      <h2 class="url"><a href="{% if currentpath %}/documentation/host/{{ host }}{% else %}/docsettings/{{ itemid }}?host={{ host }}{% end %}">{{ host }}</a>{% if currentpath %}{{ currentpath }}{% end %}</h2>
+      <h2 class="url"><a href="/documentation/{% if currentpath %}host{% else %}api{% end %}/{{ host }}">{{ host }}</a>{% if currentpath %}{{ currentpath }}{% end %}</h2>
     </div>
   </div>
 </div>
