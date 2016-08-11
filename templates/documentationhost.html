@@ -46,6 +46,29 @@
     </div>
 
   </div>
+  {% elif row is not None %}
+  {% set entry = row %}
+  <form class="pure-form" method="post" action="/docsettings/{{ entry['_id'] }}">
+    <div class="box-body top-bar">
+    <input type="hidden" name="id" value="{{ entry['_id'] }}" />
+    <input type="hidden" name="host" value="{{ entry['host'] }}" />
+    {% if entry['active'] %}
+    <input type="hidden" name="active" value="checked" />
+    {% end %}
+
+    <div class="pure-form-stacked">
+
+    <div class="pure-control-group">
+    <label for="groupindex">Group</label>
+    <input type="text" name="groupindex" placeholder="1" value="{% if 'groupindex' in entry and entry['groupindex'] != None %}{{ entry['groupindex'] }}{% end %}" />
+    </div>
+
+    </div>
+    
+    </div>
+      <div class="box-body top-bar">
+    <button type="submit" class="pure-button pure-button-primary">Update</button>
+  </form>
   {% end %}
 </div>
 
