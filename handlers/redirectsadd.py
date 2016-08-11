@@ -19,7 +19,7 @@ class RedirectsAddHandler(BaseRequestHandler):
             collection = self.settings['db'].proxyservice['log_logentry']
             entry = yield motor.Op(collection.find_one, {'_id': self.get_id(item)})
 
-        self.render("redirectadd.html", tryagain=False, origin=origin, host=host, item=item, entry=entry, ohost=None, dhost=None, protocol=None, dprotocol=None)
+        self.render("redirectadd.html", tryagain=False, origin=origin, host=host, item=item, entry=entry, ohost=host, dhost=None, protocol=None, dprotocol=None)
     
     @tornado.web.asynchronous
     @gen.coroutine
