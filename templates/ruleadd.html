@@ -43,6 +43,9 @@
     </div>
 
     </div>
+</div>
+      <div class="box-body top-bar">
+
     <h3>Request Headers</h3>
       <div id="reqheader-group">
       {% set x = 0 %}
@@ -68,7 +71,9 @@
 
       </div>
 
-    <h4 class="text-md">Response</h4>
+</div>
+      <div class="box-body top-bar">
+    <h3>Response</h3>
 
     <input type="hidden" name="response" value="{% if item %}{{ item }}{% end %}" />
 
@@ -85,7 +90,9 @@
       </div>
 
     </div>
+      </div>
 
+      <div class="box-body top-bar">
     <h3>Response Headers</h3>
       <div id="respheader-group">
       {% set x = 0 %}
@@ -111,6 +118,8 @@
 
       </div>
 
+      </div>
+      <div class="box-body top-bar">
     <h3>Response Body</h3>
 
     <textarea rows="30" style="width:90%; display: none;" data-editor="{% if fmt %}{{ fmt }}{% end %}" name="body" placeholder="body content">{% if body %}{{ body }}{% end %}</textarea>
