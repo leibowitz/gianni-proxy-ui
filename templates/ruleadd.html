@@ -19,7 +19,7 @@
 
     <div class="pure-control-group">
     <label for="origin">Origin</label>
-    <input type="text" name="origin" size="35" placeholder="IP of client" value="{% if origin %}{{ origin }}{% elif entry and entry['origin'] %}{{ entry['origin'] }}{% end %}" />
+    <input type="text" name="origin" size="35" placeholder="IP of client" value="{% if origin %}{{ origin }}{% elif entry and 'origin' in entry and entry['origin'] %}{{ entry['origin'] }}{% end %}" />
     </div>
 
     <div class="pure-control-group">

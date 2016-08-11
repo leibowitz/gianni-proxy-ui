@@ -86,6 +86,5 @@ class DocumentationViewHandler(BaseRequestHandler):
                 socketuuid=None,
                 origin=origin,
                 host=host,
-                show_save=False,
-                show_resend=False)
+                from_doc=True)
 

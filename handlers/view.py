@@ -113,8 +113,7 @@ class ViewHandler(BaseRequestHandler):
                 socketuuid=socketuuid,
                 origin=origin,
                 host=host,
-                show_save=True,
-                show_resend=True)
+                from_doc=False)
 
     @gen.coroutine
     def get_messages(self, entry):

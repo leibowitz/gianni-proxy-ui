@@ -16,11 +16,13 @@ class RequestHandler(BaseRequestHandler):
     def get(self):
         headers = {}
         itemid = self.get_argument('item', None)
+        doc = True if self.get_argument('doc', False) else False
+        coll = 'documentation' if doc else 'log_logentry'
         body = None
         url = None
         method = 'GET'
         if itemid:
-            collection = self.settings['db'].proxyservice['log_logentry']
+            collection = self.settings['db'].proxyservice[coll]
             entry = yield motor.Op(collection.find_one, {'_id': self.get_id(itemid)})
             if entry and entry['request']:
                 headers = entry['request']['headers']
@@ -33,6 +35,8 @@ class RequestHandler(BaseRequestHandler):
 
 		if 'fileid' in entry['request']:
 		    body, ctype = yield self.get_gridfs_body(entry['request']['fileid'], requestheaders)
+		elif 'body' in entry['request']:
+		    body = entry['request']['body']
 
         self.render("request.html", headers=headers, method=method, body=body, url=url, methods=self.methods, tryagain=False)
 
