@@ -24,7 +24,11 @@
     <input type="text" name="origin" size="35" placeholder="IP of client" value="{% if entry['origin'] %}{{ entry['origin'] }}{% elif origin %}{{ origin }}{% end %}" />
     </div>
 
-    <h2>Destination</h2>
+</div>
+    </div>
+      <div class="box-body top-bar">
+    <div class="pure-form-aligned">
+    <h3 class="form-group">Destination</h3>
     <div class="pure-control-group">
         <label for="protocol">Protocol</label>
         <select name="protocol" class="large-select">
@@ -39,7 +43,11 @@
       <input type="text" name="ohost" size="50" placeholder="google.com" value="{% if entry['host'] %}{{ entry['host'] }}{% end %}" />
     </div>
 
-    <h2>Redirect To</h2>
+</div>
+    </div>
+      <div class="box-body top-bar">
+    <div class="pure-form-aligned">
+    <h3 class="form-group">Redirect To</h3>
     <div class="pure-control-group">
         <label for="dprotocol">Protocol</label>
         <select name="dprotocol" class="large-select">
