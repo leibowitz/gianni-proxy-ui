@@ -28,7 +28,7 @@ class RequestHandler(BaseRequestHandler):
                 headers = entry['request']['headers']
                 if 'Content-Length' in headers:
 		    del headers['Content-Length']
-                url = entry['request']['url'] if 'url' in entry['request'] else (entry['request']['scheme'] if 'scheme' in entry['request'] else '') + entry['request']['host'] + entry['request']['path']
+                url = entry['request']['url'] if 'url' in entry['request'] else (entry['request']['scheme'] if 'scheme' in entry['request'] else 'http') + '://' + entry['request']['host'] + entry['request']['path']
                 method = entry['request']['method']
                 requestquery = entry['request']['query']
                 requestheaders = self.nice_headers(headers)
