@@ -461,6 +461,9 @@ h4 {
 .nav-item {
   display: inline-block;
   text-align: center;
+  width: 10%;
+  min-width: 80px;
+  max-width: 85px;
 }
 
 .nav-item+.nav-item {
