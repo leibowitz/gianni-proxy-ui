@@ -11,8 +11,6 @@
     
     <input type="hidden" name="id" value="{{ entry['_id'] }}" />
 
-    <h3>Request</h3>
-
     <div class="pure-form-aligned">
         
     <div class="pure-control-group">
@@ -42,6 +40,8 @@
 
     </div>
     
+      </div>
+      <div class="box-body top-bar">
     <h3>Request Headers</h3>
       <div id="reqheader-group">
       {% set x = 0 %}
@@ -69,12 +69,16 @@
     
       </div>
     
+      </div>
+      <div class="box-body top-bar">
     <h3>Request Body</h3>
 
     <textarea rows="10" style="width:90%; display:none;" data-editor="{% if reqfmt %}{{ reqfmt }}{% end %}" name="reqbody" placeholder="body content">{% if entry['request']['body'] %}{{ entry['request']['body'] }}{% end %}</textarea>
 
 
-    <h4 class="text-md">Response</h4>
+    </div>
+    <div class="box-body top-bar">
+    <h3>Response</h3>
 
     <input type="hidden" name="response" value="{% if entry['response']['body'] %}{{ entry['response']['body'] }}{% end %}" />
 
@@ -87,6 +91,8 @@
     
   </div>
 
+      </div>
+      <div class="box-body top-bar">
     <h3>Response Headers</h3>
       <div id="respheader-group">
       {% set x = 0 %}
@@ -114,6 +120,8 @@
 
       </div>
 
+      </div>
+      <div class="box-body top-bar">
     <h3>Response Body</h3>
 
     <textarea rows="10" style="width:90%; display:none;" data-editor="{% if respfmt %}{{ respfmt }}{% end %}" name="respbody" placeholder="body content">{% if entry['response']['body'] %}{{ entry['response']['body'] }}{% end %}</textarea>
