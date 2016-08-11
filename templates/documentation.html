@@ -2,9 +2,11 @@
 {% block title %}List of documents{% end %}
 {% block content %}
 <div class="top-button">
+    <a class="pure-button pure-button-primary" href="/docsettings/add">Add Host</a>
     <a class="pure-button pure-button-primary" href="/documentation/add{% if host %}?host={{ host }}{% end %}">Add Endpoint</a>
     <div class="top-right">
     {% if host %}<a class="pure-button" href="/documentation"><i class="mdi mdi-close-circle"></i> Host: {{ host }}</a>{% end %}
+    <a class="pure-button" href="/docsettings">All hosts</a>
     </div>
 </div>
 <div class="box">
