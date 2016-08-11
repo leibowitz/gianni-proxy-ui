@@ -36,11 +36,14 @@
 {% block content %}
 <div class="top-button">
 <button class="pure-button pure-button-primary button-success" id="onPlayPause"><i id="record-icon" class="mdi mdi-play"></i> <span id="record-text">Start Recording</span></button>
-<button class="pure-button top-right" id="onClear">Clear all</button>
+<div class="top-right">
+{% if host %}<a class="pure-button" href="{% if origin %}/origin/{{ origin }}{% else %}/all{% end %}"><i class="mdi mdi-close-circle"></i> Host: {{ host }}</a>{% end %}
+{% if origin %}<a class="pure-button" href="{% if host %}/host/{{ host }}{% else %}/all{% end %}"><i class="mdi mdi-close-circle"></i> Origin: {{ origin }}</a>{% end %}
+<button class="pure-button" id="onClear"><i class="mdi mdi-delete-forever"></i> Clear all</button>
+</div>
 </div>
 
 <form id="filterForm" class="pure-form">
-  <div>{% if host %}Host filter: {{ host }}<a class="pure-button" href="{% if origin %}/origin/{{ origin }}{% else %}/all{% end %}">X</a>{% end %}</div>
   <input type="search" id="filterText" placeholder="&#xf002; Search" class="full-width input-icon" />
   <input type="hidden" id="host" value="{% if host %}{{ host }}{% end %}" />
   <input type="hidden" id="origin" value="{% if origin %}{{ origin }}{% end %}" />

@@ -2,7 +2,8 @@
 {% block title %}List of rules{% end %}
 {% block content %}
 <div class="top-button">
-    <a class="pure-button pure-button-primary" href="/rules/add">Add Mock</a>
+  <a class="pure-button pure-button-primary" href="/rules/add{% if host %}?host={{ host }}{% end %}">Add Mock</a>
+  {% if host %}<a class="pure-button top-right" href="/rules"><i class="mdi mdi-close-circle"></i> Host: {{ host }}</a>{% end %}
 </div>
         <div class="box">
 

@@ -16,7 +16,7 @@ class DocumentationHandler(BaseRequestHandler):
         cursor = collection.find(req).sort([('request.host', 1), ('request.path', 1)])
         res = cursor.to_list(100)
         entries = yield res
-        self.render("documentation.html", items=entries)
+        self.render("documentation.html", items=entries, host=host)
 
     def post(self):
         collection = self.settings['db'].proxyservice['documentation']

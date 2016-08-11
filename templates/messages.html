@@ -3,6 +3,7 @@
 {% block content %}
 <div class="top-button">
     <a class="pure-button pure-button-primary" href="/messages/add?{% if item is not None %}&amp;item={{ item }}{% end %}{% if origin is not None %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}">Add Message</a>
+  {% if host %}<a class="pure-button top-right" href="/messages"><i class="mdi mdi-close-circle"></i> Host: {{ host }}</a>{% end %}
 </div>
 
 
