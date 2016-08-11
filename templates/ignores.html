@@ -1,8 +1,8 @@
 {% extends "default.html" %}
-{% block title %}List of filters{% end %}
+{% block title %}List of hosts{% end %}
 {% block content %}
 <div class="top-button">
-    <a class="pure-button pure-button-primary" href="/ignores/add{% if host %}?host={{ host }}{% end %}">Add Filter</a>
+    <a class="pure-button pure-button-primary" href="/ignores/add{% if host %}?host={{ host }}{% end %}">Add Host</a>
   {% if host %}<a class="pure-button top-right" href="/ignores"><i class="mdi mdi-close-circle"></i> Host: {{ host }}</a>{% end %}
 </div>
 
