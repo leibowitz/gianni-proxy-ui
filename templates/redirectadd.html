@@ -35,7 +35,7 @@
 
     <div class="pure-control-group">
       <label for="ohost">Host</label>
-      <input type="text" name="ohost" size="50" {% if ohost %}value="{{ ohost }}"{% elif entry %}value="{{ entry['request']['host'] }}"{% end %} placeholder="google.com" />
+      <input type="text" name="ohost" class="large-field" {% if ohost %}value="{{ ohost }}"{% elif entry %}value="{{ entry['request']['host'] }}"{% end %} placeholder="google.com" />
     </div>
     
 </div>
@@ -54,7 +54,7 @@
 
     <div class="pure-control-group">
       <label for="dhost">Host</label>
-      <input type="text" name="dhost" size="50" {% if dhost %}value="{{ dhost }}"{% end %} placeholder="google.com" />
+      <input type="text" name="dhost" class="large-field" {% if dhost %}value="{{ dhost }}"{% end %} placeholder="google.com" />
     </div>
 
     </div>
