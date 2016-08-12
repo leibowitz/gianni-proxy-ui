@@ -45,6 +45,7 @@ table.table-fixed {
 
 .large-field {
 	width: 40em;
+	max-width: 80%;
 }
 
 .text-muted {
@@ -53,10 +54,12 @@ table.table-fixed {
 
 .header-key {
 	width: 15em;
+	max-width: 30%;
 }
 
 .header-value {
   width: 30em;
+  max-width: 60%;
 }
 
 .fixed-container {
