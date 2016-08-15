@@ -112,7 +112,7 @@ def get_body_content_type(body, content = None):
         ctype = None
     return ctype
 
-def nice_body(body, content=None, cssclass=None):
+def nice_body(body, content=None, cssclass=None, encoding='utf-8'):
     if not body:
         return None
     cssclasses = ['codehilite']
@@ -127,7 +127,7 @@ def nice_body(body, content=None, cssclass=None):
             lex = JsonLexer()
         else:
             try:
-                lex = get_lexer_for_mimetype(content)
+                lex = get_lexer_for_mimetype(content, encoding=encoding)
             except ClassNotFound as e:
                 return body
 
@@ -137,14 +137,14 @@ def nice_body(body, content=None, cssclass=None):
                 return tornado.escape.xhtml_escape(body)
             args = collections.OrderedDict(sorted(parsedbody))
             params = "\n".join([k.strip() + "=" + v for k, v in args.iteritems()])
-            return highlight(params, IniLexer(), HtmlFormatter(cssclass=classes))
+            return highlight(params, IniLexer(), HtmlFormatter(cssclass=classes, encoding=encoding))
         elif isinstance(lex, JsonLexer):
             try:
                 return highlight(json.dumps(json.loads(body), indent=4), JsonLexer(), HtmlFormatter(cssclass=classes))
             except ValueError as e:
                 pass
 
-    return highlight(body, lex, HtmlFormatter(cssclass=classes))
+    return highlight(body, lex, HtmlFormatter(cssclass=classes, encoding=encoding))
     #except Exception as e:
     #    raise e
     #    print e
