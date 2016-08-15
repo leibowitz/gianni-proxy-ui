@@ -135,6 +135,7 @@ def nice_body(body, content=None, cssclass=None, encoding='utf-8'):
             parsedbody = urlparse.parse_qsl(body, keep_blank_values=True)
             if body and not parsedbody:
                 return tornado.escape.xhtml_escape(body)
+            parsedbody = [(x.strip(), y) for [x, y] in parsedbody]
             args = collections.OrderedDict(sorted(parsedbody))
             params = "\n".join([k.strip() + "=" + v for k, v in args.iteritems()])
             return highlight(params, IniLexer(), HtmlFormatter(cssclass=classes, encoding=encoding))
