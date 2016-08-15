@@ -5,6 +5,7 @@ import skinfer
 import json
 import urlparse
 import urllib
+from bson.objectid import ObjectId
 
 from shared import util
 
@@ -68,7 +69,7 @@ class DocumentationEndpointHandler(BaseRequestHandler):
         collection = self.settings['db'].proxyservice['docsettings']
         row = yield collection.find_one({'host': host})
 
-        self.render("documentationhost.html", host=host, entries=entries, tree=tree, render_tree=self.render_tree, render_document=self.render_document, currentpath=path, method=method, row=row)
+        self.render("documentationhost.html", host=host, entries=entries, tree=tree, render_tree=self.render_tree, render_document=self.render_document, currentpath=path, method=method, row=row, ObjectId=ObjectId)
 
     def render_tree(self, host, tree, currentpath=None, fullpath = '', method=None, hostsettings=None):
         return self.render_string("documentationtree.html", host=host, tree=tree, render_tree=self.render_tree, fullpath=fullpath+'/', currentpath=currentpath, currentmethod=method, hostsettings=hostsettings)
