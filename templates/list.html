@@ -253,7 +253,7 @@ function filterRow(row, text)
   }
   return true;
 }
-$('#filterText').on('keyup', function(evt){
+$('#filterText').on('search', function(evt){
     var text = $('#filterText').val().trim();
     if (text.length > 0) {
       var row;
