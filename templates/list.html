@@ -35,7 +35,7 @@
 {% end %}
 {% block content %}
 <div class="top-button">
-<button class="pure-button pure-button-primary button-success" id="onPlayPause"><i id="record-icon" class="mdi mdi-play"></i> <span id="record-text">Start Recording</span></button>
+<button class="pure-button pure-button-primary button-success" style="display:none;" id="onPlayPause"><i id="record-icon" class="mdi mdi-play"></i> <span id="record-text">Start Recording</span></button>
 <div class="top-right">
 {% if host %}<a class="pure-button" href="{% if origin %}/origin/{{ origin }}{% else %}/all{% end %}"><i class="mdi mdi-close-circle"></i> Host: {{ host }}</a>{% end %}
 {% if origin %}<a class="pure-button" href="{% if host %}/host/{{ host }}{% else %}/all{% end %}"><i class="mdi mdi-close-circle"></i> Origin: {{ origin }}</a>{% end %}
@@ -219,12 +219,12 @@ createSocket(origin);
 
 function setStatus(status) {
   if (!status) {
-    $('#onPlayPause').toggleClass("recording");
+    $('#onPlayPause').css('display', 'inline').removeClass("recording");
     $('#record-text').text('Start Recording');
     $('#record-icon').removeClass("mdi-stop").addClass("mdi-start");
     document.title = 'MockProxy{% if origin %} - {{ origin }}{% end %} (not listening)';
   } else {
-    $('#onPlayPause').toggleClass("recording");
+    $('#onPlayPause').css('display', 'inline').addClass("recording");
     $('#record-text').text('Stop Recording');
     $('#record-icon').removeClass("mdi-start").addClass("mdi-stop");
     document.title = '● Recording {% if origin %}{{ origin }}{% end %}';
