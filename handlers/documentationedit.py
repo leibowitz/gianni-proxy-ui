@@ -24,7 +24,6 @@ class DocumentationEditHandler(BaseRequestHandler):
         if not entry:
             raise tornado.web.HTTPError(404)
 
-        print entry
         reqheaders = entry['request']['headers'] if 'request' in entry and 'headers' in entry['request'] else {}
         respheaders = entry['response']['headers'] if 'response' in entry and 'headers' in entry['response'] else {}
 
@@ -107,7 +106,6 @@ class DocumentationEditHandler(BaseRequestHandler):
 
         yield collection.update({'_id': self.get_id(ident)}, {'$set': up})
         item['_id'] = ident
-        print item
 
         self.render("documentationedit.html", entry=item, tryagain=False, reqheaders=reqheaders, respheaders=respheaders, respfmt=respfmt, reqfmt=reqfmt, scheme=scheme)
 
