@@ -221,12 +221,12 @@ function setStatus(status) {
   if (!status) {
     $('#onPlayPause').css('display', 'inline').removeClass("recording");
     $('#record-text').text('Start Recording');
-    $('#record-icon').removeClass("mdi-stop").addClass("mdi-start");
+    $('#record-icon').removeClass("mdi-stop").addClass("mdi-play");
     document.title = 'MockProxy{% if origin %} - {{ origin }}{% end %} (not listening)';
   } else {
     $('#onPlayPause').css('display', 'inline').addClass("recording");
     $('#record-text').text('Stop Recording');
-    $('#record-icon').removeClass("mdi-start").addClass("mdi-stop");
+    $('#record-icon').removeClass("mdi-play").addClass("mdi-stop");
     document.title = '● Recording {% if origin %}{{ origin }}{% end %}';
   }
 }
