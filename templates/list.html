@@ -244,7 +244,7 @@ $('#onPlayPause').on('click', function(evt){
 });
 function setHidden(row, s)
 {
-    return s ? row.attr('class', 'hidden') : row.removeAttr('class');
+    return s ? (!row.hasClass('hidden') ? row.addClass('hidden') : row) : row.removeClass('hidden');
 }
 function filterRow(row, text)
 {
