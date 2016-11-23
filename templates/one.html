@@ -18,6 +18,10 @@
 <span class="url">
 {% if 'scheme' in item['request'] %}{{ item['request']['scheme'] }}://{% end %}<a href="{% if origin %}/origin/{{ origin }}{% end %}/host/{{ item['request']['host'] }}">{{ item['request']['host'] }}</a>{{ item['request']['path'] }}
 </span>
+
+      <div class="top-right">
+          <span class="time">{{ relativedelta(seconds=item['request']['time']).normalized().microseconds/1000 }}ms</span>
+      </div>
 </h2>
 
     </div>
