@@ -19,7 +19,7 @@ class RulesHandler(BaseRequestHandler):
         if origin:
             query['origin'] = {'$in': [origin, None]}
         if host:
-            query['host'] = {'$in': [host, None]}
+            query['host'] = {'$regex': '.*' + host + '.*'}
         # merge all conditions with an and
         if len(query) > 1:
             query = {'$and': map(lambda x: {x[0]: x[1]}, query.iteritems())}
