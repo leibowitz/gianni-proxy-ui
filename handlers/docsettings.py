@@ -14,7 +14,7 @@ class DocSettingsHandler(BaseRequestHandler):
         collection = self.settings['db'].proxyservice['docsettings']
         req = {}
         if host:
-            req['host'] = host
+            req['host'] = {'$regex': '.*' + host + '.*'}
 
         cursor = collection.find(req).sort([('host', 1)])
         res = cursor.to_list(100)
