@@ -9,13 +9,22 @@ class DocSettingsHandler(BaseRequestHandler):
     @tornado.web.asynchronous
     @gen.engine
     def get(self):
+        host = self.get_argument('host', None)
+
         collection = self.settings['db'].proxyservice['docsettings']
-        cursor = collection.find({}).sort([('host', 1)])
+        req = {}
+        if host:
+            req['host'] = host
+
+        cursor = collection.find(req).sort([('host', 1)])
         res = cursor.to_list(100)
         entries = yield res
 
-        collection = self.settings['db'].proxyservice['documentation']
-        domains = yield collection.distinct('request.host')
+        if host:
+            domains = [host]
+        else:
+            collection = self.settings['db'].proxyservice['documentation']
+            domains = yield collection.distinct('request.host')
 
         items = {}
         for item in entries:
