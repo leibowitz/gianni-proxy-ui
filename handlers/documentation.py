@@ -12,7 +12,7 @@ class DocumentationHandler(BaseRequestHandler):
         host = self.get_argument('host', None)
         req = {}
         if host:
-            req['request.host'] = host
+            req = {'request.host': {'$regex': '.*' + host + '.*'}}
         cursor = collection.find(req).sort([('request.host', 1), ('request.path', 1), ('response.status', 1)])
         res = cursor.to_list(100)
         entries = yield res
