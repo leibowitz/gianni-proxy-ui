@@ -19,8 +19,8 @@
     <th>
       Host
     </th>
-    <!--<th class="delete">
-    </th>-->
+    <th class="delete">
+    </th>
   </thead>
   <tbody>
 {% for num, key in enumerate(sorted(items)) %}
@@ -40,13 +40,15 @@
       {{ row['host'] }}
       </a>
     </td>
-    <!--<td class="delete">
+    <td class="delete">
       <form method="post" name="deleteForm">
         <input type="hidden" name="ident" value="{{ row['_id'] }}" />
         <input type="hidden" name="action" value="delete" />
+          {% if row['exists'] %}
           <button class="btn" name="delete"><i class="fa fa-times"></i></button>
+          {% end %}
       </form>
-    </td>-->
+    </td>
   </tr>
 {% end %}
   </tbody>

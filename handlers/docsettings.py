@@ -17,14 +17,14 @@ class DocSettingsHandler(BaseRequestHandler):
         collection = self.settings['db'].proxyservice['documentation']
         domains = yield collection.distinct('request.host')
 
-        print entries, domains
         items = {}
         for item in entries:
+            item['exists'] = True
             items[ item['host'] ] = item
 
         for host in domains:
             if host not in items:
-                items[ host ] = {'_id': ObjectId(), 'host': host, 'active': False}
+                items[ host ] = {'_id': ObjectId(), 'host': host, 'active': False, 'exists': False}
 
         self.render("docsettings.html", items=items)
 
