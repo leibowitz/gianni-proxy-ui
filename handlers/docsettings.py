@@ -10,7 +10,7 @@ class DocSettingsHandler(BaseRequestHandler):
     @gen.engine
     def get(self):
         collection = self.settings['db'].proxyservice['docsettings']
-        cursor = collection.find({}).sort([('request.host', 1)])
+        cursor = collection.find({}).sort([('host', 1)])
         res = cursor.to_list(100)
         entries = yield res
 
