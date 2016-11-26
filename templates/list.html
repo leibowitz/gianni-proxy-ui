@@ -192,8 +192,8 @@ function createSocket(origin)
         row.appendTo("table > tbody");
         setStripedClass(row);
 
-        // Use a threshold to avoid difference of a few pixels causing problems
-        var threshold = 30;
+        // Use a threshold of 5 rows to enable scrolling
+        var threshold = row.height() * 5;
         var shouldScroll = sizeDiff < threshold;
         if (shouldScroll && doNotScroll == null) {
             scrollToBottom(0);
