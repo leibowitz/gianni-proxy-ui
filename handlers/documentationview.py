@@ -9,6 +9,7 @@ import requests
 from pygments import highlight
 from pygments.lexers import BashLexer
 from pygments.formatters import HtmlFormatter
+from dateutil.relativedelta import relativedelta
 
 from base import BaseRequestHandler
 from shared import util
@@ -86,5 +87,6 @@ class DocumentationViewHandler(BaseRequestHandler):
                 socketuuid=None,
                 origin=origin,
                 host=host,
+                relativedelta=relativedelta,
                 from_doc=True)
 
