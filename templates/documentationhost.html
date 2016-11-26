@@ -9,11 +9,6 @@
 
   <div class="layout">
     <div class="box-header">
-      {% if method %}
-      <div class="top-right top-right-method">
-      <span class="method-{{ method }}">{{ method }}</span>
-      </div>
-      {% else %}
       {% set itemid = row['_id'] if row is not None else ObjectId() %}
       <div class="top-right">
       <form name="activateForm" method="post">
@@ -24,8 +19,11 @@
         <label for="cmn-toggle-{{ itemid }}"></label>
       </form>
       </div>
-      {% end %}
-      <h2 class="url"><a href="{% if currentpath %}/documentation/host/{{ host }}{% else %}/docsettings/{{ itemid }}?host={{ host }}{% end %}">{{ host }}</a>{% if currentpath %}{{ currentpath }}{% end %}</h2>
+      <h2 class="url">
+        {% if method %}
+        <span class="method-{{ method }}">{{ method }}</span>
+        {% end %}
+        <a href="{% if currentpath %}/documentation/host/{{ host }}{% else %}/docsettings/{{ itemid }}?host={{ host }}{% end %}">{{ host }}</a>{% if currentpath %}{{ currentpath }}{% end %}</h2>
     </div>
   </div>
 </div>
