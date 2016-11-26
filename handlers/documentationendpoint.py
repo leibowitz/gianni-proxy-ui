@@ -50,11 +50,15 @@ class DocumentationEndpointHandler(BaseRequestHandler):
             reqbody = None
             if 'body' in entries[k]['request'] and entries[k]['request']['body']:
                 reqbody = entries[k]['request']['body']
+                entries[k]['request']['content-type'] = util.get_content_type(entry['request']['headers'])
             elif 'request' in entry and 'fileid' in entry['request']:
                 reqbody, entries[k]['request']['content-type'] = yield self.get_gridfs_body(entry['request']['fileid'], entry['request']['headers'])
 
-            if 'content-type' in entries[k]['request'] and entries[k]['request']['content-type'] == 'application/x-www-form-urlencoded' and reqbody:
-                entries[k]['request']['body'] = urlparse.parse_qsl(reqbody, keep_blank_values=True)
+            if 'content-type' in entries[k]['request'] and reqbody:
+                if entries[k]['request']['content-type'] == 'application/x-www-form-urlencoded':
+                    entries[k]['request']['body'] = urlparse.parse_qsl(reqbody, keep_blank_values=True)
+                else:
+                    entries[k]['request']['body'] = self.get_formatted_body(reqbody, entries[k]['request']['content-type'], 'break-all')
 
             if 'response' in entry:
                 if 'fileid' in entry['response']:
