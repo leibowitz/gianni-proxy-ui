@@ -2,7 +2,7 @@
 <link href="/static/default.css" media="all" rel="stylesheet" type="text/css" />
 {% end %}
 {% for key, entry in enumerate(entries) %}
-  <span class="top-right content-schema response-content-{{ entry['response']['status'] }}" {% if key != 0 %}style="display: none;"{% end %}>
+  <span class="top-right content-schema response-content-{{ entry['_id'] }}" {% if key != 0 %}style="display: none;"{% end %}>
   <a class="pure-button" href="/rules/add?item={{ entry['_id'] }}&doc=1&host={{ entry['request']['host'] }}">Save</a>
   <a class="pure-button" href="/request?item={{ entry['_id'] }}&doc=1">Resend</a>
   <a class="pure-button" href="/documentation/edit/{{ entry['_id'] }}">Edit</a>
@@ -15,7 +15,7 @@
 <ul class="pure-menu-list statuses">
 {% for key, item in enumerate(entries) %}
 <li class="pure-menu-item {% if key == 0 %}pure-menu-selected{% end %}">
-<a class="pure-menu-link response-status" data-target="{{ item['response']['status'] }}">
+<a class="pure-menu-link response-status" data-target="{{ item['_id'] }}">
 <span class="status-{{ (item['response']['status']/100)*100 }}">{{ item['response']['status'] }}</span>
 </a>
 </li>
@@ -30,7 +30,7 @@
 <h3 class="capitalize no-top-padding no-top-margin">Headers</h3>
 
 {% for key, entry in enumerate(entries) %}
-<div class="content-schema response-content-{{ entry['response']['status'] }}" {% if key != 0 %}style="display: none;"{% end %}>
+<div class="content-schema response-content-{{ entry['_id'] }}" {% if key != 0 %}style="display: none;"{% end %}>
 
 <table class="headers full-width table-fixed">
 {% for num, key in enumerate(sorted(entry['request']['headers'])) %}
@@ -121,7 +121,7 @@
 
 <div class="doc-view box-body b-t">
 {% for key, entry in enumerate(entries) %}
-<div class="content-schema response-content-{{ entry['response']['status'] }}" {% if key != 0 %}style="display: none;"{% end %}>
+<div class="content-schema response-content-{{ entry['_id'] }}" {% if key != 0 %}style="display: none;"{% end %}>
 <h1 class="center">Response</h1>
 
 {% if entry and entry['response']['headers'] %}
@@ -161,14 +161,14 @@
 <div class="top-margin">
 {% for key, item in enumerate(entries) %}
 <div class="pure-menu pure-menu-horizontal">
-<ul class="pure-menu-list content-schema content-tabs response-content-{{ item['response']['status'] }}" {% if key != 0 %}style="display: none;"{% end %}>
+<ul class="pure-menu-list content-schema content-tabs response-content-{{ item['_id'] }}" {% if key != 0 %}style="display: none;"{% end %}>
 {% if item['response']['body'] %}
 <li class="pure-menu-item {% if True or not 'schema' in item['response'] %}pure-menu-selected{% end %}">
-<a class="response-content pure-menu-link" data-target="response-content-{{ item['response']['status'] }}-body">Example</a>
+<a class="response-content pure-menu-link" data-target="response-content-{{ item['_id'] }}-body">Example</a>
 </li>
 {% end %}
 {% if 'schema' in item['response'] %}
-<li class="pure-menu-item {% if not item['response']['body'] %}pure-menu-selected{% end %}"><a class="response-content pure-menu-link" data-target="response-content-{{ item['response']['status'] }}-json">Schema</a>
+<li class="pure-menu-item {% if not item['response']['body'] %}pure-menu-selected{% end %}"><a class="response-content pure-menu-link" data-target="response-content-{{ item['_id'] }}-json">Schema</a>
 </li>
 {% end %}
 </ul>
@@ -177,9 +177,9 @@
 </div>
 
 {% for key, item in enumerate(entries) %}
-<div class="content-schema response-content-{{ item['response']['status'] }}" {% if key != 0 %}style="display: none;"{% end %}>
+<div class="content-schema response-content-{{ item['_id'] }}" {% if key != 0 %}style="display: none;"{% end %}>
 <ul class="list-content">
-<li {% if False and 'schema' in item['response'] %}style="display: none;"{% end %} id="response-content-{{ item['response']['status'] }}-body" class="response-content-data response-content-data-body">
+<li {% if False and 'schema' in item['response'] %}style="display: none;"{% end %} id="response-content-{{ item['_id'] }}-body" class="response-content-data response-content-data-body">
   <div>
 
    {% if item['response']['body'] %}
@@ -188,7 +188,7 @@
   </div>
 </li>
 {% if 'schema' in item['response'] %}
-<li id="response-content-{{ item['response']['status'] }}-json" class="response-content-data response-content-data-json"{% if item['response']['body'] %} style="display: none;"{% end %}>
+<li id="response-content-{{ item['_id'] }}-json" class="response-content-data response-content-data-json"{% if item['response']['body'] %} style="display: none;"{% end %}>
 <div>
 {% raw render_schema(item['response']['schema']) %}
 </div>
