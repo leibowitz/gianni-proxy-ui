@@ -43,12 +43,12 @@
 <span class="status-{{ (row['response']['status']/100)*100 }}">{{ row['response']['status'] }}</span>
     </td>
     <td>
-      <a href="/documentation/host/{{ row['request']['host'] }}">
+      <a class="underline" href="/documentation/host/{{ row['request']['host'] }}">
       {{ row['request']['host'] }}
       </a>
     </td>
     <td>
-      <a href="/documentation/endpoint/{{ row['request']['host'] }}?{% if row['request']['path'] %}path={{ row['request']['path'] }}&{% end %}method={{ row['request']['method'] }}">
+      <a class="underline" href="/documentation/endpoint/{{ row['request']['host'] }}?{% if row['request']['path'] %}path={{ row['request']['path'] }}&{% end %}method={{ row['request']['method'] }}">
       {% if row['request']['path'] %}{{ row['request']['path'] }}{% else %}/{% end %}
       </a>
     </td>
