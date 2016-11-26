@@ -19,7 +19,7 @@
         <a href="/origin/{{ item }}">{{ item }}</a>
     </td>
     <td>
-        {% if agent %}{{ agent }}{% end %}
+      <a href="/origins/{{ item }}">{% if agent %}{{ agent }}{% end %}</a>
     </td>
   </tr>
 {% end %}
