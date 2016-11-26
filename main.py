@@ -36,7 +36,7 @@ if __name__ == "__main__":
         (r"/origins/(?P<ident>[^\/]+)", OriginsEditHandler),
         (r"/documentation", DocumentationHandler),
         (r"/documentation/host/(?P<host>[^\/]+)", DocumentationHostHandler),
-        (r"/documentation/endpoint/(?P<host>[^\/]+)", DocumentationEndpointHandler),
+        (r"/documentation/endpoint/(?P<reqhost>[^\/]+)", DocumentationEndpointHandler),
         (r"/documentation/view/(?P<ident>[^\/]+)", DocumentationViewHandler),
         (r"/documentation/edit/(?P<ident>[^\/]+)", DocumentationEditHandler),
         (r"/documentation/add", DocumentationAddHandler),

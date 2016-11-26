@@ -8,14 +8,14 @@
 <ul class="endpoint">
     {% for method, statuses in values['methods'].iteritems() %}
 	<li>
-		<a class="tree-link{% if fullpath + path == currentpath and method == currentmethod %} tree-link-selected{% end %}" href="/documentation/endpoint/{{ host }}?path={{ fullpath }}{{ path }}&method={{ method }}">
+		<a class="tree-link{% if fullpath + path == currentpath and method == currentmethod %} tree-link-selected{% end %}" href="/documentation/endpoint/{{ treehost }}?path={{ fullpath }}{{ path }}&method={{ method }}&host={{ host }}" title="{{ fullpath }}{{ path }}">
 			<span class="method method-{{ method }}">{{ method }}</span> <span class="path-tree">{{ fullpath }}{{ path }}</span>
 		</a>
 	</li>
 	{% end %}
 </ul>
 	</div>
-	{% raw render_tree(host, values, currentpath, fullpath + path, currentmethod, hostsettings) %}
+	{% raw render_tree(treehost, values, currentpath, fullpath + path, currentmethod, hostsettings, host) %}
 </li>
 {% end %}
 </ul>

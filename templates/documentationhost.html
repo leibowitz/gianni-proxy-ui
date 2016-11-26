@@ -31,9 +31,11 @@
 </div>
 
 
-{% if tree %}
+{% if alltree %}
       <div class="tree box">
-{% raw render_tree(host, tree, currentpath, '', method, row) %}
+{% for treehost, tree in alltree.iteritems() %}
+{% raw render_tree(treehost, tree, currentpath, '', method, row, host) %}
+{% end %}
       </div>
 {% end %}
 <div class="box box-with-tree">
@@ -41,7 +43,7 @@
   {% if method is not None %}
   <div class="layout layout-with-tree">
     <div class="box-body">
-      {% raw render_document(entries, method, host) %}
+      {% raw render_document(entries, method, host, reqhost) %}
       <div class="clear"></div>
     </div>
 

@@ -15,12 +15,15 @@ class DocumentationEndpointHandler(BaseRequestHandler):
 
     @tornado.web.asynchronous
     @gen.engine
-    def get(self, host):
+    def get(self, reqhost):
+        host = self.get_argument('host', reqhost)
         path = self.get_argument('path', None)
         method = self.get_argument('method', None)
 
         collection = self.settings['db'].proxyservice['documentation']
-        cursor = collection.find({'request.host': host}).sort([('request.path', 1), ('response.status', 1)])
+
+        req = {'request.host': {'$regex': '.*' + host + '.*'}}
+        cursor = collection.find(req).sort([('request.path', 1), ('response.status', 1)])
         res = cursor.to_list(100)
         endpoints = yield res
 
@@ -29,13 +32,18 @@ class DocumentationEndpointHandler(BaseRequestHandler):
 
         for item in endpoints:
             parts = filter(None, item['request']['path'].split('/'))
-            o = tree
+            o = tree[ item['request']['host'] ]
             for part in parts:
                 o = o['children'][part]
 
             o['methods'][item['request']['method']][item['response']['status']] = item['_id']
 
-        entries = yield collection.find({'request.host': host, 'request.path': path, 'request.method': method}).sort([('response.status', 1)]).to_list(100)
+        req['request.path'] = path
+        req['request.method'] = method
+
+        if len(req) > 1:
+            req = {'$and': map(lambda x: {x[0]: x[1]}, req.iteritems())}
+        entries = yield collection.find(req).sort([('response.status', 1)]).to_list(100)
 
         for k, entry in enumerate(entries):
             entries[k]['request']['headers'] = self.nice_headers(entry['request']['headers'])
@@ -63,19 +71,18 @@ class DocumentationEndpointHandler(BaseRequestHandler):
                     entries[k]['response']['schema'] = skinfer.generate_schema(json.loads(entry['response']['body']))
                     #genson.Schema().add_object(json.loads(resbody)).to_dict()
                 
-                print entries[k]['response']['content-type']
                 entries[k]['response']['body'] = self.get_formatted_body(entries[k]['response']['body'], entries[k]['response']['content-type'], 'break-all')
 
         collection = self.settings['db'].proxyservice['docsettings']
         row = yield collection.find_one({'host': host})
 
-        self.render("documentationhost.html", host=host, entries=entries, tree=tree, render_tree=self.render_tree, render_document=self.render_document, currentpath=path, method=method, row=row, ObjectId=ObjectId)
+        self.render("documentationhost.html", host=host, reqhost=reqhost, entries=entries, alltree=tree, render_tree=self.render_tree, render_document=self.render_document, currentpath=path, method=method, row=row, ObjectId=ObjectId)
 
-    def render_tree(self, host, tree, currentpath=None, fullpath = '', method=None, hostsettings=None):
-        return self.render_string("documentationtree.html", host=host, tree=tree, render_tree=self.render_tree, fullpath=fullpath+'/', currentpath=currentpath, currentmethod=method, hostsettings=hostsettings)
+    def render_tree(self, treehost, tree, currentpath=None, fullpath = '', method=None, hostsettings=None, host=None):
+        return self.render_string("documentationtree.html", treehost=treehost, tree=tree, render_tree=self.render_tree, fullpath=fullpath+'/', currentpath=currentpath, currentmethod=method, hostsettings=hostsettings, host=host)
 
-    def render_document(self, entries=[], method=None, host=None):
-        return self.render_string("documentationendpoint.html", entries=entries, render_schema=self.render_schema, method=method, host=host)
+    def render_document(self, entries=[], method=None, host=None, reqhost=None):
+        return self.render_string("documentationendpoint.html", entries=entries, render_schema=self.render_schema, method=method, host=host, reqhost=reqhost)
 
     def render_schema(self, schema):
         return self.render_string("documentationschema.html", schema=schema, render_schema=self.render_schema)
