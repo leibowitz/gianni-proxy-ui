@@ -147,36 +147,36 @@ table.fixed-header th {
   padding: 1em 0;
 }
 
-.status-200 {
+.status-200, .status-200:link, .status-200:visited {
 	color: #4caf50;
 }
 
-.status-300 {
+.status-300, .status-300:link, .status-300:visited {
 	color: #00bcd4;
 }
 
-.status-400 {
+.status-400, .status-400:link, .status-400:visited {
 	color: #c62828;
 }
 
-.status-500 {
+.status-500, .status-500:link, .status-500:visited {
 	color: #f44336;
 }
 
 
-.method-GET {
+.method-GET, .method-GET:link, .method-GET:visited {
 	color: #0D679C;
 }
 
-.method-POST {
+.method-POST, .method-POST:link, .method-POST:visited {
 	color: #8e44ad;
 }
 
-.method-DELETE {
+.method-DELETE, .method-DELETE:link, .method-DELETE:visited {
 	color: #c0392b;
 }
 
-.method-PUT {
+.method-PUT, .method-PUT:link, .method-PUT:visited {
 	color: #e67e22;
 }
 
