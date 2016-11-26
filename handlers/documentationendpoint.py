@@ -28,7 +28,10 @@ class DocumentationEndpointHandler(BaseRequestHandler):
         tree = util.tree()
 
         for item in endpoints:
-            parts = filter(None, item['request']['path'].split('/'))
+            if item['request']['path']:
+                parts = filter(None, item['request']['path'].split('/'))
+            else:
+                parts = []
             o = tree
             for part in parts:
                 o = o['children'][part]
