@@ -44,7 +44,7 @@
   {% end %}
     </td>
     <td class="delete">
-      <form method="post" name="deleteForm">
+      <form method="post" name="deleteHeaderForm">
         <input type="hidden" name="ident" value="{{ entry['_id'] }}" />
         <input type="hidden" name="key" value="{{ key }}" />
         <input type="hidden" name="type" value="reqheader" />
@@ -70,7 +70,7 @@
     {{ value }}
     </td>
     <td class="delete">
-      <form method="post" name="deleteForm">
+      <form method="post" name="deleteHeaderForm">
         <input type="hidden" name="ident" value="{{ entry['_id'] }}" />
         <input type="hidden" name="key" value="{{ key }}" />
         <input type="hidden" name="type" value="query" />
@@ -97,7 +97,7 @@
     {{ value }}
     </td>
     <td class="delete">
-      <form method="post" name="deleteForm">
+      <form method="post" name="deleteHeaderForm">
         <input type="hidden" name="ident" value="{{ entry['_id'] }}" />
         <input type="hidden" name="key" value="{{ key }}" />
         <input type="hidden" name="action" value="delete" />
@@ -139,7 +139,7 @@
   {% end %}
     </td>
     <td class="delete">
-      <form method="post" name="deleteForm">
+      <form method="post" name="deleteHeaderForm">
         <input type="hidden" name="ident" value="{{ entry['_id'] }}" />
         <input type="hidden" name="key" value="{{ key }}" />
         <input type="hidden" name="action" value="delete" />
@@ -214,7 +214,7 @@ $('.response-content').on('click', function(evt){
   $(evt.currentTarget).parent().addClass('pure-menu-selected');
   $('#'+$(evt.currentTarget).data('target')).show();
 });
-$('form[name=deleteForm] button[name=delete]').on('click', function(evt){
+$('form[name=deleteHeaderForm] button[name=delete]').on('click', function(evt){
   var t = evt.currentTarget;
   evt.preventDefault();
   if (confirm("Are you sure you want to remove this from the definition?")) {
