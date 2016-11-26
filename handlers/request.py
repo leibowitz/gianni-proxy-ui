@@ -60,8 +60,6 @@ class RequestHandler(BaseRequestHandler):
         proxyport = self.settings['proxyport']
         host = proxyhost + ':' + str(proxyport)
         resp = requests.request(method, url, params=params, data=body, headers=self.nice_headers(headers))#, proxies={'http':host, 'https':host})
-        #print resp.text, resp.status_code, resp.url, resp.headers
-        #print body, requestheaders, method, url
 
         suid = bson.binary.Binary(uuid.uuid4().bytes, 0)
         data = {
@@ -83,7 +81,6 @@ class RequestHandler(BaseRequestHandler):
             'date': datetime.datetime.utcnow(),
             }
 
-	print type(resp.headers)
 	ctype = util.get_content_type(self.nice_headers(headers))
 	reqCtype = util.get_body_content_type(body, ctype)
 
@@ -98,26 +95,18 @@ class RequestHandler(BaseRequestHandler):
 	if not resEnc:
 	    resEnc = util.get_content_encoding(self.nice_headers(resp.headers))
 
-	print reqid, body, reqCtype
-	print resid, resp.text, resCtype
-
 	gfs = motor.MotorGridFS(self.settings['db'].proxyservice, 'fs')
 
 	if body: 
-	    print 'saving request', reqCtype, reqEnc
 	    rqid = yield gfs.put(body, _id=reqid, filename=str(reqid), contentType=reqCtype, encoding=reqEnc)
 	    data['request']['fileid'] = reqid
 
 	if resp.text:
-	    print resp.headers
-	    print 'saving response', resCtype, resEnc
 	    if not resEnc:
 		resEnc = 'utf8'
 	    rsid = yield gfs.put(resp.text, _id=resid, filename=str(resid), contentType=resCtype, encoding=resEnc)
 	    data['response']['fileid'] = resid
 
-        print "Inserting"
-        #print data
         collection = self.settings['db'].proxyservice['log_logentry']
         itemid = yield collection.insert(data)
         self.redirect('item/'+str(itemid))
