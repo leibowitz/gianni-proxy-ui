@@ -28,7 +28,8 @@ table.table-fixed {
 }
 
 .box-with-tree {
-  margin-left: 20em;
+  margin-left: 29em;
+  overflow-y: scroll;
 }
 
 .nobg.codehilite, .nobg pre {
@@ -504,7 +505,7 @@ h4 {
 }
 
 .tree-link {
-  padding: 5px 0;
+  display: block;
   font-weight: 200;
 }
 
@@ -518,11 +519,13 @@ h4 {
 
 .path-tree {
   color: black;
-  width: 13em;
-  display: inline-block;
+  vertical-align: bottom;
+}
+
+.path-container {
   text-overflow: ellipsis;
   overflow: hidden;
-  vertical-align: bottom;
+  white-space: nowrap;
 }
 
 .center {

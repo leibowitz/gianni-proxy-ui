@@ -7,7 +7,7 @@
 	<div>
 <ul class="endpoint">
     {% for method, statuses in values['methods'].iteritems() %}
-	<li>
+	<li class="path-container">
 		<a class="tree-link{% if fullpath + path == currentpath and method == currentmethod %} tree-link-selected{% end %}" href="/documentation/endpoint/{{ host }}?path={{ fullpath }}{{ path }}&method={{ method }}">
 			<span class="method method-{{ method }}">{{ method }}</span> <span class="path-tree">{{ fullpath }}{{ path }}</span>
 		</a>
