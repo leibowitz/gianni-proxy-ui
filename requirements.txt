@@ -10,3 +10,4 @@ pygments
 pytz
 uuid
 skinfer
+python-dateutil
