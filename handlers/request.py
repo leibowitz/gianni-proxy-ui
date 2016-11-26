@@ -27,16 +27,16 @@ class RequestHandler(BaseRequestHandler):
             if entry and entry['request']:
                 headers = entry['request']['headers']
                 if 'Content-Length' in headers:
-		    del headers['Content-Length']
+                    del headers['Content-Length']
                 url = entry['request']['url'] if 'url' in entry['request'] else (entry['request']['scheme'] if 'scheme' in entry['request'] else 'http') + '://' + entry['request']['host'] + entry['request']['path']
                 method = entry['request']['method']
                 requestquery = entry['request']['query']
                 requestheaders = self.nice_headers(headers)
 
-		if 'fileid' in entry['request']:
-		    body, ctype = yield self.get_gridfs_body(entry['request']['fileid'], requestheaders)
-		elif 'body' in entry['request']:
-		    body = entry['request']['body']
+                if 'fileid' in entry['request']:
+                    body, ctype = yield self.get_gridfs_body(entry['request']['fileid'], requestheaders)
+                elif 'body' in entry['request']:
+                    body = entry['request']['body']
 
         self.render("request.html", headers=headers, method=method, body=body, url=url, methods=self.methods, tryagain=False)
 
@@ -81,31 +81,31 @@ class RequestHandler(BaseRequestHandler):
             'date': datetime.datetime.utcnow(),
             }
 
-	ctype = util.get_content_type(self.nice_headers(headers))
-	reqCtype = util.get_body_content_type(body, ctype)
+        ctype = util.get_content_type(self.nice_headers(headers))
+        reqCtype = util.get_body_content_type(body, ctype)
 
-	ctype = util.get_content_type(self.nice_headers(resp.headers))
-	resCtype = util.get_body_content_type(resp.text, ctype)
+        ctype = util.get_content_type(self.nice_headers(resp.headers))
+        resCtype = util.get_body_content_type(resp.text, ctype)
 
         reqid = bson.objectid.ObjectId()
         resid = bson.objectid.ObjectId()
 
-	reqEnc = util.get_content_encoding(self.nice_headers(headers))
-	resEnc = resp.encoding
-	if not resEnc:
-	    resEnc = util.get_content_encoding(self.nice_headers(resp.headers))
+        reqEnc = util.get_content_encoding(self.nice_headers(headers))
+        resEnc = resp.encoding
+        if not resEnc:
+            resEnc = util.get_content_encoding(self.nice_headers(resp.headers))
 
-	gfs = motor.MotorGridFS(self.settings['db'].proxyservice, 'fs')
+        gfs = motor.MotorGridFS(self.settings['db'].proxyservice, 'fs')
 
-	if body: 
-	    rqid = yield gfs.put(body, _id=reqid, filename=str(reqid), contentType=reqCtype, encoding=reqEnc)
-	    data['request']['fileid'] = reqid
+        if body: 
+            rqid = yield gfs.put(body, _id=reqid, filename=str(reqid), contentType=reqCtype, encoding=reqEnc)
+            data['request']['fileid'] = reqid
 
-	if resp.text:
-	    if not resEnc:
-		resEnc = 'utf8'
-	    rsid = yield gfs.put(resp.text, _id=resid, filename=str(resid), contentType=resCtype, encoding=resEnc)
-	    data['response']['fileid'] = resid
+        if resp.text:
+            if not resEnc:
+                resEnc = 'utf8'
+            rsid = yield gfs.put(resp.text, _id=resid, filename=str(resid), contentType=resCtype, encoding=resEnc)
+            data['response']['fileid'] = resid
 
         collection = self.settings['db'].proxyservice['log_logentry']
         itemid = yield collection.insert(data)
