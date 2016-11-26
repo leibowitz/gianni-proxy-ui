@@ -48,8 +48,8 @@
       </a>
     </td>
     <td>
-      <a href="/documentation/endpoint/{{ row['request']['host'] }}?path={{ row['request']['path'] }}&method={{ row['request']['method'] }}">
-      {{ row['request']['path'] }}
+      <a href="/documentation/endpoint/{{ row['request']['host'] }}?{% if row['request']['path'] %}path={{ row['request']['path'] }}&{% end %}method={{ row['request']['method'] }}">
+      {% if row['request']['path'] %}{{ row['request']['path'] }}{% else %}/{% end %}
       </a>
     </td>
     <td class="delete">
