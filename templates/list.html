@@ -267,7 +267,7 @@ $('#filterText').on('search', function(evt){
         }
       });
     } else {
-      $('table > tbody > tr').removeAttr('class');
+      $('table > tbody > tr').removeClass('hidden');
       refreshStrip();
     }
     // Scroll to bottom
