@@ -9,6 +9,11 @@
   <a class="pure-button" href="/request?item={{ entry['_id'] }}&doc=1">Resend</a>
   <a class="pure-button" href="/documentation/edit/{{ entry['_id'] }}">Edit</a>
   <a class="pure-button" href="/documentation/view/{{ entry['_id'] }}">View</a>
+  <form class="inline" method="post" name="deleteEndpointForm" action="/documentation">
+   <input type="hidden" name="ident" value="{{ entry['_id'] }}" />
+   <input type="hidden" name="action" value="delete" />
+  <button class="pure-button" name="delete">Delete</button>
+  </form>
   </span>
 {% end %}
 <div class="pure-menu pure-menu-horizontal">
@@ -224,6 +229,16 @@ $('form[name=deleteHeaderForm] button[name=delete]').on('click', function(evt){
     $.post("/documentation/endpoint/{{ host }}", {ident: id, key: key, type: type, action: "delete"}, function(data, status) {
       var row = t.parentNode.parentNode.parentNode;
       row.parentNode.removeChild(row);
+    });
+  }
+});
+$('form[name=deleteEndpointForm] button[name=delete]').on('click', function(evt){
+  var t = evt.currentTarget;
+  evt.preventDefault();
+  if (confirm("Are you sure you want to remove this from the endpoint?")) {
+    var id = t.parentNode.querySelector('input[name=ident]').value;
+    $.post("/documentation", {ident: id, action: "delete"}, function(data, status) {
+     window.location.href = '/documentation/host/{{ host }}';
     });
   }
 });
