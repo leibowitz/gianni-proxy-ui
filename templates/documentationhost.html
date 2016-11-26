@@ -30,7 +30,7 @@
 
 
 {% if tree %}
-      <div class="tree box">
+      <div class="tree box" id="sticker">
 {% raw render_tree(host, tree, currentpath, '', method, row) %}
       </div>
 {% end %}
@@ -71,6 +71,7 @@
 </div>
 
 <script src="/static/jquery.min.js"></script>
+<script src="/static/jquery.sticky.js"></script>
 <script type="text/javascript">
     $('form[name=activateForm] input[type=checkbox]').on('click', function(evt){
       var id = evt.target.parentNode.querySelector('input[name=ident]').value;
@@ -79,5 +80,9 @@
       $.post("/docsettings", {ident: id, action: action, host: host});
       
     });
+
+  $(document).ready(function(){
+    $("#sticker").sticky({topSpacing:0});
+  });
 </script>
 {% end %}

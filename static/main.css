@@ -389,6 +389,15 @@ div.right {
   padding: 1rem;
 }
 
+.sticky-wrapper {
+  float: left;
+  width: 29em;
+}
+
+.tree.is-sticky {
+  background-color: black;
+}
+
 .text-md {
 	font-size: 1.125rem;
 }
