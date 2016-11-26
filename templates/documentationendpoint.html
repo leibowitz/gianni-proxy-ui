@@ -5,7 +5,7 @@
 
 {% for key, entry in enumerate(entries) %}
   <span class="top-right content-schema response-content-{{ entry['response']['status'] }}" {% if key != 0 %}style="display: none;"{% end %}>
-  <a class="pure-button" href="/rules/add?item={{ entry['_id'] }}&doc=1&host={{ entry['request']['host'] }}"><i class="mdi mdi-file-hidden"></i> Save</a>
+  <a class="pure-button" href="/rules/add?item={{ entry['_id'] }}&doc=1&host={{ entry['request']['host'] }}"><i class="mdi mdi-file-hidden"></i> Mock</a>
   <a class="pure-button" href="/request?item={{ entry['_id'] }}&doc=1"><i class="mdi mdi-send"></i> Resend</a>
   <a class="pure-button" href="/documentation/edit/{{ entry['_id'] }}">Edit</a>
   <a class="pure-button" href="/documentation/view/{{ entry['_id'] }}">View</a>
