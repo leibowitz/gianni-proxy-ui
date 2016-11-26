@@ -11,6 +11,10 @@ form {
   margin: 0;
 }
 
+form.inline {
+  display: inline-block;
+}
+
 table.table-fixed {
   table-layout: fixed;
 }
