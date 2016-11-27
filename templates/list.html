@@ -165,8 +165,8 @@ function createSocket(origin)
         // ignore this as we are not looking at this origin now
         return;
       }
-      var item_link = "<a target='_blank' href='/item/" + msg['_id']['$oid'] + "?" + (origin.length != 0 ? "origin="+ encodeURIComponent(origin) + (host ? "&" : "") : "") + (host ? "host=" + encodeURIComponent(host) : "") + "' title='"+ msg['request']['path'] + "'>";
-      var host_link = host ? item_link : "<a href='" + (origin.length != 0 ? "/origin/" + origin : "" ) + "/host/" + msg['request']['host'] + "'>";
+      var item_link = "/item/" + msg['_id']['$oid'] + "?" + (origin.length != 0 ? "origin="+ encodeURIComponent(origin) + (host ? "&" : "") : "") + (host ? "host=" + encodeURIComponent(host) : "");
+      var host_link = host ? "<a target='_blank' href='" + item_link + "'>" : "<a href='" + (origin.length != 0 ? "/origin/" + origin : "" ) + "/host/" + msg['request']['host'] + "'>";
       var row = $("<tr>" +
             "<td class='fixed-width-time'>" + moment(msg['date']['$date']).tz("{{ tz.zone }}").format(jsDateFormat) + "</td>" +
             {% if not origin %}
@@ -185,7 +185,11 @@ function createSocket(origin)
             "</a>" + 
             '</span>' + 
             '<span>' + 
+            '<a target="_blank"' +
+            ' title="' + msg['request']['path'] + '"' +
+            ' href="' +
             item_link +
+            '">' + 
             ( msg['request']['path'].length > 50 ? msg['request']['path'].substr(0, 50) + '...' : msg['request']['path'] ) +
             '</a>' + 
             "</span>" + 
