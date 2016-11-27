@@ -104,9 +104,9 @@
     </td>
     <td class="fixed-width-url">
       <div class="fixed-url">
-        <span>{% if 'scheme' in item['request'] %}{{ item['request']['scheme'] }}://{% end %}</span>
-        <span><a class="link-domain" href="{% if not host %}{% if origin %}/origin/{{ origin }}{% end %}/host/{{ item['request']['host'] }}{% else %}/item/{{ item['_id'] }}{% if origin or host %}?{% end %}{% if origin %}origin={{ url_escape(origin) }}{% if host %}&amp;{% end %}{% end %}{% if host %}host={{ url_escape(host) }}{% end %}{% end %}">{{ item['request']['host'] }}</a></span>
-        <span><a target="_blank" href="/item/{{ item['_id'] }}{% if origin or host %}?{% end %}{% if origin %}origin={{ url_escape(origin) }}{% if host %}&amp;{% end %}{% end %}{% if host %}host={{ url_escape(host) }}{% end %}" title="{{ item['request']['path'] }}">{% if len(item['request']['path']) > 50 %}{{ item['request']['path'][:50] }}...{% else %}{{ item['request']['path'] }}{% end %}</a></span>
+        <span>{% if 'scheme' in item['request'] %}{{ item['request']['scheme'] }}://{% end %}</span><!--
+        --><span><a class="link-domain" href="{% if not host %}{% if origin %}/origin/{{ origin }}{% end %}/host/{{ item['request']['host'] }}{% else %}/item/{{ item['_id'] }}{% if origin or host %}?{% end %}{% if origin %}origin={{ url_escape(origin) }}{% if host %}&amp;{% end %}{% end %}{% if host %}host={{ url_escape(host) }}{% end %}{% end %}">{{ item['request']['host'] }}</a></span><!--
+        --><span><a target="_blank" href="/item/{{ item['_id'] }}{% if origin or host %}?{% end %}{% if origin %}origin={{ url_escape(origin) }}{% if host %}&amp;{% end %}{% end %}{% if host %}host={{ url_escape(host) }}{% end %}" title="{{ item['request']['path'] }}">{% if len(item['request']['path']) > 50 %}{{ item['request']['path'][:50] }}...{% else %}{{ item['request']['path'] }}{% end %}</a></span>
       </div>
     </td>
   </tr>
