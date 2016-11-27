@@ -169,6 +169,14 @@ table.fixed-header {
   height: 2em;
 }
 
+.clickable-row {
+  cursor: pointer;
+}
+
+table tr.clickable-row:hover {
+  background-color: #efefef;
+}
+
 .response-status, .response-content {
   cursor: pointer;
 }
