@@ -111,25 +111,33 @@ table.fixed-header th {
     
 .fixed-width-time {
   width: 6em;
+  overflow-wrap: break-word;
 }
 
 .fixed-width-origin {
   width: 10em;
+  overflow-wrap: break-word;
 }
 
 .fixed-width-status {
   width: 5em;
   white-space: nowrap;
+  overflow: hidden;
+}
+
+.fixed-width-name {
+  width: 10em;
 }
 
 .fixed-width-method {
   width: 5em;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .fixed-width-url {
   min-width: 40em;
 }
-
 
 /*th div{
   position: absolute;
