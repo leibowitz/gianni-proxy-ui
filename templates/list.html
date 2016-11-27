@@ -103,8 +103,9 @@
       {{ item['request']['method'] }}
     </td>
     <td class="fixed-width-url">
-        
+      <div class="fixed-url">
       {% if 'scheme' in item['request'] %}{{ item['request']['scheme'] }}://{% end %}<a href="{% if not host %}{% if origin %}/origin/{{ origin }}{% end %}/host/{{ item['request']['host'] }}{% else %}/item/{{ item['_id'] }}{% if origin or host %}?{% end %}{% if origin %}origin={{ url_escape(origin) }}{% if host %}&amp;{% end %}{% end %}{% if host %}host={{ url_escape(host) }}{% end %}{% end %}">{{ item['request']['host'] }}</a><a target="_blank" href="/item/{{ item['_id'] }}{% if origin or host %}?{% end %}{% if origin %}origin={{ url_escape(origin) }}{% if host %}&amp;{% end %}{% end %}{% if host %}host={{ url_escape(host) }}{% end %}" title="{{ item['request']['path'] }}">{% if len(item['request']['path']) > 50 %}{{ item['request']['path'][:50] }}...{% else %}{{ item['request']['path'] }}{% end %}</a>
+      </div>
     </td>
   </tr>
 {% end %}
@@ -172,13 +173,16 @@ function createSocket(origin)
             '<td class="fixed-width-status status-' + (parseInt(msg['response']['status']/100)*100) + '"><i class="fa fa-circle"></i> ' + msg['response']['status'] + "</td>" +
             '<td class="fixed-width-method method-' + msg['request']['method'] + '">' + msg['request']['method'] + "</td>" +
             '<td class="fixed-width-url">' + 
+            '<div class="fixed-url">' + 
             msg['request']['scheme'] + '://' +
             host_link + 
             msg['request']['host'] + 
             "</a>" + 
             item_link + 
             ( msg['request']['path'].length > 50 ? msg['request']['path'].substr(0, 50) + '...' : msg['request']['path'] ) + 
-            "</a></td>" +
+            "</a>" + 
+            "</div>" + 
+            "</td>" +
             "</tr>");
       var text = $('#filterText').val().trim();
 

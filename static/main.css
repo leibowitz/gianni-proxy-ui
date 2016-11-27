@@ -139,6 +139,11 @@ table.fixed-header th {
   min-width: 40em;
 }
 
+.fixed-url {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
 /*th div{
   position: absolute;
   top: 13em;
