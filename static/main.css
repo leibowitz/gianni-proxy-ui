@@ -94,21 +94,11 @@ tr.stripped{ /*:nth-child(odd){*/
   height: 2em;
 }
 
-table.fixed-header tbody {
-  display: block;
-  overflow: scroll;
-  height: 300px;
+table.fixed-header {
+  table-layout: fixed;
+  border-collapse: separate;
 }
 
-table.fixed-header thead tr {
-  position: relative;
-  display: block;
-}
-
-table.fixed-header td,
-table.fixed-header th {
-}
-    
 .fixed-width-time {
   width: 6em;
   overflow-wrap: break-word;
