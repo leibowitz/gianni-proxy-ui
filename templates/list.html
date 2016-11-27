@@ -133,18 +133,14 @@ var origin = eOrigin.length != 0 ? eOrigin.val().trim() : undefined;
 var host = $('#host').val().trim();
 var sock;
 function scrollToBottom(duration){
-  if (duration == undefined) {
-    duration = 400;
-  }
-  $('table.fixed-header tbody').animate({scrollTop: $('table.fixed-header tbody')[0].scrollHeight-$('table.fixed-header tbody').height()}, duration);
+  $("html, body").animate({ scrollTop: $(document).height() }, "fast");
 }
 
 function getScrollHeight()
 {
-  return Math.abs($('table.fixed-header tbody')[0].scrollHeight-$('table.fixed-header tbody').scrollTop()-$('table.fixed-header tbody').height());
+  return $(document).height()-$('body').scrollTop()-$(window).height();
 }
 
-var scrollTimeout;
 var retries = 0;
 
 function createSocket(origin)
@@ -211,8 +207,8 @@ function createSocket(origin)
         // Use a threshold of 5 rows to enable scrolling
         var threshold = row.height() * 5;
         var shouldScroll = sizeDiff < threshold;
-        if (shouldScroll && doNotScroll == null) {
-            scrollToBottom(0);
+        if (shouldScroll) {
+            scrollToBottom();
         }
       }
   };
@@ -287,7 +283,7 @@ $('#filterText').on('search', function(evt){
       refreshStrip();
     }
     // Scroll to bottom
-    scrollToBottom(0);
+    scrollToBottom();
 });
 function refreshStrip(){
   $('table > tbody > tr').each(function(index, row){
@@ -326,30 +322,9 @@ $('#filterForm').on('submit', function(evt){
     }
   });
 
-var lastScrollTop = $('table.fixed-header tbody').scrollTop();
-var doNotScroll = null;
-    
-$('table.fixed-header tbody').scroll(function(evt){
-    var currentScroll = $('table.fixed-header tbody').scrollTop();
-    if (currentScroll < lastScrollTop){
-        if (doNotScroll != null) {
-            clearTimeout(doNotScroll);
-        }
-        doNotScroll = setTimeout(function(){
-            doNotScroll = null;
-        }, 1000);
-    }
-    lastScrollTop = currentScroll;
-});
-
 // Make the tbody height as big as possible
 $(document).ready(function(){
-    $('table.fixed-header tbody').height($(window).height()-(200+$('#filterBox').height()));
-    $("html, body").animate({ scrollTop: $(document).height() }, 1);
-    scrollToBottom(0);
-});
-$( window ).resize(function() {
-    $('table.fixed-header tbody').height($(window).height()-(200+$('#filterBox').height()));
+    scrollToBottom();
 });
 })();
 
