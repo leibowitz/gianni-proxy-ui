@@ -136,7 +136,15 @@ table.fixed-header th {
 }
 
 .fixed-width-url {
-  min-width: 40em;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-spacing: 0;
+}
+
+.fixed-width-url span {
+  font-size: 18px;
 }
 
 .fixed-url {

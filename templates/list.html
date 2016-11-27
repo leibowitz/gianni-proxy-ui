@@ -104,7 +104,9 @@
     </td>
     <td class="fixed-width-url">
       <div class="fixed-url">
-      {% if 'scheme' in item['request'] %}{{ item['request']['scheme'] }}://{% end %}<a href="{% if not host %}{% if origin %}/origin/{{ origin }}{% end %}/host/{{ item['request']['host'] }}{% else %}/item/{{ item['_id'] }}{% if origin or host %}?{% end %}{% if origin %}origin={{ url_escape(origin) }}{% if host %}&amp;{% end %}{% end %}{% if host %}host={{ url_escape(host) }}{% end %}{% end %}">{{ item['request']['host'] }}</a><a target="_blank" href="/item/{{ item['_id'] }}{% if origin or host %}?{% end %}{% if origin %}origin={{ url_escape(origin) }}{% if host %}&amp;{% end %}{% end %}{% if host %}host={{ url_escape(host) }}{% end %}" title="{{ item['request']['path'] }}">{% if len(item['request']['path']) > 50 %}{{ item['request']['path'][:50] }}...{% else %}{{ item['request']['path'] }}{% end %}</a>
+        <span>{% if 'scheme' in item['request'] %}{{ item['request']['scheme'] }}://{% end %}</span>
+        <span><a href="{% if not host %}{% if origin %}/origin/{{ origin }}{% end %}/host/{{ item['request']['host'] }}{% else %}/item/{{ item['_id'] }}{% if origin or host %}?{% end %}{% if origin %}origin={{ url_escape(origin) }}{% if host %}&amp;{% end %}{% end %}{% if host %}host={{ url_escape(host) }}{% end %}{% end %}">{{ item['request']['host'] }}</a></span>
+        <span><a target="_blank" href="/item/{{ item['_id'] }}{% if origin or host %}?{% end %}{% if origin %}origin={{ url_escape(origin) }}{% if host %}&amp;{% end %}{% end %}{% if host %}host={{ url_escape(host) }}{% end %}" title="{{ item['request']['path'] }}">{% if len(item['request']['path']) > 50 %}{{ item['request']['path'][:50] }}...{% else %}{{ item['request']['path'] }}{% end %}</a></span>
       </div>
     </td>
   </tr>
@@ -174,13 +176,19 @@ function createSocket(origin)
             '<td class="fixed-width-method method-' + msg['request']['method'] + '">' + msg['request']['method'] + "</td>" +
             '<td class="fixed-width-url">' + 
             '<div class="fixed-url">' + 
+            '<span>' + 
             msg['request']['scheme'] + '://' +
+            '</span>' + 
+            '<span>' +
             host_link + 
             msg['request']['host'] + 
             "</a>" + 
-            item_link + 
-            ( msg['request']['path'].length > 50 ? msg['request']['path'].substr(0, 50) + '...' : msg['request']['path'] ) + 
-            "</a>" + 
+            '</span>' + 
+            '<span>' + 
+            item_link +
+            ( msg['request']['path'].length > 50 ? msg['request']['path'].substr(0, 50) + '...' : msg['request']['path'] ) +
+            '</a>' + 
+            "</span>" + 
             "</div>" + 
             "</td>" +
             "</tr>");
