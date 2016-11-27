@@ -10,7 +10,7 @@
 
 
 {% if len(items) != 0 %}
-<table class="full-width">
+<table class="full-width table-fixed">
   <thead>
     <th class="active">
       Active
@@ -19,7 +19,7 @@
       Host Redirect
     </th>
     {% if not origin %}
-    <th>
+    <th class="fixed-width-origin">
       Origin
     </th>
     {% end %}

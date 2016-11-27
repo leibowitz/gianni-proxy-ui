@@ -19,6 +19,12 @@ table.table-fixed {
   table-layout: fixed;
 }
 
+.table-fixed td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .pure-form-aligned .pure-control-group input.cmn-toggle-round + label {
   width: 60px;
 }
