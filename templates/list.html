@@ -163,7 +163,8 @@ function createSocket(origin)
         return;
       }
       var item_link = "/item/" + msg['_id']['$oid'] + "?" + (origin.length != 0 ? "origin="+ encodeURIComponent(origin) + (host ? "&" : "") : "") + (host ? "host=" + encodeURIComponent(host) : "");
-      var host_link = host ? "<a class='link-domain' target='_blank' href='" + item_link + "'>" : "<a class='link-domain' href='" + (origin.length != 0 ? "/origin/" + origin : "" ) + "/host/" + msg['request']['host'] + "'>";
+      var a_item_link = "<a class='link-domain' target='_blank' href='" + item_link + "'>";
+      var host_link = host ? a_item_link : "<a class='link-domain' href='" + (origin.length != 0 ? "/origin/" + origin : "" ) + "/host/" + msg['request']['host'] + "'>";
       var row = $("<tr>" +
             "<td class='fixed-width-time'>" + moment(msg['date']['$date']).tz("{{ tz.zone }}").format(jsDateFormat) + "</td>" +
             {% if not origin %}
