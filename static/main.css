@@ -152,11 +152,20 @@ table.fixed-header th {
   overflow: hidden;
 }
 
+.link-domain {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 50%;
+  vertical-align: top;
+  display: inline-block;
+}
+
 /*th div{
   position: absolute;
   top: 13em;
   line-height: normal;
 }*/
+
 .pure-control-group {
   margin-bottom: 1em;
 }
