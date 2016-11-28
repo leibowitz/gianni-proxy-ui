@@ -2,17 +2,8 @@
 {% block title %}● Recording {% if origin %}{{ origin }}{% end %}{% end %}
 {% block stylesheets %}
 <style type="text/css">
-  .fixed {
-    background-color: white;
-    border: 2px solid;
-    position: fixed;
-    padding: 5px;
-  }
-  tr.stripped{ /*:nth-child(odd){*/
+  tr.stripped{
     background-color: rgba(0,0,0,.025);
-  }
-  .top-space{
-      padding-top: {% if not host %}9em{% else %}11em{% end %};
   }
 </style>
 {% end %}
