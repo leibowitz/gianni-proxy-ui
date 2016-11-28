@@ -23,8 +23,8 @@
     </th>
   </thead>
   <tbody>
-{% for row in items %}
-  <tr>
+{% for num, row in enumerate(items) %}
+  <tr class="{% if num % 2 == 0 %}stripped{% end %}">
     <td>
         {% if 'name' in row %}{{ row['name'] }}{% else %}{{ row['_id'] }}{% end %}
     </td>

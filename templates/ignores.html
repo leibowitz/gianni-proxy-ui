@@ -26,8 +26,8 @@
     </th>
   </thead>
   <tbody>
-{% for row in items %}
-  <tr>
+{% for num, row in enumerate(items) %}
+  <tr class="{% if num % 2 == 0 %}stripped{% end %}">
     <td>
       <form name="activateForm" method="post">
         <input type="hidden" name="ident" value="{{ row['_id'] }}" />
