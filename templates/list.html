@@ -1,38 +1,5 @@
 {% extends "default.html" %}
 {% block title %}● Recording {% if origin %}{{ origin }}{% end %}{% end %}
-{% block stylesheets %}
-<style type="text/css">
-  .fixed {
-    background-color: white;
-    border: 2px solid;
-    position: fixed;
-    padding: 5px;
-  }
-  tr.stripped{ /*:nth-child(odd){*/
-    background-color: rgba(0,0,0,.025);
-  }
-  .top-space{
-      padding-top: {% if not host %}9em{% else %}11em{% end %};
-  }
-  .pure-table th.compact,
-  .pure-table td.compact
-  {
-      padding-left: 5;
-      padding-right: 5;
-  }
-  .pure-table th.compact-right,
-  .pure-table td.compact-right{
-      padding-right:10;
-  }
-  .pure-table th.compact-left,
-  .pure-table td.compact-left{
-      padding-left:10;
-  }
-
-
-
-</style>
-{% end %}
 {% block content %}
 <div class="top-button">
 <button class="pure-button pure-button-primary button-success" style="display:none;" id="onPlayPause"><i id="record-icon" class="mdi mdi-play"></i> <span id="record-text">Start Recording</span></button>
@@ -86,7 +53,7 @@
 {% for num, item in enumerate(items) %}
 <tr {% if num % 2 == 0 %}class="stripped"{% end %}>
     <td class="fixed-width-time">
-      {{ item['date'].astimezone(tz).strftime('%H:%M:%S') }}
+      <span title="{{ item['date'].astimezone(tz).strftime('%F') }}">{{ item['date'].astimezone(tz).strftime('%H:%M:%S') }}</span>
     </td>
     {% if not origin %}
       <td class="fixed-width-origin">

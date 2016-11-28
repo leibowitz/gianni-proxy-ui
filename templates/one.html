@@ -115,27 +115,31 @@
   </tr>
 {% end %}
 </table>
-{% if responsebody %}
+{% if body or responsebody %}
 <div id="response" class="b-t">
-<button id="btn-rsp" class="pure-button top-right" data-clipboard-action="copy" data-clipboard-target="#response">Copy</button>
-<script type="text/javascript">
-new Clipboard('#btn-rsp');
-</script>
-<!--<div>
-<pre lang="json"></pre>
-</div>-->
-{% raw responsebody %}
+  {% if fmt is not None and fmt == 'json' %}
+  <textarea rows="30" id="editor-rsp" readonly="readonly" style="width:90%;display:none;" name="body" data-editor="{% if fmt is not None %}{{ fmt }}{% end %}" placeholder="body content">{% if body %}{{ body }}{% end %}</textarea>
+  {% elif responsebody %}
+    <button id="btn-rsp" class="pure-button top-right" data-clipboard-action="copy" data-clipboard-target="#response"><i class="mdi mdi-content-copy"></i> Copy</button>
+    <script type="text/javascript">
+    new Clipboard('#btn-rsp');
+    </script>
+    <!--<div>
+    <pre lang="json"></pre>
+    </div>-->
+    {% raw responsebody %}
+  {% end %}
 </div>
 {% end %}
   </div>
 <script src="/static/jquery.min.js"></script>
-{% if not finished %}
-<script src="/static/sockjs-0.3.min.js"></script>
-<script src="/static/multiplex.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ace.js" type="text/javascript"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/ace/1.1.3/ext-modelist.js" type="text/javascript"></script>
 <script src="/static/editor.js"></script>
+{% if not finished %}
 <script src="/static/formatjson.js"></script>
+<script src="/static/sockjs-0.3.min.js"></script>
+<script src="/static/multiplex.js"></script>
 <script type="text/javascript">
 {% if socketuuid %}
 function createSocket()

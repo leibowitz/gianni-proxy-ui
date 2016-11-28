@@ -24,7 +24,7 @@ class DocumentationHostHandler(BaseRequestHandler):
             if item['request']['path']:
                 parts = filter(None, item['request']['path'].split('/'))
             else:
-                parts = []
+                parts = ['']
             o = tree
             for part in parts:
                 o = o['children'][part]
