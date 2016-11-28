@@ -165,13 +165,13 @@ function createSocket(origin)
       var item_link = "<a target='_blank' href='/item/" + msg['_id']['$oid'] + "?" + (origin.length != 0 ? "origin="+ encodeURIComponent(origin) + (host ? "&" : "") : "") + (host ? "host=" + encodeURIComponent(host) : "") + "' title='"+ msg['request']['path'] + "'>";
       var host_link = host ? item_link : "<a href='" + (origin.length != 0 ? "/origin/" + origin : "" ) + "/host/" + msg['request']['host'] + "'>";
       var row = $("<tr>" +
-            "<td>" + moment(msg['date']['$date']).tz("{{ tz.zone }}").format(jsDateFormat) + "</td>" +
+            "<td class='fixed-width-time'>" + moment(msg['date']['$date']).tz("{{ tz.zone }}").format(jsDateFormat) + "</td>" +
             {% if not origin %}
-            '<td class="compact-right"><a href="/origin/' + msg['request']['origin'] + '">' + msg['request']['origin'] + "</a></td>" +
+            '<td  class="fixed-width-origin"><a href="/origin/' + msg['request']['origin'] + '">' + msg['request']['origin'] + "</a></td>" +
             {% end %}
-            '<td class="compact status-' + (parseInt(msg['response']['status']/100)*100) + '"><i class="fa fa-circle"></i> ' + msg['response']['status'] + "</td>" +
-            '<td class="compact method-' + msg['request']['method'] + '">' + msg['request']['method'] + "</td>" +
-            '<td class="compact-left">' + 
+            '<td class="fixed-width-status status-' + (parseInt(msg['response']['status']/100)*100) + '"><i class="fa fa-circle"></i> ' + msg['response']['status'] + "</td>" +
+            '<td class="fixed-width-method method-' + msg['request']['method'] + '">' + msg['request']['method'] + "</td>" +
+            '<td class="fixed-width-url">' + 
             msg['request']['scheme'] + '://' +
             host_link + 
             msg['request']['host'] + 
