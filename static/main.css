@@ -19,6 +19,10 @@ table.table-fixed {
   table-layout: fixed;
 }
 
+.pure-form-aligned .pure-control-group label {
+  max-width: 10%;
+}
+
 .pure-form-aligned .pure-control-group input.cmn-toggle-round + label {
   width: 60px;
 }
