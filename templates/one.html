@@ -117,7 +117,10 @@
 </table>
 {% if responsebody %}
 <div id="response" class="b-t">
-<button id="btn-rsp" class="pure-button top-right" data-clipboard-action="copy" data-clipboard-target="#response"><i class="mdi mdi-content-copy"></i> Copy</button>
+<div class="top-right">
+<button id="preview-rsp" class="pure-button"><i class="mdi mdi-blinds"></i> Preview</button>
+<button id="btn-rsp" class="pure-button" data-clipboard-action="copy" data-clipboard-target="#response"><i class="mdi mdi-content-copy"></i> Copy</button>
+</div>
 <script type="text/javascript">
 new Clipboard('#btn-rsp');
 </script>
@@ -241,5 +244,22 @@ $('#curl').on('click', function(evt){
     }
 });
 new Clipboard('#curl');
+</script>
+<script type="text/javascript">
+
+$('#preview-rsp').on('click', function(evt){
+  var scheme = '{{ item['request']['scheme'] }}';
+  var host = '{{ item['request']['host'] }}';
+  var url = scheme + "://" + host;
+  var fullurl = '{# item['request']['url'] #}';
+  var content = $('#response-body').text();
+  content = content
+    .replace(/src="\/\//g, 'src="'+scheme+'://')
+    .replace(/href="\/\//g, 'href="'+scheme+'://')
+    .replace(/src="\//g, 'src="' + url + '/')
+    .replace(/href="\//g, 'href="' + url + '/');
+  
+  window.open("", "Title", "toolbar=no, location=no").document.write(content.split('scri').join('scri'));
+});
 </script>
 {% end %}
