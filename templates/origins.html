@@ -24,8 +24,8 @@
     </th>
   </thead>
   <tbody>
-{% for k, row in items.iteritems() %}
-  <tr>
+{% for num, (k, row) in enumerate(items.iteritems()) %}
+  <tr class="{% if num % 2 == 0 %}stripped{% end %}">
     <td>
       <form name="activateForm" method="post">
         <input type="hidden" name="ident" value="{{ row['origin'] }}" />

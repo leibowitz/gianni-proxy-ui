@@ -32,8 +32,8 @@
     </th>
   </thead>
   <tbody>
-{% for row in items %}
-  <tr>
+{% for num, row in enumerate(items) %}
+  <tr class="{% if num % 2 == 0 %}stripped{% end %}">
     <td>
       <a href="/documentation/edit/{{ row['_id'] }}">
 <span class="method-{{ row['request']['method'] }}">{{ row['request']['method'] }}</span>
