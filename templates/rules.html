@@ -25,15 +25,6 @@
     <th>
       Path
     </th>
-    <th>
-      Status
-    </th>
-    <th>
-      Query
-    </th>
-    <th>
-      Dynamic
-    </th>
     {% if not origin %}
     <th>
       Origin
@@ -70,23 +61,6 @@
       {{ row['path'] }}
       {% else %}
       <i class="fa fa-asterisk"></i>
-      {% end %}
-    </td>
-    <td>
-      {% if row['status'] %}
-      {{ row['status'] }}
-      {% else %}
-      <i class="fa fa-asterisk"></i>
-      {% end %}
-    </td>
-    <td>
-      {% if row['query'] %}
-      <i class="mdi mdi-check"></i>
-      {% end %}
-    </td>
-    <td>
-      {% if row['dynamic'] %}
-      <i class="mdi mdi-check"></i>
       {% end %}
     </td>
     {% if not origin %}

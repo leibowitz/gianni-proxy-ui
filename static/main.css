@@ -3,6 +3,14 @@ body{
   font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+i.mdi {
+  width: 17px;
+}
+
+.nav-link i.mdi {
+  width: 35px;
+}
+
 .box-body {
 	padding: 1em;
 }
@@ -17,6 +25,10 @@ form.inline {
 
 table.table-fixed {
   table-layout: fixed;
+}
+
+.pure-form-aligned .pure-control-group label {
+  max-width: 10%;
 }
 
 .pure-form-aligned .pure-control-group input.cmn-toggle-round + label {
@@ -369,9 +381,17 @@ div.right {
 
 .tree {
   float: left;
-  width: 20em;
+  width: 29em;
   padding: 1em 0.5em 1em 1em;
   background-color: #f8f8f8;
+  overflow-y: scroll;
+  overflow: -moz-scrollbars-vertical;
+
+  /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#f8f8f8+0,f8f8f8+0,f8f8f8+100&1+0,1+89,0+99 */
+  background: -moz-linear-gradient(top, rgba(248,248,248,1) 0%, rgba(248,248,248,1) 89%, rgba(248,248,248,0) 99%, rgba(248,248,248,0) 100%); /* FF3.6-15 */
+  background: -webkit-linear-gradient(top, rgba(248,248,248,1) 0%,rgba(248,248,248,1) 89%,rgba(248,248,248,0) 99%,rgba(248,248,248,0) 100%); /* Chrome10-25,Safari5.1-6 */
+  background: linear-gradient(to bottom, rgba(248,248,248,1) 0%,rgba(248,248,248,1) 89%,rgba(248,248,248,0) 99%,rgba(248,248,248,0) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f8f8f8', endColorstr='#00f8f8f8',GradientType=0 ); /* IE6-9 */
 }
 
 .padding {
