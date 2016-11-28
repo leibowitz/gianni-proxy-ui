@@ -1,12 +1,5 @@
 {% extends "default.html" %}
 {% block title %}● Recording {% if origin %}{{ origin }}{% end %}{% end %}
-{% block stylesheets %}
-<style type="text/css">
-  tr.stripped{
-    background-color: rgba(0,0,0,.025);
-  }
-</style>
-{% end %}
 {% block content %}
 <div class="top-button">
 <button class="pure-button pure-button-primary button-success" style="display:none;" id="onPlayPause"><i id="record-icon" class="mdi mdi-play"></i> <span id="record-text">Start Recording</span></button>
