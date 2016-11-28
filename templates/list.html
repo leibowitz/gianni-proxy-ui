@@ -3,6 +3,8 @@
 {% block content %}
 <div class="top-button">
 <button class="pure-button pure-button-primary button-success" style="display:none;" id="onPlayPause"><i id="record-icon" class="mdi mdi-play"></i> <span id="record-text">Start Recording</span></button>
+{% if host %}<a class="pure-button" href="/ignores?host={{ host }}"><i class="mdi mdi-web"></i> Filters</a>{% end %}
+{% if origin %}<a class="pure-button" href="/origins/{{ origin }}">Device</a>{% end %}
 <div class="top-right">
 {% if host %}<a class="pure-button" href="{% if origin %}/origin/{{ origin }}{% else %}/all{% end %}"><i class="mdi mdi-close-circle"></i> Host: {{ host }}</a>{% end %}
 {% if origin %}<a class="pure-button" href="{% if host %}/host/{{ host }}{% else %}/all{% end %}"><i class="mdi mdi-close-circle"></i> Origin: {{ origin }}</a>{% end %}

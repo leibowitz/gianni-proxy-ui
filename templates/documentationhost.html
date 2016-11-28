@@ -4,6 +4,14 @@
 <div class="top-button">
   <a class="pure-button pure-button-primary" href="/docsettings/add">Add Host</a>
   <a class="pure-button pure-button-primary" href="/documentation/add?host={{ host }}">Add Endpoint</a>
+  <div class="top-right">
+  <a class="pure-button" href="/host/{{ host }}"><i class="mdi mdi-traffic-light"></i> Traffic</a>
+  <a class="pure-button" href="/ignores?host={{ host }}"><i class="mdi mdi-web"></i> Filters</a>
+  <a class="pure-button" href="/redirects?host={{ host }}"><i class="mdi mdi-call-missed"></i> Redirects</a>
+  <a class="pure-button" href="/rules?host={{ host }}"><i class="mdi mdi-file-hidden"></i> Mocks</a>
+  <a class="pure-button" href="/messages?host={{ host }}"><i class="mdi mdi-message-text-outline"></i> Messages</a>
+  <a class="pure-button" href="/documentation?host={{ host }}"><i class="mdi mdi-file-document"></i> Endpoints</a>
+  </div>
 </div>
 <div class="box">
 
