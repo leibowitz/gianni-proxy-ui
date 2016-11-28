@@ -291,6 +291,10 @@ body {
   background-color: #f0f0f0;
 }
 
+a.underline:hover {
+  text-decoration: underline;
+}
+
 .b-t {
   border-top: 9px solid rgba(120,130,140,.13);
 }
