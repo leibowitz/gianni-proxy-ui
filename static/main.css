@@ -3,6 +3,14 @@ body{
   font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+i.mdi {
+  width: 17px;
+}
+
+.nav-link i.mdi {
+  width: 35px;
+}
+
 .box-body {
 	padding: 1em;
 }
