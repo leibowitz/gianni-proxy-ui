@@ -124,10 +124,12 @@ new Clipboard('#btn-rsp');
 <!--<div>
 <pre lang="json"></pre>
 </div>-->
+<div id="response-body">
 {% raw responsebody %}
 </div>
+</div>
 {% end %}
-  </div>
+</div>
 <script src="/static/jquery.min.js"></script>
 {% if not finished %}
 <script src="/static/sockjs-0.3.min.js"></script>
