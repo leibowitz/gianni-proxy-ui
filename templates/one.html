@@ -118,7 +118,9 @@
 {% if responsebody %}
 <div id="response" class="b-t">
 <div class="top-right">
+{% if response_mime_type and 'text/html' in response_mime_type %}
 <button id="preview-rsp" class="pure-button"><i class="mdi mdi-blinds"></i> Preview</button>
+{% end %}
 <button id="btn-rsp" class="pure-button" data-clipboard-action="copy" data-clipboard-target="#response"><i class="mdi mdi-content-copy"></i> Copy</button>
 </div>
 <script type="text/javascript">

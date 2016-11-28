@@ -65,6 +65,8 @@ class ViewHandler(BaseRequestHandler):
         # consider the response finished
         finished = True
 
+        response_mime_type = util.get_content_type(requests.structures.CaseInsensitiveDict(responseheaders))
+
         if 'fileid' in entry['response']:
 
             respfileid = entry['response']['fileid']
@@ -75,7 +77,6 @@ class ViewHandler(BaseRequestHandler):
                 resbody, ctype = yield self.get_gridfs_body(respfileid, responseheaders)
                 responsebody = self.get_formatted_body(resbody, ctype)
             else:
-                response_mime_type = util.get_content_type(requests.structures.CaseInsensitiveDict(responseheaders))
                 responsebody = self.get_partial_content_body(filepath, response_mime_type)
 
         if 'fileid' in entry['request']:
@@ -101,6 +102,7 @@ class ViewHandler(BaseRequestHandler):
 
         self.render("one.html", 
                 item=entry, 
+                response_mime_type=response_mime_type,
                 cmd=cmd,
                 body=resbody,
                 fmt=fmt,
