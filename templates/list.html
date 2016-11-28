@@ -86,7 +86,7 @@
 {% for num, item in enumerate(items) %}
 <tr {% if num % 2 == 0 %}class="stripped"{% end %}>
     <td class="fixed-width-time">
-      {{ item['date'].astimezone(tz).strftime('%H:%M:%S') }}
+      <span title="{{ item['date'].astimezone(tz).strftime('%F') }}">{{ item['date'].astimezone(tz).strftime('%H:%M:%S') }}</span>
     </td>
     {% if not origin %}
       <td class="fixed-width-origin">
