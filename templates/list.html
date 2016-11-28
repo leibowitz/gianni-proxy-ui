@@ -3,6 +3,7 @@
 {% block content %}
 <div class="top-button">
 <button class="pure-button pure-button-primary button-success" style="display:none;" id="onPlayPause"><i id="record-icon" class="mdi mdi-play"></i> <span id="record-text">Start Recording</span></button>
+<button class="pure-button pure-button-primary button-success recording" id="onScrollToggle"><i id="scroll-icon" class="<!--mdi mdi-stop-->"></i> <span id="scroll-text">Disable Scroll</span></button>
 {% if host %}<a class="pure-button" href="/ignores?host={{ host }}"><i class="mdi mdi-web"></i> Filters</a>{% end %}
 {% if origin %}<a class="pure-button" href="/origins/{{ origin }}">Device</a>{% end %}
 <div class="top-right">
@@ -103,7 +104,9 @@ var origin = eOrigin.length != 0 ? eOrigin.val().trim() : undefined;
 var host = $('#host').val().trim();
 var sock;
 function scrollToBottom(){
-  $("html, body").animate({ scrollTop: $(document).height() }, "fast");
+  if (doScroll) {
+    $("html, body").animate({ scrollTop: $(document).height() }, "fast");
+  }
 }
 
 function getScrollHeight()
@@ -236,6 +239,21 @@ function filterRow(row, text)
   }
   return true;
 }
+var doScroll = true;
+$('#onScrollToggle').on('click', function(evt){
+    var checkScroll = doScroll;
+    doScroll = !doScroll;
+    if (!checkScroll) {
+        scrollToBottom();
+        $('#scroll-text').text('Disable Scroll');
+        $('#onScrollToggle').css('display', 'inline').addClass("recording");
+        //$('#scroll-icon').removeClass("mdi-play").addClass("mdi-stop");
+     } else {
+        $('#onScrollToggle').css('display', 'inline').removeClass("recording");
+        $('#scroll-text').text('Enable Scroll');
+        //$('#scroll-icon').removeClass("mdi-stop").addClass("mdi-play");
+     }
+});
 $('#filterText').on('search', function(evt){
     var text = $('#filterText').val().trim();
     if (text.length > 0) {
