@@ -74,6 +74,7 @@ class DocumentationViewHandler(BaseRequestHandler):
         fmt = util.get_format(respctype) if respctype else None
 
         self.render("one.html", 
+                tz=self.TZ,
                 item=entry, 
                 body=resbody,
                 fmt=fmt,

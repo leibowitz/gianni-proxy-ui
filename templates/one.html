@@ -23,7 +23,7 @@
 </span>
 
       <div class="top-right">
-          <span class="time">{{ relativedelta(seconds=item['request']['time']).normalized().microseconds/1000 }}ms</span>
+        <span class="time" title="{{ item['date'].astimezone(tz).strftime('%F %H:%M:%S') }}">{{ relativedelta(seconds=item['request']['time']).normalized().microseconds/1000 }}ms</span>
       </div>
 </h2>
 
