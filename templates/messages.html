@@ -11,7 +11,7 @@
   <div class="layout">
 
 {% if len(items) != 0 %}
-<table class="full-width table-fixed">
+<table class="full-width table-fixed clickable-row-table">
   <thead>
     <th class="fixed-width-name">
       Name
@@ -24,7 +24,7 @@
   </thead>
   <tbody>
 {% for num, row in enumerate(items) %}
-  <tr class="{% if num % 2 == 0 %}stripped{% end %}">
+  <tr class="clickable-row {% if num % 2 == 0 %}stripped{% end %}" data-href="/message/{{ row['_id'] }}">
     <td>
         {% if 'name' in row %}{{ row['name'] }}{% else %}{{ row['_id'] }}{% end %}
     </td>
@@ -61,6 +61,12 @@
           row.parentNode.removeChild(row);
         });
       }
+      return false;
     });
+$(".clickable-row-table").on("click", ".clickable-row", function(evt) {
+    if (evt.target.nodeName != 'A') {
+        location.href = $(this).data("href");
+    }
+});
 </script>
 {% end %}

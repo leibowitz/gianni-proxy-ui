@@ -11,7 +11,7 @@
   <div class="layout">
 
 {% if len(items) != 0 %}
-<table class="full-width table-fixed">
+<table class="full-width table-fixed clickable-row-table">
   <thead>
     <th class="active">
       Record
@@ -25,7 +25,7 @@
   <tbody>
 {% for num, key in enumerate(sorted(items)) %}
 {% set row = items[key] %}
-  <tr class="{% if num % 2 == 0 %}stripped{% end %}">
+  <tr class="clickable-row {% if num % 2 == 0 %}stripped{% end %}" data-href="/docsettings/{{ row['_id'] }}">
     <td>
       <form name="activateForm" method="post">
         <input type="hidden" name="ident" value="{{ row['_id'] }}" />
@@ -70,6 +70,7 @@
           row.parentNode.removeChild(row);
         });
       }
+      return false;
     });
     $('form[name=activateForm] input[type=checkbox]').on('click', function(evt){
       var id = evt.target.parentNode.querySelector('input[name=ident]').value;
@@ -78,5 +79,10 @@
       $.post("/docsettings", {ident: id, action: action, host: host});
       
     });
+$(".clickable-row-table").on("click", ".clickable-row", function(evt) {
+    if (evt.target.nodeName != 'A') {
+        location.href = $(this).data("href");
+    }
+});
 </script>
 {% end %}
