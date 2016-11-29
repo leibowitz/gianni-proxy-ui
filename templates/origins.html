@@ -9,7 +9,7 @@
 
   <div class="layout">
 
-<table class="full-width table-fixed">
+<table class="full-width table-fixed clickable-row-table">
   <thead>
     <th class="active">
       Record
@@ -25,7 +25,7 @@
   </thead>
   <tbody>
 {% for k, row in items.iteritems() %}
-  <tr>
+  <tr class="clickable-row" data-href="/origins/{{ row['origin'] }}">
     <td>
       <form name="activateForm" method="post">
         <input type="hidden" name="ident" value="{{ row['origin'] }}" />
@@ -77,6 +77,7 @@
           row.parentNode.removeChild(row);
         });
       }
+      return false;
     });
     $('form[name=activateForm] input[type=checkbox]').on('click', function(evt){
       var id = evt.target.parentNode.querySelector('input[name=ident]').value;
@@ -84,5 +85,10 @@
       $.post("/origins", {ident: id, action: action});
       
     });
+$(".clickable-row-table").on("click", ".clickable-row", function(evt) {
+    if (evt.target.nodeName != 'A') {
+        location.href = $(this).data("href");
+    }
+});
 </script>
 {% end %}
