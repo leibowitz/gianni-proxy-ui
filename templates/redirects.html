@@ -88,10 +88,9 @@
       var id = evt.target.parentNode.querySelector('input[name=ident]').value;
       var action = evt.target.checked ? "enable" : "disable";
       $.post("/redirects", {ident: id, action: action});
-      
     });
 $(".clickable-row-table").on("click", ".clickable-row", function(evt) {
-    if (evt.target.nodeName != 'A') {
+    if (evt.target.nodeName == 'TD') {
         location.href = $(this).data("href");
     }
 });

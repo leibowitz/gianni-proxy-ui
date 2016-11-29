@@ -77,10 +77,9 @@
       var host = evt.target.parentNode.querySelector('input[name=host]').value;
       var action = evt.target.checked ? "enable" : "disable";
       $.post("/docsettings", {ident: id, action: action, host: host});
-      
     });
 $(".clickable-row-table").on("click", ".clickable-row", function(evt) {
-    if (evt.target.nodeName != 'A') {
+    if (evt.target.nodeName == 'TD') {
         location.href = $(this).data("href");
     }
 });
