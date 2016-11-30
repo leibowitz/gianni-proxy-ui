@@ -2,6 +2,7 @@ import urllib
 from tornado import gen
 import tornado.web
 import motor
+import bson
 
 from base import BaseRequestHandler
 from shared import util
@@ -11,13 +12,15 @@ class DocSettingsEditHandler(BaseRequestHandler):
     @tornado.web.asynchronous
     @gen.engine
     def get(self, ident):
+        item = self.get_argument('item', None)
+        host = self.get_argument('host', None)
+
         collection = self.settings['db'].proxyservice['docsettings']
         entry = yield motor.Op(collection.find_one, {'_id': self.get_id(ident)})
         if not entry:
-            raise tornado.web.HTTPError(404)
+            entry = {'active': False, 'host': host, '_id': bson.objectid.ObjectId()} # active should probably be whatever is the default
+            #raise tornado.web.HTTPError(404)
 
-        item = self.get_argument('item', None)
-        host = self.get_argument('host', None)
         self.render("docsettingsedit.html", entry=entry, item=item, host=host, tryagain=False)
     
     @tornado.web.asynchronous
@@ -36,10 +39,7 @@ class DocSettingsEditHandler(BaseRequestHandler):
             return
 
         collection = self.settings['db'].proxyservice['docsettings']
-        collection.update({'_id': self.get_id(ident)}, {
-            'active': active,
-            'host': host,
-        })
+        collection.update({'_id': self.get_id(ident)}, {'$set': {'active': active, 'host': host}}, upsert=True)
 
         self.redirect('/docsettings')
 
