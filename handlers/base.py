@@ -153,8 +153,7 @@ class BaseRequestHandler(RequestHandler):
             url = entry['request']['url']
         else:
             if 'scheme' in entry['request']:
-                print entry['request']
-                url = entry['request']['scheme'] + '://' + entry['request']['host'] + entry['request']['path']
+                url = entry['request']['scheme'] + '://' + entry['request']['host'] + (entry['request']['path'] if entry['request']['path'] else '')
                 if 'query' in entry['request'] and entry['request']['query']:
                     url = url + '?' + entry['request']['query']
 
