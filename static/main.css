@@ -471,6 +471,10 @@ div.right {
   box-shadow: 0 0 1px rgba(0,0,0,.15);
 }
 
+.box-radius {
+  border-radius: 0.5em;
+}
+
 .tree {
   float: left;
   width: 29em;
