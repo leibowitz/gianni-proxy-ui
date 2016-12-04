@@ -34,7 +34,7 @@
 {% raw render_tree(host, tree, currentpath, '', method, row) %}
       </div>
 {% end %}
-<div class="box box-with-tree box-radius-bottom">
+<div class="box box-with-tree box-radius-bottom-right {% if method is not None %}box-radius-bottom-left{% end %}">
 
   {% if method is not None %}
   <div class="layout layout-with-tree">
