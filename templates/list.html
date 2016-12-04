@@ -8,7 +8,7 @@
 {% if origin %}<a class="pure-button" href="/origins/{{ origin }}">Device</a>{% end %}
 <div class="top-right">
 {% if host %}<a class="pure-button" href="{% if origin %}/origin/{{ origin }}{% else %}/all{% end %}"><i class="mdi mdi-close-circle"></i> Host: {{ host }}</a>{% end %}
-{% if origin %}<a class="pure-button" href="{% if host %}/host/{{ host }}{% else %}/all{% end %}"><i class="mdi mdi-close-circle"></i> Origin: {{ origin }}</a>{% end %}
+{% if origin %}<a class="pure-button" href="{% if host %}/host/{{ host }}{% else %}/all{% end %}"><i class="mdi mdi-close-circle"></i> Device: {{ origin }}</a>{% end %}
 <button class="pure-button" id="onClear"><i class="mdi mdi-delete-forever"></i> Clear all</button>
 </div>
 </div>
