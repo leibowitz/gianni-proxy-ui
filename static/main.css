@@ -15,6 +15,31 @@ i.mdi {
 	padding: 1em;
 }
 
+.top-nav {
+  height: 5em;
+}
+
+.logo-text {
+  margin: 0.4em;
+  display: block;
+  font-size: 2em;
+  font-weight: 200;
+  text-transform: uppercase;
+}
+
+.logo-img {
+  vertical-align: bottom;
+}
+
+.logo-svg {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+.logo-width {
+  width: 19em;
+}
+
 form {
   margin: 0;
 }
@@ -384,6 +409,10 @@ input[type=search]::-webkit-search-cancel-button {
 
 .top-right {
   float: right;
+}
+
+.top-left {
+  float: left;
 }
 
 .top-right-method {
