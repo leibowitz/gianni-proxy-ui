@@ -3,6 +3,14 @@ body{
   font-family: "Roboto", "Helvetica Neue", Helvetica, Arial, sans-serif;
 }
 
+a, a:visited {
+  color: #1F8A70;
+}
+
+a.pure-button, button.pure-button {
+  color: #176653;
+}
+
 i.mdi {
   width: 17px;
 }
@@ -16,10 +24,12 @@ i.mdi {
 }
 
 .top-nav {
+  background-color: #1F8A70;
   height: 5em;
 }
 
 .logo-text {
+  color: #fff;
   margin: 0.4em;
   display: block;
   font-size: 2.2em;
@@ -28,7 +38,9 @@ i.mdi {
 }
 
 .logo-img {
+  color: #fff;
   vertical-align: bottom;
+  fill: currentColor;
 }
 
 .logo-svg {
@@ -38,6 +50,14 @@ i.mdi {
 
 .logo-width {
   width: 19em;
+}
+
+svg path {
+  fill: #fff;
+}
+
+a:hover svg path {
+  fill: #b6e5d9;
 }
 
 form {
@@ -278,7 +298,7 @@ html {
 
 body {
   font-size: .875rem;
-  color: rgba(0,0,0,.87);
+  color: rgba(0,0,0,.75);
   background-color: #f0f0f0;
 }
 
@@ -509,7 +529,6 @@ h4 {
 .nav {
   list-style: none;
   text-align: left;
-  background-color: #fff;
   padding: 0.5em 1em 0;
   margin: 0;
   font-size: 2em;
@@ -530,15 +549,21 @@ h4 {
 .nav-link {
   line-height: 2rem;
   white-space: nowrap;
+  color: #edf3f1;
+  text-shadow: 1px 1px 2px #295b4e;
+}
+
+.nav-link:visited {
+  color: #edf3f1;
 }
 
 .nav-link:hover {
-  color: #0cc2aa!important;
+  color: #b6e5d9!important;
+  text-shadow: 1px 1px 2px #475954;
 }
 
 .nav-text {
   display: inline-block;
-  font-weight: 500;
   line-height: 1;
 }
 
@@ -667,8 +692,28 @@ ul.list-content {
 	border-color: rgba(120,130,140,.3);
 }
 
+.pure-button {
+  text-shadow: 0 1px 0 #fff;
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 0.2em;
+}
+
+a.pure-button-primary, button.pure-button-primary {
+  text-shadow: none;
+  color: #f6fdfd;
+  border-color: #377163;
+  background-color: #1F8A70;
+  text-shadow: 1px 1px 3px #1a6654;
+}
+
+.pure-button-primary:hover {
+  text-shadow: 1px 1px 3px #377163;
+}
+
 .button-success {
   background: rgb(28, 184, 65); /* this is a green */
+  border-color: #10872c;
 }
 
 .button-error {
@@ -685,5 +730,6 @@ ul.list-content {
 
 .recording {
   background: rgb(202, 60, 60);
+  border-color: #a03030;
 }
 
