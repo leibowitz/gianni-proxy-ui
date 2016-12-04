@@ -227,9 +227,15 @@ table.fixed-header {
   margin-bottom: 1em;
 }
 
+.pure-menu-item {
+  border-top: 2px solid transparent;
+  text-shadow: 1px 1px 2px #dcdcdc;
+}
+
 .pure-menu-selected {
   background-color: #eaeaea;
-  text-shadow: 0px 0px 5px rgba(255, 255, 255, 1);
+  text-shadow: 0px 0px 5px #e0e0e0;
+  border-top-color: #1f8a70;
 }
 
 .large-select {
