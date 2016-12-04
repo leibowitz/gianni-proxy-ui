@@ -75,8 +75,8 @@ def get_uuid(entry):
 def get_content_type(headers):
     return get_header(headers, 'Content-Type')
 
-def get_content_encoding(headers):
-    return get_header(headers, 'Content-Encoding')
+def get_content_encoding(headers, default=None):
+    return get_header(headers, 'Content-Encoding') or default
 
 def get_header(headers, key, default=None):
     return headers[key] if key in headers else default
