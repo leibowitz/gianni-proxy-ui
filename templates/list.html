@@ -19,7 +19,7 @@
         <div class="box b-t">
   <div class="layout">
 <div class="table">
-<table class="fixed-header full-width">
+<table class="fixed-header full-width clickable-row-table">
   <thead>
     <th class="fixed-width-time">
       <div>
@@ -51,7 +51,8 @@
   </thead>
   <tbody>
 {% for num, item in enumerate(items) %}
-<tr {% if num % 2 == 0 %}class="stripped"{% end %}>
+{% set itemlink = "/item/" + str(item['_id']) + ("?" if origin or host else "") + ("origin=" + url_escape(origin) + ("&" if host else "") if origin else "") + ("host=" + url_escape(host) if host else "") %}
+<tr class="clickable-row{% if num % 2 == 0 %} stripped{% end %}" data-href='{{ itemlink }}'>
     <td class="fixed-width-time">
       <span title="{{ item['date'].astimezone(tz).strftime('%F') }}">{{ item['date'].astimezone(tz).strftime('%H:%M:%S') }}</span>
     </td>
@@ -72,8 +73,8 @@
     <td class="fixed-width-url">
       <div class="fixed-url">
         <span>{% if 'scheme' in item['request'] %}{{ item['request']['scheme'] }}://{% end %}</span><!--
-        --><span><a class="link-domain" href="{% if not host %}{% if origin %}/origin/{{ origin }}{% end %}/host/{{ item['request']['host'] }}{% else %}/item/{{ item['_id'] }}{% if origin or host %}?{% end %}{% if origin %}origin={{ url_escape(origin) }}{% if host %}&amp;{% end %}{% end %}{% if host %}host={{ url_escape(host) }}{% end %}{% end %}">{{ item['request']['host'] }}</a></span><!--
-        --><span><a target="_blank" href="/item/{{ item['_id'] }}{% if origin or host %}?{% end %}{% if origin %}origin={{ url_escape(origin) }}{% if host %}&amp;{% end %}{% end %}{% if host %}host={{ url_escape(host) }}{% end %}" title="{{ item['request']['path'] }}">{{ item['request']['path'] or '/' }}</a></span
+        --><span><a class="link-domain"{% if host %} target="_blank"{% end %} href="{% if not host %}{% if origin %}/origin/{{ origin }}{% end %}/host/{{ item['request']['host'] }}{% else %}/item/{{ item['_id'] }}{% if origin or host %}?{% end %}{% if origin %}origin={{ url_escape(origin) }}{% if host %}&amp;{% end %}{% end %}{% if host %}host={{ url_escape(host) }}{% end %}{% end %}">{{ item['request']['host'] }}</a></span><!--
+        --><span><a target="_blank" href="{{ itemlink }}" title="{{ item['request']['path'] }}">{{ item['request']['path'] or '/' }}</a></span>
       </div>
     </td>
   </tr>
@@ -129,8 +130,9 @@ function createSocket(origin)
         return;
       }
       var item_link = "/item/" + msg['_id']['$oid'] + "?" + (origin.length != 0 ? "origin="+ encodeURIComponent(origin) + (host ? "&" : "") : "") + (host ? "host=" + encodeURIComponent(host) : "");
-      var host_link = host ? "<a class='link-domain' target='_blank' href='" + item_link + "'>" : "<a class='link-domain' href='" + (origin.length != 0 ? "/origin/" + origin : "" ) + "/host/" + msg['request']['host'] + "'>";
-      var row = $("<tr>" +
+      var a_item_link = "<a class='link-domain' target='_blank' href='" + item_link + "'>";
+      var host_link = host ? a_item_link : "<a class='link-domain' href='" + (origin.length != 0 ? "/origin/" + origin : "" ) + "/host/" + msg['request']['host'] + "'>";
+      var row = $("<tr class='clickable-row' data-href='" + item_link + "'>" +
             "<td class='fixed-width-time'>" + moment(msg['date']['$date']).tz("{{ tz.zone }}").format(jsDateFormat) + "</td>" +
             {% if not origin %}
             '<td class="fixed-width-origin"><a href="/origin/' + msg['request']['origin'] + '">' + msg['request']['origin'] + "</a></td>" +
@@ -294,6 +296,12 @@ $(document).ready(function(){
     scrollToBottom();
 });
 })();
+
+$(".clickable-row-table").on("click", ".clickable-row", function(evt) {
+    if (evt.target.nodeName != 'A') {
+        window.open($(this).data("href"), '_blank');
+    }
+});
 
 </script>
 {% end %}

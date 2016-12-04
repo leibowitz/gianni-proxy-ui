@@ -11,7 +11,7 @@
 
 
 {% if len(items) != 0 %}
-<table class="full-width table-fixed">
+<table class="full-width table-fixed clickable-row-table">
   <thead>
     <th class="active">
       Active
@@ -35,7 +35,7 @@
   </thead>
   <tbody>
 {% for row in items %}
-  <tr>
+  <tr class="clickable-row" data-href="/rule/{{ row['_id'] }}?{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}{% if item is not None %}&amp;item={{ item }}{% end %}">
     <td>
       <form name="activateForm" method="post">
         <input type="hidden" name="ident" value="{{ row['_id'] }}" />
@@ -96,12 +96,17 @@
           row.parentNode.removeChild(row);
         });
       }
+      return false;
     });
     $('form[name=activateForm] input[type=checkbox]').on('click', function(evt){
       var id = evt.target.parentNode.querySelector('input[name=ident]').value;
       var action = evt.target.checked ? "enable" : "disable";
       $.post("/rules", {ident: id, action: action});
-      
     });
+$(".clickable-row-table").on("click", ".clickable-row", function(evt) {
+    if (evt.target.nodeName == 'TD') {
+        location.href = $(this).data("href");
+    }
+});
 </script>
 {% end %}

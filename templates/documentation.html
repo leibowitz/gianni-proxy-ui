@@ -14,7 +14,7 @@
   <div class="layout">
 
 {% if len(items) != 0 %}
-<table class="full-width table-fixed">
+<table class="full-width table-fixed clickable-row-table">
   <thead>
     <th class="fixed-width-method">
       Method
@@ -33,11 +33,9 @@
   </thead>
   <tbody>
 {% for row in items %}
-  <tr>
+<tr class="clickable-row" data-href="/documentation/edit/{{ row['_id'] }}">
     <td>
-      <a href="/documentation/edit/{{ row['_id'] }}">
 <span class="method-{{ row['request']['method'] }}">{{ row['request']['method'] }}</span>
-      </a>
     </td>
     <td>
 <span class="status-{{ (row['response']['status']/100)*100 }}">{{ row['response']['status'] }}</span>
@@ -80,6 +78,12 @@
           row.parentNode.removeChild(row);
         });
       }
+      return false;
     });
+$(".clickable-row-table").on("click", ".clickable-row", function(evt) {
+    if (evt.target.nodeName == 'TD') {
+        location.href = $(this).data("href");
+    }
+});
 </script>
 {% end %}
