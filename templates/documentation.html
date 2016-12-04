@@ -35,9 +35,7 @@
 {% for num, row in enumerate(items) %}
 <tr class="clickable-row {% if num % 2 == 0 %}stripped{% end %}" data-href="/documentation/edit/{{ row['_id'] }}">
     <td>
-      <a href="/documentation/edit/{{ row['_id'] }}">
 <span class="method-{{ row['request']['method'] }}">{{ row['request']['method'] }}</span>
-      </a>
     </td>
     <td>
 <span class="status-{{ (row['response']['status']/100)*100 }}">{{ row['response']['status'] }}</span>
