@@ -106,7 +106,7 @@ def get_body_content_type(body, content = None):
     if content is not None:
         mimetype, chars = httpheader.parse_media_type(content, with_parameters=False)
         ctype = '/'.join(filter(None, mimetype))
-    elif body is not None:
+    elif body:
         ctype = magic.from_buffer(body, mime=True)
     else:
         ctype = None
