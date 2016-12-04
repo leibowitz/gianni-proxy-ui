@@ -40,7 +40,7 @@
       </a>
     </td>
     <td>
-      {% if 'name' in row %}
+      {% if 'name' in row and row['name'] %}
       {{ row['name'] }}
       {% else %}
       [Unknown]
