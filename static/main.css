@@ -385,8 +385,14 @@ div.right {
   box-shadow: 0 0 1px rgba(0,0,0,.15);
 }
 
-.box-radius {
-  border-radius: 0.5em;
+.box-radius, .box-radius-top {
+  border-top-left-radius: 0.5em;
+  border-top-right-radius: 0.5em;
+}
+
+.box-radius, .box-radius-bottom {
+  border-bottom-right-radius: 0.5em;
+  border-bottom-left-radius: 0.5em;
 }
 
 .tree {

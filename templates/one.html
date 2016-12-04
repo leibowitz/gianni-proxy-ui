@@ -10,7 +10,7 @@
     <a class="pure-button" href="/rules/add?item={{ item['_id'] }}{% if from_doc %}&doc=1{% end %}">Save</a>
     <a class="pure-button" href="/request?item={{ item['_id'] }}{% if from_doc %}&doc=1{% end %}">Resend</a>
 </div>
-  <div class="box">
+  <div class="box box-radius-top">
     <div class="box-header">
 <h2 class="url">
 <span class="status-{{ (item['response']['status']/100)*100 }}">{{ item['response']['status'] }}</span>
@@ -75,8 +75,8 @@
 </div>
 {% end %}
 
-  <div class="box b-t">
 {% if not finished %}
+  <div class="box b-t">
 <div class="link-messages"><a class="pure-button" href="/messages?host={{ item['request']['host'] }}">Manage messages</a></div>
   <div class="box-header">
 <h2>Messages</h2>
@@ -96,8 +96,8 @@
 
 </form>
   </div>
-  <div class="box b-t">
 {% end %}
+  <div class="box b-t box-radius-bottom">
   <div>
 <h1 class="center no-bottom-margin">Response</h1>
   </div>
