@@ -325,12 +325,13 @@ pre.curl {
 
 pre {
   margin: 0;
+  word-break: break-all;
 }
 
 #response pre {
   font-size: 15px;
 }
-pre {
+.codehilite {
   padding: 1em;
 }
 
