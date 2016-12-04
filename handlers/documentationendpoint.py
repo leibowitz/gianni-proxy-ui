@@ -38,7 +38,13 @@ class DocumentationEndpointHandler(BaseRequestHandler):
 
             o['methods'][item['request']['method']][item['response']['status']] = item['_id']
 
-        entries = yield collection.find({'request.host': host, 'request.path': path, 'request.method': method}).sort([('response.status', 1)]).to_list(100)
+        req = {'request.host': host, 'request.method': method}
+        if path and path != '/':
+            req['request.path'] = path
+        else:
+            req['request.path'] = {'$in': [False, '/']}
+
+        entries = yield collection.find(req).sort([('response.status', 1)]).to_list(100)
 
         for k, entry in enumerate(entries):
             entries[k]['request']['headers'] = self.nice_headers(entry['request']['headers'])
