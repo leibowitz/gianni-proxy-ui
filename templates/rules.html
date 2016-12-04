@@ -55,9 +55,7 @@
       {% end %}
     </td>
     <td>
-      <a href="/rule/{{ row['_id'] }}?{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}{% if item is not None %}&amp;item={{ item }}{% end %}">
       {{ row['host'] }}
-      </a>
     </td>
     <td>
       {% if row['path'] %}
