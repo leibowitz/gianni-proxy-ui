@@ -48,6 +48,15 @@ table.table-fixed {
   overflow-y: scroll;
 }
 
+#response {
+  position: relative;
+}
+
+#btn-rsp {
+  position: absolute;
+  right: 0;
+}
+
 .nobg.codehilite, .nobg pre {
   background-color: inherit;
 }
