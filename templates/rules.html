@@ -46,7 +46,9 @@
     </td>
     <td>
       {% if row['method'] %}
+      <span class="method-{{ row['method'] }}">
       {{ row['method'] }}
+      </span>
       {% else %}
       <i class="fa fa-asterisk"></i>
       {% end %}
