@@ -26,7 +26,7 @@ class RulesAddHandler(BaseRequestHandler):
             collection = self.settings['db'].proxyservice[coll]
             entry = yield motor.Op(collection.find_one, {'_id': self.get_id(item)})
             if entry:
-                reqheaders = entry['request']['headers'] if 'request' in entry and 'headers' in entry['request'] else reqheaders
+                reqheaders = entry['request']['headers'] if 'request' in entry and 'headers' in entry['request'] and entry['request']['headers'] else reqheaders
                 respheaders = entry['response']['headers'] if 'response' in entry and 'headers' in entry['response'] else respheaders
                 status = entry['response']['status']
 
@@ -43,7 +43,7 @@ class RulesAddHandler(BaseRequestHandler):
             collection = self.settings['db'].proxyservice['log_rules']
             entry = yield motor.Op(collection.find_one, {'_id': self.get_id(ruleid)})
             body = entry['body']
-            reqheaders = entry['reqheaders'] if 'reqheaders' in entry else reqheaders
+            reqheaders = entry['reqheaders'] if 'reqheaders' in entry and entry['reqheaders'] else reqheaders
             respheaders = entry['respheaders'] if 'respheaders' in entry else respheaders
             fmt = util.get_format(util.get_content_type(self.nice_headers(respheaders))) if respheaders else None
 
