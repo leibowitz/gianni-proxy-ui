@@ -40,13 +40,11 @@
       </a>
     </td>
     <td>
-      <a href="/origins/{{ row['origin'] }}">
       {% if 'name' in row %}
       {{ row['name'] }}
       {% else %}
       [Unknown]
       {% end %}
-      </a>
     </td>
     <td class="delete">
       <form method="post" name="deleteForm">
