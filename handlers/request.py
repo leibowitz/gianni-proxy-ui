@@ -59,7 +59,14 @@ class RequestHandler(BaseRequestHandler):
         proxyhost = self.settings['proxyhost'] or self.request.host.split(':')[0]
         proxyport = self.settings['proxyport']
         host = proxyhost + ':' + str(proxyport)
-        resp = requests.request(method, url, params=params, data=body, headers=self.nice_headers(headers))#, proxies={'http':host, 'https':host})
+        now = datetime.datetime.utcnow()
+        try:
+            resp = requests.request(method, url, params=params, data=body, headers=self.nice_headers(headers), allow_redirects=False, timeout=10)#, proxies={'http':host, 'https':host})
+            elapsed = resp.elasped
+        except requests.Timeout as e:
+            print e
+            resp = None
+            elapsed = datetime.datetime.utcnow() - now
 
         suid = bson.binary.Binary(uuid.uuid4().bytes, 0)
         data = {
@@ -72,27 +79,32 @@ class RequestHandler(BaseRequestHandler):
                 'origin': '127.0.0.1',
                 'url': url,
                 'method': method,
+                'time': elapsed.total_seconds(),
             },
             'response': {
-                'status': resp.status_code,
-                'headers': self.dict_headers(resp.headers),
+                'status': resp.status_code if resp else 0,
+                'headers': self.dict_headers(resp.headers) if resp else {},
             },
             'uuid': suid,
-            'date': datetime.datetime.utcnow(),
+            'date': now,
             }
 
         ctype = util.get_content_type(self.nice_headers(headers))
         reqCtype = util.get_body_content_type(body, ctype)
 
-        ctype = util.get_content_type(self.nice_headers(resp.headers))
-        resCtype = util.get_body_content_type(resp.text, ctype)
+        if resp:
+            ctype = util.get_content_type(self.nice_headers(resp.headers))
+            resCtype = util.get_body_content_type(resp.text, ctype)
+        else:
+            resCtype = None
+
 
         reqid = bson.objectid.ObjectId()
         resid = bson.objectid.ObjectId()
 
         reqEnc = util.get_content_encoding(self.nice_headers(headers))
-        resEnc = resp.encoding
-        if not resEnc:
+        resEnc = resp.encoding if resp else None
+        if not resEnc and resp:
             resEnc = util.get_content_encoding(self.nice_headers(resp.headers))
 
         gfs = motor.MotorGridFS(self.settings['db'].proxyservice, 'fs')
@@ -101,7 +113,7 @@ class RequestHandler(BaseRequestHandler):
             rqid = yield gfs.put(body, _id=reqid, filename=str(reqid), contentType=reqCtype, encoding=reqEnc)
             data['request']['fileid'] = reqid
 
-        if resp.text:
+        if resp and resp.text:
             if not resEnc:
                 resEnc = 'utf8'
             rsid = yield gfs.put(resp.text, _id=resid, filename=str(resid), contentType=resCtype, encoding=resEnc)
