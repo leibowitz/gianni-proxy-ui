@@ -476,8 +476,11 @@ div.right {
   border-top-right-radius: 0.5em;
 }
 
-.box-radius, .box-radius-bottom {
+.box-radius, .box-radius-bottom, .box-radius-bottom-right {
   border-bottom-right-radius: 0.5em;
+}
+
+.box-radius, .box-radius-bottom, .box-radius-bottom-left {
   border-bottom-left-radius: 0.5em;
 }
 
