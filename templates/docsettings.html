@@ -25,7 +25,7 @@
   <tbody>
 {% for num, key in enumerate(sorted(items)) %}
 {% set row = items[key] %}
-  <tr class="clickable-row" data-href="/docsettings/{{ row['_id'] }}">
+  <tr class="clickable-row" data-href="/docsettings/{{ row['_id'] }}?host={{ row['host'] }}">
     <td>
       <form name="activateForm" method="post">
         <input type="hidden" name="ident" value="{{ row['_id'] }}" />

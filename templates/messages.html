@@ -24,7 +24,7 @@
   </thead>
   <tbody>
 {% for row in items %}
-  <tr class="clickable-row" data-href="/message/{{ row['_id'] }}">
+  <tr class="clickable-row" data-href="/message/{{ row['_id'] }}?{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}{% if item is not None %}&amp;item={{ item }}{% end %}">
     <td>
         {% if 'name' in row %}{{ row['name'] }}{% else %}{{ row['_id'] }}{% end %}
     </td>

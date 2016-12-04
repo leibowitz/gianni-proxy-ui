@@ -28,7 +28,7 @@
   </thead>
   <tbody>
 {% for row in items %}
-  <tr class="clickable-row" data-href="/redirect/{{ row['_id'] }}">
+  <tr class="clickable-row" data-href="/redirect/{{ row['_id'] }}?{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}{% if item is not None %}&amp;item={{ item }}{% end %}">
     <td>
       <form name="activateForm" method="post">
         <input type="hidden" name="ident" value="{{ row['_id'] }}" />
