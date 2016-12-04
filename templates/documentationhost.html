@@ -13,7 +13,7 @@
   <a class="pure-button" href="/documentation?host={{ host }}"><i class="mdi mdi-file-document"></i> Endpoints</a>
   </div>
 </div>
-<div class="box">
+<div class="box box-radius-top">
 
   <div class="layout">
     <div class="box-header">
@@ -42,7 +42,7 @@
 {% raw render_tree(host, tree, currentpath, '', method, row) %}
       </div>
 {% end %}
-<div class="box box-with-tree">
+<div class="box box-with-tree box-radius-bottom">
 
   {% if method is not None %}
   <div class="layout layout-with-tree">
