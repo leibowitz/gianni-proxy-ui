@@ -36,7 +36,7 @@
   </thead>
   <tbody>
 {% for num, row in enumerate(items) %}
-  <tr class="clickable-row {% if num % 2 == 0 %}stripped{% end %}" data-href="/rule/{{ row['_id'] }}">
+  <tr class="clickable-row {% if num % 2 == 0 %}stripped{% end %}" data-href="/rule/{{ row['_id'] }}?{% if origin %}&amp;origin={{ url_escape(origin) }}{% end %}{% if host is not None %}&amp;host={{ host }}{% end %}{% if item is not None %}&amp;item={{ item }}{% end %}">
     <td>
       <form name="activateForm" method="post">
         <input type="hidden" name="ident" value="{{ row['_id'] }}" />
