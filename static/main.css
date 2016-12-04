@@ -565,15 +565,15 @@ h4 {
 
 .btn:hover {
   box-shadow: inset 0 -10rem 0 rgba(158,158,158,.1);
+  border-color: #cbcbcb;
 }
 
 .btn {
   background-color: #fff;
   padding: .15rem .45rem;
   font-size: .875rem;
-  border: 0 solid rgba(0, 0, 0, 0);
+  border: 1px solid #eaeaea;
   border-radius: .25rem;
-  box-shadow: inset 0 0 1px rgba(0,0,0,.3);
 }
 
 .top-button {
