@@ -16,15 +16,15 @@
   <div class="box box-radius-top">
     <div class="box-header">
 <h2 class="url">
+      <div class="top-right margin-left">
+        {% if 'time' in item['request'] and elapsed %}<span class="time"{% if 'date' in item %} title="{{ item['date'].astimezone(tz).strftime('%F %H:%M:%S') }}"{% end %}>{{ elapsed }}</span>{% end %}
+      </div>
 <span class="status-{{ (item['response']['status']/100)*100 }}">{{ item['response']['status'] }}</span>
 <span class="method-{{ item['request']['method'] }}">{{ item['request']['method'] }}</span>
 <span class="url">
 {% if 'scheme' in item['request'] %}{{ item['request']['scheme'] }}://{% end %}<a href="{% if origin %}/origin/{{ origin }}{% end %}/host/{{ item['request']['host'] }}">{{ item['request']['host'] }}</a>{% if item['request']['path'] %}{{ item['request']['path'] }}{% end %}
 </span>
 
-      <div class="top-right">
-        {% if 'time' in item['request'] and elapsed %}<span class="time"{% if 'date' in item %} title="{{ item['date'].astimezone(tz).strftime('%F %H:%M:%S') }}"{% end %}>{{ elapsed }}</span>{% end %}
-      </div>
 </h2>
 
     </div>
