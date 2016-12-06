@@ -73,8 +73,19 @@ class DocumentationViewHandler(BaseRequestHandler):
 
         fmt = util.get_format(respctype) if respctype else None
 
+        if 'time' in entry['request']:
+            elapsed = relativedelta(seconds=entry['request']['time']).normalized()
+
+            if elapsed.seconds:
+                elapsed_total = str(elapsed.microseconds/1000000+elapsed.seconds) + 's'
+            else:
+                elapsed_total = str(elapsed.microseconds/1000) + 'ms'
+        else:
+            elapsed_total = None
+
         self.render("one.html", 
                 tz=self.TZ,
+                elapsed=elapsed_total,
                 item=entry, 
                 body=resbody,
                 fmt=fmt,
