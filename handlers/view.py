@@ -99,6 +99,16 @@ class ViewHandler(BaseRequestHandler):
 
         fmt = util.get_format(util.get_content_type(self.nice_headers(responseheaders))) if responseheaders else None
 
+        if 'time' in entry['request']:
+            elapsed = relativedelta(seconds=entry['request']['time']).normalized()
+
+            if elapsed.seconds:
+                elapsed_total = str(elapsed.microseconds/1000000+elapsed.seconds) + 's'
+            else:
+                elapsed_total = str(elapsed.microseconds/1000) + 'ms'
+        else:
+            elapsed_total = None
+
         self.render("one.html", 
                 tz=self.TZ,
                 item=entry, 
@@ -116,6 +126,7 @@ class ViewHandler(BaseRequestHandler):
                 origin=origin,
                 host=host,
                 relativedelta=relativedelta,
+                elapsed=elapsed_total,
                 from_doc=False)
 
     @gen.coroutine
