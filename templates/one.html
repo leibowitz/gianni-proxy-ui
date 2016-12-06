@@ -46,7 +46,7 @@
 
 
   </div>
-
+  {% if len(requestheaders) != 0 %}
   <div class="box-body no-top-padding no-top-margin">
 <h3 class="capitalize no-top-padding no-top-margin">Headers</h3>
 <table class="headers full-width table-fixed">
@@ -66,6 +66,7 @@
 {% end %}
 </table>
   </div>
+  {% end %}
 {% end %}
   </div>
 
@@ -102,6 +103,7 @@
 <h1 class="center no-bottom-margin">Response</h1>
   </div>
   <div class="box-body no-top-padding no-top-margin">
+  {% if len(responseheaders) != 0 %}
 <h3 class="capitalize no-top-padding no-top-margin">Headers</h3>
 <table class="headers full-width">
 {% for num, key in enumerate(sorted(responseheaders)) %}
@@ -115,6 +117,7 @@
   </tr>
 {% end %}
 </table>
+{% end %}
 {% if body or responsebody %}
 <div id="response" class="b-t">
   {% if fmt is not None and fmt == 'json' %}
