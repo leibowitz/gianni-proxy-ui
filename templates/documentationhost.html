@@ -5,7 +5,7 @@
   <a class="pure-button pure-button-primary" href="/docsettings/add">Add Host</a>
   <a class="pure-button pure-button-primary" href="/documentation/add?host={{ host }}">Add Endpoint</a>
 </div>
-<div class="box">
+<div class="box box-radius-top">
 
   <div class="layout">
     <div class="box-header">
@@ -34,7 +34,7 @@
 {% raw render_tree(host, tree, currentpath, '', method, row) %}
       </div>
 {% end %}
-<div class="box box-with-tree">
+<div class="box box-with-tree box-radius-bottom-right {% if method is not None %}box-radius-bottom-left{% end %}">
 
   {% if method is not None %}
   <div class="layout layout-with-tree">
