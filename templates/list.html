@@ -70,8 +70,11 @@
       {{ item['request']['method'] }}
     </td>
     <td class="fixed-width-url">
-        
-      {% if 'scheme' in item['request'] %}{{ item['request']['scheme'] }}://{% end %}<a href="{% if not host %}{% if origin %}/origin/{{ origin }}{% end %}/host/{{ item['request']['host'] }}{% else %}/item/{{ item['_id'] }}{% if origin or host %}?{% end %}{% if origin %}origin={{ url_escape(origin) }}{% if host %}&amp;{% end %}{% end %}{% if host %}host={{ url_escape(host) }}{% end %}{% end %}">{{ item['request']['host'] }}</a><a target="_blank" href="/item/{{ item['_id'] }}{% if origin or host %}?{% end %}{% if origin %}origin={{ url_escape(origin) }}{% if host %}&amp;{% end %}{% end %}{% if host %}host={{ url_escape(host) }}{% end %}" title="{{ item['request']['path'] }}">{% if len(item['request']['path']) > 50 %}{{ item['request']['path'][:50] }}...{% else %}{{ item['request']['path'] }}{% end %}</a>
+      <div class="fixed-url">
+        <span>{% if 'scheme' in item['request'] %}{{ item['request']['scheme'] }}://{% end %}</span><!--
+        --><span><a class="link-domain" href="{% if not host %}{% if origin %}/origin/{{ origin }}{% end %}/host/{{ item['request']['host'] }}{% else %}/item/{{ item['_id'] }}{% if origin or host %}?{% end %}{% if origin %}origin={{ url_escape(origin) }}{% if host %}&amp;{% end %}{% end %}{% if host %}host={{ url_escape(host) }}{% end %}{% end %}">{{ item['request']['host'] }}</a></span><!--
+        --><span><a target="_blank" href="/item/{{ item['_id'] }}{% if origin or host %}?{% end %}{% if origin %}origin={{ url_escape(origin) }}{% if host %}&amp;{% end %}{% end %}{% if host %}host={{ url_escape(host) }}{% end %}" title="{{ item['request']['path'] }}">{{ item['request']['path'] or '/' }}</a></span
+      </div>
     </td>
   </tr>
 {% end %}
@@ -96,19 +99,15 @@ var eOrigin = $('#origin');
 var origin = eOrigin.length != 0 ? eOrigin.val().trim() : undefined;
 var host = $('#host').val().trim();
 var sock;
-function scrollToBottom(duration){
-  if (duration == undefined) {
-    duration = 400;
-  }
-  $('table.fixed-header tbody').animate({scrollTop: $('table.fixed-header tbody')[0].scrollHeight-$('table.fixed-header tbody').height()}, duration);
+function scrollToBottom(){
+  $("html, body").animate({ scrollTop: $(document).height() }, "fast");
 }
 
 function getScrollHeight()
 {
-  return Math.abs($('table.fixed-header tbody')[0].scrollHeight-$('table.fixed-header tbody').scrollTop()-$('table.fixed-header tbody').height());
+  return $(document).height()-$('body').scrollTop()-$(window).height();
 }
 
-var scrollTimeout;
 var retries = 0;
 
 function createSocket(origin)
@@ -129,8 +128,8 @@ function createSocket(origin)
         // ignore this as we are not looking at this origin now
         return;
       }
-      var item_link = "<a target='_blank' href='/item/" + msg['_id']['$oid'] + "?" + (origin.length != 0 ? "origin="+ encodeURIComponent(origin) + (host ? "&" : "") : "") + (host ? "host=" + encodeURIComponent(host) : "") + "' title='"+ msg['request']['path'] + "'>";
-      var host_link = host ? item_link : "<a href='" + (origin.length != 0 ? "/origin/" + origin : "" ) + "/host/" + msg['request']['host'] + "'>";
+      var item_link = "/item/" + msg['_id']['$oid'] + "?" + (origin.length != 0 ? "origin="+ encodeURIComponent(origin) + (host ? "&" : "") : "") + (host ? "host=" + encodeURIComponent(host) : "");
+      var host_link = host ? "<a class='link-domain' target='_blank' href='" + item_link + "'>" : "<a class='link-domain' href='" + (origin.length != 0 ? "/origin/" + origin : "" ) + "/host/" + msg['request']['host'] + "'>";
       var row = $("<tr>" +
             "<td class='fixed-width-time'>" + moment(msg['date']['$date']).tz("{{ tz.zone }}").format(jsDateFormat) + "</td>" +
             {% if not origin %}
@@ -139,13 +138,26 @@ function createSocket(origin)
             '<td class="fixed-width-status status-' + (parseInt(msg['response']['status']/100)*100) + '"><i class="fa fa-circle"></i> ' + msg['response']['status'] + "</td>" +
             '<td class="fixed-width-method method-' + msg['request']['method'] + '">' + msg['request']['method'] + "</td>" +
             '<td class="fixed-width-url">' + 
+            '<div class="fixed-url">' + 
+            '<span>' + 
             msg['request']['scheme'] + '://' +
+            '</span>' + 
+            '<span>' +
             host_link + 
             msg['request']['host'] + 
             "</a>" + 
-            item_link + 
-            ( msg['request']['path'].length > 50 ? msg['request']['path'].substr(0, 50) + '...' : msg['request']['path'] ) + 
-            "</a></td>" +
+            '</span>' + 
+            '<span>' + 
+            '<a target="_blank"' +
+            ' title="' + msg['request']['path'] + '"' +
+            ' href="' +
+            item_link +
+            '">' + 
+            (msg['request']['path'] ? msg['request']['path'] : '/') +
+            '</a>' + 
+            "</span>" + 
+            "</div>" + 
+            "</td>" +
             "</tr>");
       var text = $('#filterText').val().trim();
 
@@ -162,8 +174,8 @@ function createSocket(origin)
         // Use a threshold of 5 rows to enable scrolling
         var threshold = row.height() * 5;
         var shouldScroll = sizeDiff < threshold;
-        if (shouldScroll && doNotScroll == null) {
-            scrollToBottom(0);
+        if (shouldScroll) {
+            scrollToBottom();
         }
       }
   };
@@ -238,7 +250,7 @@ $('#filterText').on('search', function(evt){
       refreshStrip();
     }
     // Scroll to bottom
-    scrollToBottom(0);
+    scrollToBottom();
 });
 function refreshStrip(){
   $('table > tbody > tr').each(function(index, row){
@@ -277,30 +289,9 @@ $('#filterForm').on('submit', function(evt){
     }
   });
 
-var lastScrollTop = $('table.fixed-header tbody').scrollTop();
-var doNotScroll = null;
-    
-$('table.fixed-header tbody').scroll(function(evt){
-    var currentScroll = $('table.fixed-header tbody').scrollTop();
-    if (currentScroll < lastScrollTop){
-        if (doNotScroll != null) {
-            clearTimeout(doNotScroll);
-        }
-        doNotScroll = setTimeout(function(){
-            doNotScroll = null;
-        }, 1000);
-    }
-    lastScrollTop = currentScroll;
-});
-
 // Make the tbody height as big as possible
 $(document).ready(function(){
-    $('table.fixed-header tbody').height($(window).height()-(200+$('#filterBox').height()));
-    $("html, body").animate({ scrollTop: $(document).height() }, 1);
-    scrollToBottom(0);
-});
-$( window ).resize(function() {
-    $('table.fixed-header tbody').height($(window).height()-(200+$('#filterBox').height()));
+    scrollToBottom();
 });
 })();
 

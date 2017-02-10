@@ -27,6 +27,12 @@ table.table-fixed {
   table-layout: fixed;
 }
 
+.table-fixed td {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .pure-form-aligned .pure-control-group label {
   max-width: 10%;
 }
@@ -109,48 +115,68 @@ tr.stripped{ /*:nth-child(odd){*/
   height: 2em;
 }
 
-table.fixed-header tbody {
-  display: block;
-  overflow: scroll;
-  height: 300px;
+table.fixed-header {
+  table-layout: fixed;
+  border-collapse: separate;
 }
 
-table.fixed-header thead tr {
-  position: relative;
-  display: block;
-}
-
-table.fixed-header td,
-table.fixed-header th {
-}
-    
 .fixed-width-time {
   width: 6em;
+  overflow-wrap: break-word;
 }
 
 .fixed-width-origin {
   width: 10em;
+  overflow-wrap: break-word;
 }
 
 .fixed-width-status {
   width: 5em;
   white-space: nowrap;
+  overflow: hidden;
+}
+
+.fixed-width-name {
+  width: 10em;
 }
 
 .fixed-width-method {
   width: 5em;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .fixed-width-url {
-  min-width: 40em;
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-spacing: 0;
 }
 
+.fixed-width-url span {
+  font-size: 18px;
+}
+
+.fixed-url {
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.link-domain {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 50%;
+  vertical-align: top;
+  display: inline-block;
+}
 
 /*th div{
   position: absolute;
   top: 13em;
   line-height: normal;
 }*/
+
 .pure-control-group {
   margin-bottom: 1em;
 }
