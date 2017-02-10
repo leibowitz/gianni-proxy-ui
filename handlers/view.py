@@ -100,6 +100,7 @@ class ViewHandler(BaseRequestHandler):
         fmt = util.get_format(util.get_content_type(self.nice_headers(responseheaders))) if responseheaders else None
 
         self.render("one.html", 
+                tz=self.TZ,
                 item=entry, 
                 cmd=cmd,
                 body=resbody,
