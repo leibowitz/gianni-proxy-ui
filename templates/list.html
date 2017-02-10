@@ -58,7 +58,7 @@
     {% if not origin %}
       <td class="fixed-width-origin">
         {% if 'origin' in item['request'] %}
-        <a href="/origin/{{ item['request']['origin'] }}">{{ item['request']['origin'] }}</a>
+        <a class="underline" href="/origin/{{ item['request']['origin'] }}">{{ item['request']['origin'] }}</a>
         {% end %}
       </td>
     {% end %}
@@ -134,7 +134,7 @@ function createSocket(origin)
       var row = $("<tr>" +
             "<td class='fixed-width-time'>" + moment(msg['date']['$date']).tz("{{ tz.zone }}").format(jsDateFormat) + "</td>" +
             {% if not origin %}
-            '<td class="fixed-width-origin"><a href="/origin/' + msg['request']['origin'] + '">' + msg['request']['origin'] + "</a></td>" +
+            '<td class="fixed-width-origin"><a class="underline" href="/origin/' + msg['request']['origin'] + '">' + msg['request']['origin'] + "</a></td>" +
             {% end %}
             '<td class="fixed-width-status status-' + (parseInt(msg['response']['status']/100)*100) + '"><i class="fa fa-circle"></i> ' + msg['response']['status'] + "</td>" +
             '<td class="fixed-width-method method-' + msg['request']['method'] + '">' + msg['request']['method'] + "</td>" +
