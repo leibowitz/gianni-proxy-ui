@@ -3,8 +3,8 @@ services:
   web:
     build: .
     command: python -u main.py --mongourl=db:27017
-    ports:
-      - "8002:8002"
+    expose:
+      - "8002"
     volumes:
       - .:/code
     links:
@@ -15,9 +15,25 @@ services:
   proxy:
     build: ../go-proxy-service
     command: go-proxy-service -v -m --mongourl=db:27017
-    ports: 
-      - "8989:8080"
+    environment:
+      - TCP_PORTS=8080
+    expose:
+      - "8080"
     links:
       - db
+  lb:
+    image: dockercloud/haproxy
+    links:
+      - proxy
+      - web
+    environment:
+      - DOCKER_TLS_VERIFY
+      - DOCKER_HOST
+      - DOCKER_CERT_PATH
+    volumes:
+      - $DOCKER_CERT_PATH:$DOCKER_CERT_PATH
+    ports:
+      - "8989:8080"
+      - "8002:80"
   db:
     image: mongo:3.0.2
